@@ -17,6 +17,9 @@
     "lib": [
       "es2018",
       "dom"
+    ],
+    "plugins": [
+      {"name": "@angular/language-service"}
     ]
   }
 }
