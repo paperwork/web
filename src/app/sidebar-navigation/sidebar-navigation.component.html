@@ -1,0 +1,7 @@
+<mat-nav-list>
+  <mat-list-item *ngFor="let navigationElement of navigationElements">
+    <mat-icon class="material-icons-outlined" mat-list-icon>{{ navigationElement.icon }}</mat-icon>
+    <a matLine (click)="navigate(navigationElement.id)">{{ navigationElement.label }}</a>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-nav-list>
