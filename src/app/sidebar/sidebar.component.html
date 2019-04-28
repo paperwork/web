@@ -1,18 +1,13 @@
-<mat-tab-group [selectedIndex]="selected.value">
-  <mat-tab label="Notifications">
-    <h1>Some tab content</h1>
-    <p>...</p>
-  </mat-tab>
-  <mat-tab label="Navigation">
-    <h1>Some tab content</h1>
-    <p>...</p>
-  </mat-tab>
-  <mat-tab label="Folders">
-    <h1>Some tab content</h1>
-    <p>...</p>
-  </mat-tab>
-  <mat-tab label="Tags">
-    <h1>Some tab content</h1>
-    <p>...</p>
+<mat-card class="profile">
+  <mat-card-header>
+    <div mat-card-avatar class="avatar" style="background: url('https://via.placeholder.com/150');"></div>
+    <mat-card-title>John Doe</mat-card-title>
+    <mat-card-subtitle>Free Account</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)" class="no-tabs">
+  <mat-tab *ngFor="let tab of tabs" label="{{ tab.label }}">
+    <app-sidebar-navigation *ngIf="tab.id == 'navigation'"></app-sidebar-navigation>
   </mat-tab>
 </mat-tab-group>
