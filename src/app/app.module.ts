@@ -54,12 +54,16 @@ import {
   MatTreeModule,
 } from '@angular/material';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
+
+import { NavigationService } from './navigation.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     NotesComponent,
-    SidebarComponent
+    SidebarComponent,
+    SidebarNavigationComponent
   ],
   imports: [
     BrowserModule,
@@ -113,7 +117,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     PortalModule,
     ScrollingModule,
   ],
-  providers: [],
+  providers: [NavigationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
