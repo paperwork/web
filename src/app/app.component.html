@@ -1,6 +1,5 @@
-<mat-sidenav-container class="example-container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
-               (closed)="events.push('close!')">
+<mat-sidenav-container class="example-container" autosize="false" hasBackdrop="false" fullscreen>
+  <mat-sidenav #sidenav mode="side" fixedInViewport="true" [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
     <app-sidebar></app-sidebar>
   </mat-sidenav>
 
