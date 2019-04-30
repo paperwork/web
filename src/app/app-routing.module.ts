@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
+import { ViewMainComponent } from './view-main/view-main.component';
 
 const routes: Routes = [
-  { path: '', component:  AppComponent},
-  { path: 'notifications', component:  AppComponent},
-  { path: 'folders', component: AppComponent},
-  { path: 'tags', component: AppComponent},
+  { path: '', redirectTo: '/notes', pathMatch: 'full' },
+  { path: 'notes', component:  ViewMainComponent },
+  { path: 'notifications', component:  ViewMainComponent },
+  { path: 'folders', component: ViewMainComponent },
+  { path: 'tags', component: ViewMainComponent },
+  // { path: '**', component: ViewNotFoundComponent },
 ];
 
 export const appRouting = RouterModule.forRoot(routes);

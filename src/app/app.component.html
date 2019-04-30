@@ -1,11 +1,1 @@
-<mat-sidenav-container class="example-container" autosize="false" hasBackdrop="false" fullscreen>
-  <mat-sidenav #sidenav mode="side" fixedInViewport="true" [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
-    <app-sidebar></app-sidebar>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>
-    <app-notes></app-notes>
-  </mat-sidenav-content>
-</mat-sidenav-container>
 <router-outlet></router-outlet>

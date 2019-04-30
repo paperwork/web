@@ -7,6 +7,4 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Paperwork';
-  opened: boolean = true; // TODO: Load from user prefs
-  events: string[] = [];
 }
