@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationService } from '../navigation.service';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -34,15 +33,12 @@ export class SidebarNavigationComponent implements OnInit {
       icon: 'settings',
     },
   ];
-  current: string;
 
-  constructor(private navigation: NavigationService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.navigation.current.subscribe(id => this.current = id)
   }
 
   navigate(id: string) {
-    this.navigation.navigate(id)
   }
 }

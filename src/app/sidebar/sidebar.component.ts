@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import { Router } from '@angular/router';
-import { NavigationService } from '../navigation.service';
+import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -29,18 +28,23 @@ export class SidebarComponent implements OnInit {
   ];
   selected = new FormControl(1);
 
-  constructor(private router: Router, private navigation: NavigationService) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
-    this.navigation.current.subscribe(id => {
-      this.tabs.forEach((tab, idx) => {
-        if(tab.id === id) {
-          this.selected.setValue(idx);
+    this.router.events.subscribe((routerEvent: RouterEvent) => {
+      if(routerEvent instanceof NavigationEnd) {
+        console.log(routerEvent);
+        let tab = this.tabs.find(tab => tab.id === routerEvent.urlAfterRedirects.replace('/', ''));
+        console.log(tab);
+        if(tab === null) {
+          return;
         }
-      });
-    });
-    this.router.events.subscribe((res) => {
-      this.selected.setValue(this.tabs.indexOf(this.tabs.find(tab => tab.id === this.router.url.replace('/', ''))));
+
+        let indexOfTab: number = this.tabs.indexOf(tab);
+        console.log(indexOfTab);
+        this.selected.setValue(indexOfTab); // TODO: This doesn't seem to work
+        console.log(this.selected.value);
+      }
     });
   }
 }
