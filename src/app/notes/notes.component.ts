@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
 import { Note } from './note';
@@ -11,7 +11,8 @@ import { MockNotes } from './mock';
   styleUrls: ['./notes.component.scss']
 })
 export class NotesComponent implements OnInit {
-  notes = MockNotes;
+  dataSource = new MatTableDataSource(MockNotes);
+  @ViewChild(MatSort) sort: MatSort;
   selection = null;
 
   constructor() {
@@ -19,17 +20,18 @@ export class NotesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.dataSource.sort = this.sort;
   }
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.notes.length;
+    const numRows = this.dataSource.data.length;
     return numSelected == numRows;
   }
 
   masterToggle() {
     this.isAllSelected() ?
         this.selection.clear() :
-        this.notes.forEach(row => this.selection.select(row));
+        this.dataSource.data.forEach(row => this.selection.select(row));
   }
 }

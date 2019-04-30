@@ -1,24 +1,34 @@
-<mat-table [dataSource]="notes">
-  <mat-header-row *cdkHeaderRowDef="['select', 'title']"></mat-header-row>
-  <mat-row *cdkRowDef="let row; columns: ['select', 'title']"></mat-row>
+<mat-table matSort [dataSource]="dataSource">
+  <mat-header-row *cdkHeaderRowDef="['select', 'title', 'created_at']"></mat-header-row>
+  <mat-row *cdkRowDef="let row; columns: ['select', 'title', 'created_at']"></mat-row>
 
   <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
+    <mat-header-cell class="notes-table-checkbox-col" *matHeaderCellDef>
       <mat-checkbox (change)="$event ? masterToggle() : null"
                     [checked]="selection.hasValue() && isAllSelected()"
                     [indeterminate]="selection.hasValue() && !isAllSelected()">
       </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
+    </mat-header-cell>
+    <mat-cell class="notes-table-checkbox-col" *matCellDef="let row">
       <mat-checkbox (click)="$event.stopPropagation()"
                     (change)="$event ? selection.toggle(row) : null"
                     [checked]="selection.isSelected(row)">
       </mat-checkbox>
-    </td>
+    </mat-cell>
   </ng-container>
 
   <ng-container cdkColumnDef="title">
-    <mat-header-cell *cdkHeaderCellDef> Title </mat-header-cell>
-    <mat-cell *cdkCellDef="let row"> {{row.title}} </mat-cell>
+    <mat-header-cell mat-sort-header *cdkHeaderCellDef>Title</mat-header-cell>
+    <mat-cell *cdkCellDef="let row">
+      <section class="mat-typography">
+        <h2>{{row.title}}</h2>
+        <span class="caption">{{row.body}}</span>
+      </section>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="created_at">
+    <mat-header-cell mat-sort-header class="notes-table-date-col" *cdkHeaderCellDef>Date</mat-header-cell>
+    <mat-cell class="notes-table-date-col" *cdkCellDef="let row">{{row.created_at | date:'shortDate'}}</mat-cell>
   </ng-container>
 </mat-table>
