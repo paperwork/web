@@ -110,16 +110,29 @@ $warn: mat-color($paperwork-warn);
         display: block;
         width: 48px;
         height: 48px;
-        margin-right: 16px;
       }
     }
 
     .view-main-mat-toolbar-row-menu {
       margin: 48px 0px 0px 0px;
+      padding: 0px 0px 0px 16px;
 
-      button.mat-raised-button.mat-primary {
+      button {
         border-radius: 20px;
 
+        .mat-button-ripple, .mat-button-focus-overlay {
+          border-radius: 20px;
+        }
+      }
+
+      button.mat-button {
+        margin-right: 8px;
+        min-width: 36px;
+        padding: 0px 6px;
+      }
+
+      button.mat-raised-button.mat-primary {
+        margin-right: 16px;
         .mat-button-wrapper {
           font-size: 1.1em;
 
@@ -172,23 +185,21 @@ $warn: mat-color($paperwork-warn);
     border-color: rgba(0, 0, 0, 0.2);
   }
 
-  .mat-header-row:after {
-    bottom: -57px;
-  }
   .mat-row:after {
-    bottom: -49px;
-  }
-  .mat-row:after, .mat-header-row:after {
     display: inline-block;
     position: absolute;
     content:"";
     width: 86px;
     border-top: 1px solid rgba(247, 250, 253, 1);
     left: 0px;
+    bottom: -49px;
+  }
+
+  .mat-header-row {
+    border-bottom-color: transparent;
   }
 
   .mat-row, .mat-header-row {
-    // border-bottom-color: transparent;
     position: relative;
 
     .mat-column-select {
@@ -196,7 +207,7 @@ $warn: mat-color($paperwork-warn);
     }
 
     .mat-column-created_at {
-      max-width: 22px;
+      max-width: 26px;
     }
   }
 
@@ -214,6 +225,8 @@ $warn: mat-color($paperwork-warn);
   }
 
   .mat-row {
+    margin-bottom: 18px;
+
     .mat-column-select {
       color: $primary;
     }
@@ -289,7 +302,7 @@ mat-card.profile {
 .sidebar-navigation-mat-nav-list {
   .mat-list-item {
     color: $color-only-grey;
-    height: 100px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
+    height: 74px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
     .mat-list-item-content {
