@@ -7,6 +7,9 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 **Are you a front-end developer looking for a fun opensource project? I could use some help on this, [get in touch](mailto:marius@paperwork.cloud?subject=Paperwork%20Web%20UI)!**
 
+## Current state
+
+![Current state](docs/current-state.png)
 
 ## Development
 
