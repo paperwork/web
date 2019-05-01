@@ -1,4 +1,4 @@
-<mat-table matSort [dataSource]="dataSource">
+<mat-table class="notes-mat-table" matSort [dataSource]="dataSource">
   <mat-header-row *cdkHeaderRowDef="['select', 'title', 'created_at']"></mat-header-row>
   <mat-row *cdkRowDef="let row; columns: ['select', 'title', 'created_at']"></mat-row>
 

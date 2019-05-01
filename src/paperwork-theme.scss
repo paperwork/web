@@ -1,0 +1,97 @@
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+
+// $my-custom-primary-color: (
+// 50 : #edebfc,
+// 100 : #d3cef8,
+// 200 : #b6aef3,
+// 300 : #988dee,
+// 400 : #8274eb,
+// 500 : #6c5ce7,
+// 600 : #6454e4,
+// 700 : #594ae0,
+// 800 : #4f41dd,
+// 900 : #3d30d7,
+// A100 : #ffffff,
+// A200 : #e9e7ff,
+// A400 : #b9b4ff,
+// A700 : #a29bff,
+// contrast: (
+// 50 : #000000,
+// 100 : #000000,
+// 200 : #000000,
+// 300 : #000000,
+// 400 : #000000,
+// 500 : #ffffff,
+// 600 : #ffffff,
+// 700 : #ffffff,
+// 800 : #ffffff,
+// 900 : #ffffff,
+// A100 : #000000,
+// A200 : #000000,
+// A400 : #000000,
+// A700 : #000000,
+// )
+// );
+// $my-app-primary: mat-palette($my-custom-primary-color);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$paperwork-primary: mat-palette($mat-light-blue);
+$paperwork-accent:  mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$paperwork-warn:    mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$paperwork-theme: mat-light-theme($paperwork-primary, $paperwork-accent, $paperwork-warn);
+
+$primary: mat-color($paperwork-primary);
+$accent: mat-color($paperwork-accent);
+$warn: mat-color($paperwork-warn);
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($paperwork-theme);
+
+.view-main-sidenav-container, .view-main-mat-toolbar {
+  background-color: rgba(247, 250, 253, 1);
+}
+
+.view-main-mat-sidenav-content {
+  padding: 0px 80px 0px 32px;
+}
+
+.notes-mat-table {
+  background: transparent;
+
+  .mat-row, .mat-header-row {
+    border-bottom-color: transparent;
+  }
+
+  .mat-row {
+    .mat-column-title, .mat-column-created_at {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      height: 80px;
+
+      h2 {
+        color: mat-color(mat-palette($mat-blue-grey))
+      }
+
+      .caption {
+        color: mat-color(mat-palette($mat-grey))
+      }
+    }
+
+    .mat-column-created_at {
+      color: $primary;
+    }
+  }
+}
