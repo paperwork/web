@@ -6,16 +6,20 @@
 
     <mat-sidenav-content class="view-main-mat-sidenav-content">
       <mat-toolbar class="view-main-mat-toolbar">
-        <mat-toolbar-row>
-          <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-toolbar-row class="view-main-mat-toolbar-row-logo">
+          <button mat-icon-button class="view-main-mat-toolbar-row-logo-sidebar-toggle" (click)="sidenav.toggle()">
             <mat-icon aria-label="Toggle sidebar" class="material-icons-outlined">{{ opened == true ? "chevron_left" : "chevron_right" }}</mat-icon>
           </button>
+
+          <span class="fill-remaining-space"></span>
+
+          <img class="logo" src="assets/images/paperwork-logo.png">
         </mat-toolbar-row>
 
-        <mat-toolbar-row>
+        <mat-toolbar-row class="view-main-mat-toolbar-row-menu">
           <button mat-raised-button color="primary">
             <mat-icon class="material-icons-outlined">note_add</mat-icon>
-            New Note
+            {{ mobileQuery.matches ? "" : "New Note" }}
           </button>
           <button mat-button color="primary">
             <mat-icon aria-label="Archive" class="material-icons-outlined">archive</mat-icon>
@@ -29,7 +33,7 @@
           <form class="search">
             <mat-form-field>
               <mat-icon matPrefix>search</mat-icon>
-              <input matInput type="search" tabindex="1" placeholder="Search">
+              <input matInput type="search" tabindex="1">
             </mat-form-field>
           </form>
         </mat-toolbar-row>
