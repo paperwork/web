@@ -29,6 +29,11 @@
 
   <ng-container cdkColumnDef="created_at">
     <mat-header-cell mat-sort-header class="notes-table-date-col" *cdkHeaderCellDef>Date</mat-header-cell>
-    <mat-cell class="notes-table-date-col" *cdkCellDef="let row">{{row.created_at | date:'shortDate'}}</mat-cell>
+    <mat-cell class="notes-table-date-col" *cdkCellDef="let row">
+      <section class="mat-typography">
+        <h2>{{row.created_at | date:'shortDate'}}</h2>
+        <span class="caption">&nbsp;<br>&nbsp;</span>
+      </section>
+    </mat-cell>
   </ng-container>
 </mat-table>
