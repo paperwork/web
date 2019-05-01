@@ -1,10 +1,23 @@
 @import '~@angular/material/theming';
-// Plus imports for other components in your app.
+@import 'assets/webfonts/Montserrat.css';
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat-core();
+$paperwork-typography: mat-typography-config(
+  $font-family: 'Montserrat, monospace',
+  $display-4:     mat-typography-level(110px, 110px, 300),
+  $display-3:     mat-typography-level(54px, 54px, 400),
+  $display-2:     mat-typography-level(43px, 46px, 400),
+  $display-1:     mat-typography-level(32px, 38px, 400),
+  $headline:      mat-typography-level(22px, 30px, 400),
+  $title:         mat-typography-level(18px, 30px, 400),
+  $subheading-2:  mat-typography-level(14px, 26px, 400),
+  $subheading-1:  mat-typography-level(13px, 22px, 400),
+  $body-2:        mat-typography-level(12px, 22px, 500),
+  $body-1:        mat-typography-level(12px, 18px, 400),
+  $caption:       mat-typography-level(12px, 20px, 400),
+  $button:        mat-typography-level(12px, 12px, 500),
+  $input:         mat-typography-level(inherit, 1.125, 400)
+);
+@include mat-core($paperwork-typography);
 
 
 // $my-custom-primary-color: (
@@ -41,11 +54,14 @@
 // );
 // $my-app-primary: mat-palette($my-custom-primary-color);
 
+$color-only-grey: #ABB3BC;
+$color-only-dark-grey: #6D7278;
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $paperwork-primary: mat-palette($mat-light-blue);
-$paperwork-accent:  mat-palette($mat-pink, A200, A100, A400);
+$paperwork-accent:  mat-palette($mat-light-blue);
 
 // The warn palette is optional (defaults to red).
 $paperwork-warn:    mat-palette($mat-red);
@@ -80,7 +96,7 @@ $warn: mat-color($paperwork-warn);
       margin: 74px 0px 0px 0px;
 
       button.view-main-mat-toolbar-row-logo-sidebar-toggle {
-        color: mat-color(mat-palette($mat-grey));
+        color: $color-only-grey;
 
         .mat-button-wrapper {
           .mat-icon {
@@ -114,7 +130,9 @@ $warn: mat-color($paperwork-warn);
       }
 
       form.search {
-        color: mat-color(mat-palette($mat-grey));
+        color: $color-only-grey;
+        // margin-right: 46px;
+
         .mat-form-field {
           .mat-form-field-wrapper {
             .mat-form-field-flex {
@@ -150,26 +168,91 @@ $warn: mat-color($paperwork-warn);
 .notes-mat-table {
   background: transparent;
 
+  .mat-checkbox-frame {
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .mat-header-row:after {
+    bottom: -57px;
+  }
+  .mat-row:after {
+    bottom: -49px;
+  }
+  .mat-row:after, .mat-header-row:after {
+    display: inline-block;
+    position: absolute;
+    content:"";
+    width: 86px;
+    border-top: 1px solid rgba(247, 250, 253, 1);
+    left: 0px;
+  }
+
   .mat-row, .mat-header-row {
-    border-bottom-color: transparent;
+    // border-bottom-color: transparent;
+    position: relative;
+
+    .mat-column-select {
+      max-width: 64px;
+    }
+
+    .mat-column-created_at {
+      max-width: 22px;
+    }
+  }
+
+  .mat-header-row {
+    .mat-column-select {
+      color: $color-only-grey;
+    }
+
+    .mat-column-title {
+      color: $color-only-grey;
+    }
+    .mat-column-created_at {
+      color: $color-only-grey;
+    }
   }
 
   .mat-row {
+    .mat-column-select {
+      color: $primary;
+    }
+
     .mat-column-title, .mat-column-created_at {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      height: 80px;
+      // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
-      h2 {
-        color: mat-color(mat-palette($mat-blue-grey));
+      section.mat-typography {
+        margin-bottom: 18px;
+
+        h2 {
+          margin-bottom: 2px;
+        }
       }
+    }
 
-      .caption {
-        color: mat-color(mat-palette($mat-grey));
+    .mat-column-title {
+      section.mat-typography {
+        width: 90%;
+
+        h2 {
+          font-size: (mat-font-size($paperwork-typography, title) - 1);
+          font-weight: 500;
+          color: $color-only-dark-grey;
+        }
+
+        .caption {
+          color: $color-only-grey;
+        }
       }
     }
 
     .mat-column-created_at {
-      color: $primary;
+      section.mat-typography {
+        h2 {
+          color: $primary;
+          font-size: mat-font-size($paperwork-typography, caption);
+        }
+      }
     }
   }
 }
@@ -190,13 +273,22 @@ mat-card.profile {
 
     .mat-card-header-text {
       margin: 48px 74px 0px 74px;
+
+      .mat-card-title {
+        font-weight: 500;
+      }
+
+      .mat-card-subtitle {
+        font-size: mat-font-size($paperwork-typography, subheading-2);
+        color: $color-only-grey;
+      }
     }
   }
 }
 
 .sidebar-navigation-mat-nav-list {
   .mat-list-item {
-    color: mat-color(mat-palette($mat-grey));
+    color: $color-only-grey;
     height: 100px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
