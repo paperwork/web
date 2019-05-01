@@ -311,3 +311,16 @@ mat-card.profile {
     }
   }
 }
+
+.snackbar-type-success {
+  background: $primary;
+}
+
+.snackbar-type-info {
+  color: $color-only-grey;
+  background: #fff;
+}
+
+.snackbar-type-error {
+  background: $warn;
+}

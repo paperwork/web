@@ -53,6 +53,7 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+import { PartialAlertComponent } from './partial-alert/partial-alert.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
 
@@ -65,6 +66,7 @@ import { ViewMainComponent } from './view-main/view-main.component';
     SidebarComponent,
     SidebarNavigationComponent,
     ViewMainComponent
+    PartialAlertComponent
   ],
   imports: [
     BrowserModule,
