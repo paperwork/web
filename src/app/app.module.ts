@@ -1,5 +1,7 @@
+import { environment } from './../environments/environment';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http';
+import { JwtModule } from '@auth0/angular-jwt';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -53,12 +55,22 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+import { ViewMainComponent } from './view-main/view-main.component';
+
 import { PartialAlertComponent } from './partial-alert/partial-alert.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
 
-import { ViewMainComponent } from './view-main/view-main.component';
 import { UsersService } from './users/users.service';
+
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
+
+export function gatewayUrl() {
+  return environment.api.gatewayProtocol + '://' + environment.api.gatewayHostPort;
+}
 
 @NgModule({
   declarations: [
@@ -66,7 +78,8 @@ import { UsersService } from './users/users.service';
     NotesComponent,
     SidebarComponent,
     SidebarNavigationComponent,
-    ViewMainComponent
+    ViewMainComponent,
+    UsersComponent,
     PartialAlertComponent
   ],
   imports: [
@@ -76,6 +89,15 @@ import { UsersService } from './users/users.service';
 
     FormsModule,
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        throwNoTokenError: false,
+        skipWhenExpired: true,
+        whitelistedDomains: [environment.api.gatewayHostPort],
+        blacklistedRoutes: [(gatewayUrl() + '/login')],
+      }
+    }),
     ReactiveFormsModule,
 
     A11yModule,
