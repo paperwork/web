@@ -15,7 +15,7 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 ### Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `make local-run-develop` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
 
 ### Code scaffolding
 
@@ -23,7 +23,7 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ### Building
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `make local-build-develop` to build the project. The build artifacts will be stored in the `dist/` directory. Use `make local-build` for a production build.
 
 ### Running unit tests
 
