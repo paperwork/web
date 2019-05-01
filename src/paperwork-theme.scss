@@ -65,6 +65,12 @@ $warn: mat-color($paperwork-warn);
   background-color: rgba(247, 250, 253, 1);
 }
 
+.view-main-sidenav-container {
+  .mat-drawer-side {
+    border-right: 0px;
+  }
+}
+
 .view-main-mat-sidenav-content {
   padding: 0px 80px 0px 32px;
 }
