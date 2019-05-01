@@ -58,6 +58,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
 
 import { ViewMainComponent } from './view-main/view-main.component';
+import { UsersService } from './users/users.service';
 
 @NgModule({
   declarations: [
@@ -120,7 +121,7 @@ import { ViewMainComponent } from './view-main/view-main.component';
     PortalModule,
     ScrollingModule,
   ],
-  providers: [],
+  providers: [UsersService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
