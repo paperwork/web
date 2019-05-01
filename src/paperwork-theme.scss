@@ -95,3 +95,9 @@ $warn: mat-color($paperwork-warn);
     }
   }
 }
+
+.sidebar-navigation-mat-nav-list {
+  .mat-list-item {
+    height: 100px; // TODO: Y U NO WORK?!?!?!
+  }
+}
