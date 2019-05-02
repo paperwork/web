@@ -1,5 +1,10 @@
+web
+===
+[<img src="https://img.shields.io/docker/cloud/build/paperwork/web.svg?style=for-the-badge"/>](https://hub.docker.com/r/paperwork/web)
+
 Paperwork Web UI
-----------------
+
+## General
 
 This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) and Material components.
 
