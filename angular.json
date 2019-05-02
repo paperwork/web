@@ -23,7 +23,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "src/assets"
+              "src/assets",
+              "src/.env.json"
             ],
             "styles": [
               "src/paperwork-theme.scss",
@@ -89,7 +90,8 @@
             ],
             "scripts": [],
             "assets": [
-              "src/assets"
+              "src/assets",
+              "src/.env.json"
             ]
           }
         },
