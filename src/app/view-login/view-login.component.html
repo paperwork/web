@@ -1,0 +1,43 @@
+<section class="modal-fullscreen mat-typography">
+
+  <div class="modal-title mat-typography">
+    <h1>Login</h1>
+  </div>
+
+  <div class="modal-box">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-fields-wide">
+
+        <mat-form-field class="login-email">
+          <input matInput type="email" placeholder="Email" formControlName="username">
+          <mat-hint></mat-hint>
+          <mat-error *ngIf="f.username.hasError('email') && !f.username.hasError('required')">
+            Please enter a valid email address
+          </mat-error>
+          <mat-error *ngIf="f.username.hasError('required')">
+            Email is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="login-password">
+          <input matInput type="password" placeholder="Password" formControlName="password">
+          <mat-hint></mat-hint>
+          <mat-error *ngIf="f.password.hasError('minlength') && !f.password.hasError('required')">
+            Password must be {{ f.password.errors.minlength.requiredLength }} characters minimum
+          </mat-error>
+          <mat-error *ngIf="f.password.hasError('required')">
+            Password is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button [disabled]="loading" color="primary">Login</button>
+        <span>Don't have an account yet? <a [routerLink]="['/register']">Sign up</a></span>
+
+      </div>
+
+    </form>
+  </div>
+
+</section>
+<partial-alert></partial-alert>

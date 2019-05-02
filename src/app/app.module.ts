@@ -55,6 +55,9 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+
+
+import { ViewLoginComponent } from './view-login/view-login.component';
 import { ViewMainComponent } from './view-main/view-main.component';
 
 import { PartialAlertComponent } from './partial-alert/partial-alert.component';
@@ -89,6 +92,7 @@ PartialSidebarComponent,
     PartialSidebarNavigationComponent,
     ViewMainComponent,
     UsersComponent,
+    ViewLoginComponent,
     PartialAlertComponent
   ],
   imports: [
