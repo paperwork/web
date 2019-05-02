@@ -11,6 +11,13 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 ![Current state](docs/current-state.png)
 
+## Docker
+
+### Environment Options
+
+- `PAPERWORK_API_GATEWAY_PROTOCOL`: The protocol the front-end should communicate with the `service-gateway`, `http` or `https`.
+- `PAPERWORK_API_GATEWAY_HOST_PORT`: The host/port combination under which the front-end can reach the `service-gateway`, e.g. `api.mydomain.com:8080`. If you're using a standard port (`80` for `http` and `443` for `https`) you can simply specify `api.mydomain.com` here.
+
 ## Development
 
 ### Development server
