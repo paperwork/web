@@ -13,9 +13,11 @@ import { AlertService } from '../partial-alert/alert.service';
 })
 export class ViewLoginComponent implements OnInit {
   loginForm: FormGroup;
+  registerForm: FormGroup;
   loading = false;
   submitted = false;
   returnUrl: string;
+  currentRoute: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -24,22 +26,53 @@ export class ViewLoginComponent implements OnInit {
     private usersService: UsersService,
     private alertService: AlertService
   ) {
-    if(this.usersService.isLoggedIn) {
+    this.currentRoute = this.router.url.replace('/', '');
+
+    if(this.currentRoute !== 'logout' && this.usersService.isLoggedIn) {
       this.router.navigate(['/']);
     }
   }
 
   ngOnInit() {
+    let commonUsername = ['', [Validators.required, Validators.email]];
+    let commonPassword = ['', [Validators.required, Validators.minLength(8)]];
+    let commonName = ['', [Validators.required]];
+
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      username: commonUsername,
+      password: commonPassword,
+    });
+
+    this.registerForm = this.formBuilder.group({
+      username: commonUsername,
+      password: commonPassword,
+      passwordConfirm: commonPassword,
+      name: this.formBuilder.group({
+        first_name: commonName,
+        last_name: commonName
+      })
+    }, {
+      validator: this.MustMatch('password', 'passwordConfirm')
     });
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f() {
+  get fLogin() {
     return this.loginForm.controls;
+  }
+
+  get fRegister() {
+    return this.registerForm.controls;
+  }
+
+  get f() {
+    switch(this.currentRoute) {
+    case 'login':
+      return this.loginForm.controls;
+    case 'register':
+      return this.registerForm.controls;
+    }
   }
 
   onSubmit() {
@@ -59,4 +92,21 @@ export class ViewLoginComponent implements OnInit {
         this.loading = false;
       });
     }
+
+  MustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      const matchingControl = formGroup.controls[matchingControlName];
+
+      if (matchingControl.errors && !matchingControl.errors.mustMatch) {
+        return;
+      }
+
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+    }
+  }
 }

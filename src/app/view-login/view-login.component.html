@@ -1,43 +1,82 @@
 <section class="modal-fullscreen mat-typography">
 
-  <div class="modal-title mat-typography">
-    <h1>Login</h1>
-  </div>
-
   <div class="modal-box">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-      <div class="form-fields-wide">
+    <mat-grid-list cols="3" rowHeight="640px">
+      <mat-grid-tile colspan="1" class="modal-box-left">
 
-        <mat-form-field class="login-email">
-          <input matInput type="email" placeholder="Email" formControlName="username">
-          <mat-hint></mat-hint>
-          <mat-error *ngIf="f.username.hasError('email') && !f.username.hasError('required')">
-            Please enter a valid email address
-          </mat-error>
-          <mat-error *ngIf="f.username.hasError('required')">
-            Email is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2" class="modal-box-right">
 
-        <mat-form-field class="login-password">
-          <input matInput type="password" placeholder="Password" formControlName="password">
-          <mat-hint></mat-hint>
-          <mat-error *ngIf="f.password.hasError('minlength') && !f.password.hasError('required')">
-            Password must be {{ f.password.errors.minlength.requiredLength }} characters minimum
-          </mat-error>
-          <mat-error *ngIf="f.password.hasError('required')">
-            Password is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
+        <form [formGroup]="currentRoute === 'login' ? loginForm : registerForm" (ngSubmit)="onSubmit()">
 
-        <button mat-raised-button [disabled]="loading" color="primary">Login</button>
-        <span>Don't have an account yet? <a [routerLink]="['/register']">Sign up</a></span>
+          <div class="form-fields-wide">
 
-      </div>
+            <mat-form-field class="login-email" appearance="outline">
+              <input matInput type="email" placeholder="Email" formControlName="username">
+              <mat-hint></mat-hint>
+              <mat-error *ngIf="f.username.hasError('email') && !f.username.hasError('required')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="f.username.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
 
-    </form>
-  </div>
+            <mat-form-field class="login-password" appearance="outline">
+              <input matInput type="password" placeholder="Password" formControlName="password">
+              <mat-hint></mat-hint>
+              <mat-error *ngIf="f.password.hasError('minlength') && !f.password.hasError('required')">
+                Password must be {{ f.password.errors.minlength.requiredLength }} characters minimum
+              </mat-error>
+              <mat-error *ngIf="f.password.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="currentRoute === 'register'" class="register-password-confirm" appearance="outline">
+              <input matInput type="password" placeholder="Password (just to make sure)" formControlName="passwordConfirm">
+              <mat-hint></mat-hint>
+              <mat-error *ngIf="f.passwordConfirm.hasError('minlength') && !f.passwordConfirm.hasError('required')">
+                Password must be {{ f.passwordConfirm.errors.minlength.requiredLength }} characters minimum
+              </mat-error>
+              <mat-error *ngIf="f.passwordConfirm.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="currentRoute === 'register'" class="register-firstname" formGroupName="name">
+              <input matInput type="text" placeholder="First name" formControlName="first_name">
+              <mat-hint></mat-hint>
+              <mat-error *ngIf="f.name.controls.first_name.hasError('required')">
+                First name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="currentRoute === 'register'" class="register-lastname" formGroupName="name">
+              <input matInput type="text" placeholder="Last name" formControlName="last_name">
+              <mat-hint></mat-hint>
+              <mat-error *ngIf="f.name.controls.last_name.hasError('required')">
+                Last name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+          </div>
+
+          <div class="modal-buttons">
+            <button *ngIf="currentRoute === 'login'" mat-raised-button [disabled]="loading" color="primary">Login</button>
+            <button *ngIf="currentRoute === 'register'" mat-raised-button [disabled]="loading" color="primary">Register</button>
+          </div>
+          <div>
+            <span class="info-text" *ngIf="currentRoute === 'login'">Don't have an account yet? <a class="button-register" [routerLink]="['/register']" color="primary">Register</a></span>
+            <span class="info-text" *ngIf="currentRoute === 'register'">Already have an account? <a class="button-login" [routerLink]="['/login']" color="primary">Login</a></span>
+          </div>
+        </form>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    </div>
 
 </section>
 <partial-alert></partial-alert>

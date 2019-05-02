@@ -6,22 +6,52 @@
   height: 100%;
   align-items: center;
   justify-content: center;
-  background: rgba(247, 250, 253, 1);
-
-  .modal-title {
-    color: #fff;
-    display: block;
-    position: absolute;
-    width: 100%;
-    top: 0;
-    text-align: center;
-  }
+  background: rgb(3,169,244);
+  background: radial-gradient(circle, rgba(3,169,244,1) 0%, rgba(172,229,255,1) 100%);
 
   .modal-box {
     width: 40%;
     background: #fff;
-    padding: 46px;
-    box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 8px 10px 6px rgba(60, 60, 60, 0.1);
+    font-size: 14px;
+
+    .modal-box-left {
+      background: $color-only-ultra-light-blue;
+    }
+
+    .modal-box-right {
+      background: #fff;
+    }
+
+    form {
+      width: 80%;
+    }
+
+    mat-form-field {
+      margin: 4px 0px;
+    }
+
+    .modal-buttons {
+      margin: 24px 0px 8px 0px;
+
+      button.mat-primary {
+        width: 50%;
+        border-radius: 20px;
+
+        .mat-button-ripple, .mat-button-focus-overlay {
+          border-radius: 20px;
+        }
+      }
+    }
+
+    .button-register, .button-login {
+      margin: 0px 6px;
+    }
+
+    .info-text {
+      font-size: 12px;
+    }
+
   }
 }
 
@@ -31,5 +61,5 @@
 }
 
 .form-fields-wide > * {
-  width: 100%;
+  width: 80%;
 }
