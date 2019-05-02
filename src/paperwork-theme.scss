@@ -78,6 +78,12 @@ $warn: mat-color($paperwork-warn);
 // that you are using.
 @include angular-material-theme($paperwork-theme);
 
+a[color=primary] {
+  font-weight: mat-font-weight($paperwork-typography, button);
+  color: $primary;
+  text-decoration: none;
+}
+
 .view-main-sidenav-container, .view-main-mat-toolbar {
   background-color: $color-only-ultra-light-blue;
 }
