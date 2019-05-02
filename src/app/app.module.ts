@@ -1,8 +1,8 @@
-import { environment } from './../environments/environment';
+import { EnvService } from './env/env.service';
 import { BrowserModule } from '@angular/platform-browser';
-import { JwtModule } from '@auth0/angular-jwt';
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -65,12 +65,20 @@ import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
 
 
-export function tokenGetter() {
-  return localStorage.getItem('access_token');
+export function jwtOptionsFactory(envService) {
+  return {
+    tokenGetter: () => {
+      return localStorage.getItem('access_token');
+    },
+    throwNoTokenError: false,
+    skipWhenExpired: true,
+    whitelistedDomains: [envService.gatewayHostPort()],
+    blacklistedRoutes: [(envService.gatewayUrl() + '/login')],
+  }
 }
 
-export function gatewayUrl() {
-  return environment.api.gatewayProtocol + '://' + environment.api.gatewayHostPort;
+export function init_env(envService: EnvService) {
+  return () => envService.init();
 }
 
 @NgModule({
@@ -91,12 +99,10 @@ PartialSidebarComponent,
     FormsModule,
     HttpClientModule,
     JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        throwNoTokenError: false,
-        skipWhenExpired: true,
-        whitelistedDomains: [environment.api.gatewayHostPort],
-        blacklistedRoutes: [(gatewayUrl() + '/login')],
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory,
+        deps: [EnvService]
       }
     }),
     ReactiveFormsModule,
@@ -144,7 +150,10 @@ PartialSidebarComponent,
     PortalModule,
     ScrollingModule,
   ],
-  providers: [UsersService],
+  providers: [
+    EnvService,
+    UsersService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

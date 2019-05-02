@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { EnvService } from './env/env.service';
 import { UsersService } from './users/users.service';
 
 @Component({
@@ -6,8 +7,11 @@ import { UsersService } from './users/users.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Paperwork';
 
-  constructor(public usersService: UsersService) {}
+  constructor(public envService: EnvService, public usersService: UsersService) {}
+
+  ngOnInit() {
+  }
 }
