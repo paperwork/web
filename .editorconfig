@@ -1,13 +1,14 @@
 root = true
 
 [*]
-charset = utf-8
 indent_style = space
-indent_size = 2
-insert_final_newline = true
+indent_size = 4
+end_of_line = lf
+charset = utf-8
 trim_trailing_whitespace = true
+insert_final_newline = true
 
-[*.md]
+[*.{md,markdown}]
 max_line_length = off
 trim_trailing_whitespace = false
 
@@ -18,3 +19,10 @@ max_line = 80
 
 [{Makefile,**.mk}]
 indent_style = tab
+
+[*.{js,ts,scss,html,json}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
