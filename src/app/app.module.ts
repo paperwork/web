@@ -62,6 +62,7 @@ import {PartialSidebarComponent } from './partial-sidebar/partial-sidebar.compon
 import { PartialSidebarNavigationComponent } from './partial-sidebar-navigation/partial-sidebar-navigation.component';
 
 import { UsersService } from './users/users.service';
+import { UsersComponent } from './users/users.component';
 
 
 export function tokenGetter() {
