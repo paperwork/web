@@ -10,9 +10,9 @@ const routes: Routes = [
   { path: 'notifications', component:  ViewMainComponent, canActivate: [AuthGuard] },
   { path: 'folders', component: ViewMainComponent, canActivate: [AuthGuard] },
   { path: 'tags', component: ViewMainComponent, canActivate: [AuthGuard] },
-  // { path: 'register', component: ViewRegisterComponent },
+  { path: 'register', component: ViewLoginComponent },
   { path: 'login', component: ViewLoginComponent },
-  // { path: 'logout', component: ViewLoginComponent },
+  { path: 'logout', component: ViewLoginComponent },
   // { path: '**', component: ViewNotFoundComponent },
 ];
 
