@@ -21,10 +21,12 @@ export class PartialAlertComponent implements OnInit {
   ngOnInit() {
     this.subscription = this.alertService.getMessage().subscribe(message => {
       // message.type (e.g. 'error'), message.text (e.g. 'Authentication unsuccessful.')
-      this.snackBar.open(message.text, '', {
-        duration: this.durationInSeconds * 1000,
-        panelClass: ('snackbar-type-' + message.type)
-      });
+      if(typeof message !== 'undefined' && message.hasOwnProperty('text') && message.hasOwnProperty('type')) {
+        this.snackBar.open(message.text, '', {
+          duration: this.durationInSeconds * 1000,
+          panelClass: ('snackbar-type-' + message.type)
+        });
+      }
     });
   }
 
