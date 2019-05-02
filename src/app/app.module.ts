@@ -58,8 +58,8 @@ import {
 import { ViewMainComponent } from './view-main/view-main.component';
 
 import { PartialAlertComponent } from './partial-alert/partial-alert.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
+import {PartialSidebarComponent } from './partial-sidebar/partial-sidebar.component';
+import { PartialSidebarNavigationComponent } from './partial-sidebar-navigation/partial-sidebar-navigation.component';
 
 import { UsersService } from './users/users.service';
 
@@ -76,8 +76,8 @@ export function gatewayUrl() {
   declarations: [
     AppComponent,
     NotesComponent,
-    SidebarComponent,
-    SidebarNavigationComponent,
+PartialSidebarComponent,
+    PartialSidebarNavigationComponent,
     ViewMainComponent,
     UsersComponent,
     PartialAlertComponent

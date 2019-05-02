@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SidebarNavigationComponent } from './sidebar-navigation.component';
+import {PartialSidebarComponent } from './partial-sidebar.component';
 
-describe('SidebarNavigationComponent', () => {
-  let component: SidebarNavigationComponent;
-  let fixture: ComponentFixture<SidebarNavigationComponent>;
+describe('PartialSidebarComponent', () => {
+  let component:PartialSidebarComponent;
+  let fixture: ComponentFixture<PartialSidebarComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidebarNavigationComponent ]
+      declarations: [PartialSidebarComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarNavigationComponent);
+    fixture = TestBed.createComponent(PartialSidebarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

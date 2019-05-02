@@ -4,10 +4,10 @@ import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
+  templateUrl: './partial-sidebar.component.html',
+  styleUrls: ['./partial-sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class PartialSidebarComponent implements OnInit {
   tabs = [
     {
       id: 'notifications',

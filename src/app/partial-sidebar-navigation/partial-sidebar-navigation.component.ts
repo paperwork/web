@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar-navigation',
-  templateUrl: './sidebar-navigation.component.html',
-  styleUrls: ['./sidebar-navigation.component.scss']
+  templateUrl: './partial-sidebar-navigation.component.html',
+  styleUrls: ['./partial-sidebar-navigation.component.scss']
 })
-export class SidebarNavigationComponent implements OnInit {
+export class PartialSidebarNavigationComponent implements OnInit {
   navigationElements = [
     {
       id: 'account',
