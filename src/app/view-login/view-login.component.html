@@ -4,7 +4,7 @@
 
     <mat-grid-list cols="3" rowHeight="640px">
       <mat-grid-tile colspan="1" class="modal-box-left">
-
+        <img class="logo" src="/assets/images/paperwork-logo.png" alt="Paperwork">
       </mat-grid-tile>
       <mat-grid-tile colspan="2" class="modal-box-right">
 
@@ -16,7 +16,7 @@
               <input matInput type="email" placeholder="Email" formControlName="username">
               <mat-hint></mat-hint>
               <mat-error *ngIf="f.username.hasError('email') && !f.username.hasError('required')">
-                Please enter a valid email address
+                Please enter a <strong>valid email address</strong>
               </mat-error>
               <mat-error *ngIf="f.username.hasError('required')">
                 Email is <strong>required</strong>
@@ -27,7 +27,7 @@
               <input matInput type="password" placeholder="Password" formControlName="password">
               <mat-hint></mat-hint>
               <mat-error *ngIf="f.password.hasError('minlength') && !f.password.hasError('required')">
-                Password must be {{ f.password.errors.minlength.requiredLength }} characters minimum
+                Password must be <strong>{{ f.password.errors.minlength.requiredLength }} characters minimum</strong>
               </mat-error>
               <mat-error *ngIf="f.password.hasError('required')">
                 Password is <strong>required</strong>
@@ -38,10 +38,13 @@
               <input matInput type="password" placeholder="Password (just to make sure)" formControlName="passwordConfirm">
               <mat-hint></mat-hint>
               <mat-error *ngIf="f.passwordConfirm.hasError('minlength') && !f.passwordConfirm.hasError('required')">
-                Password must be {{ f.passwordConfirm.errors.minlength.requiredLength }} characters minimum
+                Password must be <strong>{{ f.passwordConfirm.errors.minlength.requiredLength }} characters minimum</strong>
               </mat-error>
               <mat-error *ngIf="f.passwordConfirm.hasError('required')">
                 Password is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="f.passwordConfirm.hasError('mustMatch')">
+                Passwords  do <strong>not match</strong>
               </mat-error>
             </mat-form-field>
 
