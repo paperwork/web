@@ -7,12 +7,15 @@ import { AuthGuard } from './auth/auth.guard';
 const routes: Routes = [
   { path: '', redirectTo: '/notes', pathMatch: 'full' },
   { path: 'notes', component:  ViewMainComponent, canActivate: [AuthGuard] },
-  { path: 'notifications', component:  ViewMainComponent, canActivate: [AuthGuard] },
+  { path: 'notes/:id', component:  ViewMainComponent, canActivate: [AuthGuard] },
   { path: 'folders', component: ViewMainComponent, canActivate: [AuthGuard] },
   { path: 'tags', component: ViewMainComponent, canActivate: [AuthGuard] },
+  { path: 'notifications', component:  ViewMainComponent, canActivate: [AuthGuard] },
+
   { path: 'register', component: ViewLoginComponent },
   { path: 'login', component: ViewLoginComponent },
   { path: 'logout', component: ViewLoginComponent },
+
   // { path: '**', component: ViewNotFoundComponent },
 ];
 
