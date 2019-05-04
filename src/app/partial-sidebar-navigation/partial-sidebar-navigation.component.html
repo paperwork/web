@@ -1,4 +1,4 @@
-<mat-nav-list class="sidebar-navigation-mat-nav-list">
+<mat-nav-list>
   <mat-list-item *ngFor="let navigationElement of navigationElements">
     <mat-icon class="material-icons-outlined" mat-list-icon>{{ navigationElement.icon }}</mat-icon>
     <a matLine [routerLink]="'/' + navigationElement.id" routerLinkActive="active">{{ navigationElement.label }}</a>

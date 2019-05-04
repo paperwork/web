@@ -5,3 +5,30 @@
     border-right: 0px;
   }
 }
+
+.sidebar-toggle {
+  transition: 0.2s ease-in all;
+
+  button {
+    .mat-button-wrapper {
+      .mat-icon {
+        font-size: 2.8em;
+        text-align: left;
+      }
+    }
+  }
+}
+
+.sidebar-toggle-opened {
+  position: absolute;
+  bottom: 20px;
+  left: 300px;
+  z-index: 999;
+}
+
+.sidebar-toggle-closed {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 999;
+}

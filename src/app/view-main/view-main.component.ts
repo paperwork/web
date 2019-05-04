@@ -9,7 +9,7 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 export class ViewMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   opened: boolean = true; // TODO: Load from user prefs
-  events: string[] = [];
+  toggleOpened: boolean = true;
 
   private _mobileQueryListener: () => void;
 

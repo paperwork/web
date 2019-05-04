@@ -1,0 +1,14 @@
+@import "paperwork-theme.scss";
+
+.mat-nav-list {
+  .mat-list-item {
+    color: $color-only-grey;
+    height: 74px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    .mat-list-item-content {
+      padding: 0px !important;
+      margin: 0px 74px 0px 74px;
+    }
+  }
+}

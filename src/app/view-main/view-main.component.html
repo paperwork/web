@@ -1,6 +1,12 @@
 <div [class.is-mobile]="mobileQuery.matches">
+  <div class="sidebar-toggle {{ toggleOpened == true ? 'sidebar-toggle-opened' : 'sidebar-toggle-closed' }}">
+    <button mat-mini-fab class="sidebar-toggle" (click)="sidenav.toggle()">
+      <mat-icon aria-label="Toggle sidebar" class="material-icons-outlined">{{ toggleOpened == true ? "chevron_left" : "chevron_right" }}</mat-icon>
+    </button>
+  </div>
+
   <mat-sidenav-container class="view-main-sidenav-container" autosize="false" [hasBackdrop]="mobileQuery.matches" fullscreen>
-    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
+    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" [(opened)]="opened" (openedStart)="toggleOpened = true" (closedStart)="toggleOpened = false">
       <app-sidebar></app-sidebar>
     </mat-sidenav>
 

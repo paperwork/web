@@ -73,6 +73,8 @@ $background-alternative: $color-only-ultra-light-blue;
 
 @include angular-material-theme($paperwork-theme);
 
+$sidebar-width: 366px;
+
 a[color=primary] {
   font-weight: mat-font-weight($paperwork-typography, button);
   color: $primary;
@@ -86,45 +88,9 @@ a[color=primary] {
   background-color: $background-alternative;
 }
 
-mat-card.profile {
-  min-width: 366px;
-  padding: 0px;
-
-  .mat-card-header {
-    display: block;
-
-    .mat-card-avatar {
-      background: url('/assets/images/avatar-default.png');
-      width: 100px;
-      height: 100px;
-      margin: 48px 74px 0px 74px;
-    }
-
-    .mat-card-header-text {
-      margin: 48px 74px 0px 74px;
-
-      .mat-card-title {
-        font-weight: 500;
-      }
-
-      .mat-card-subtitle {
-        font-size: mat-font-size($paperwork-typography, subheading-2);
-        color: $color-only-grey;
-      }
-    }
-  }
-}
-
-.sidebar-navigation-mat-nav-list {
-  .mat-list-item {
-    color: $color-only-grey;
-    height: 74px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-    .mat-list-item-content {
-      padding: 0px !important;
-      margin: 0px 74px 0px 74px;
-    }
+.profile { // TODO: This is unbelievably stupid and I cannot believe there's no other way to do this. Find and fix!
+  .mat-card-header-text {
+    margin: 48px 74px 0px 74px;
   }
 }
 

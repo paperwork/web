@@ -1,0 +1,27 @@
+@import "paperwork-theme.scss";
+
+.profile {
+  min-width: $sidebar-width;
+  padding: 0px;
+
+  .mat-card-header {
+    display: block;
+
+    .mat-card-avatar {
+      background: url('/assets/images/avatar-default.png');
+      width: 100px;
+      height: 100px;
+      margin: 48px 74px 0px 74px;
+    }
+
+    .mat-card-title {
+      font-weight: 500;
+    }
+
+    .mat-card-subtitle {
+      font-size: mat-font-size($paperwork-typography, subheading-2);
+      color: $color-only-grey;
+    }
+
+  }
+}
