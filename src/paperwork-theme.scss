@@ -209,7 +209,7 @@ a[color=primary] {
     }
 
     .mat-column-created_at {
-      max-width: 26px;
+      max-width: 34px;
     }
   }
 
@@ -266,6 +266,7 @@ a[color=primary] {
         h2 {
           color: $primary;
           font-size: mat-font-size($paperwork-typography, caption);
+          letter-spacing: 2px;
         }
       }
     }
