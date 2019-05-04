@@ -67,6 +67,8 @@ import { PartialSidebarNavigationComponent } from './partial-sidebar-navigation/
 import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
 import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partial-sidebar-folders.component';
+import { PartialToolbarRowLogoComponent } from './partial-toolbar-row-logo/partial-toolbar-row-logo.component';
+import { PartialToolbarRowNotesListComponent } from './partial-toolbar-row-notes-list/partial-toolbar-row-notes-list.component';
 
 
 export function jwtOptionsFactory(envService) {
@@ -95,7 +97,9 @@ PartialSidebarComponent,
     UsersComponent,
     ViewLoginComponent,
     PartialAlertComponent,
-    PartialSidebarFoldersComponent
+    PartialSidebarFoldersComponent,
+    PartialToolbarRowLogoComponent,
+    PartialToolbarRowNotesListComponent
   ],
   imports: [
     BrowserModule,

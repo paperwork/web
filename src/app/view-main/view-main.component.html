@@ -5,39 +5,6 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="view-main-mat-sidenav-content">
-      <mat-toolbar class="view-main-mat-toolbar">
-        <mat-toolbar-row class="view-main-mat-toolbar-row-logo">
-          <button mat-icon-button class="view-main-mat-toolbar-row-logo-sidebar-toggle" (click)="sidenav.toggle()">
-            <mat-icon aria-label="Toggle sidebar" class="material-icons-outlined">{{ opened == true ? "chevron_left" : "chevron_right" }}</mat-icon>
-          </button>
-
-          <span class="fill-remaining-space"></span>
-
-          <img class="logo" src="assets/images/paperwork-logo.png">
-        </mat-toolbar-row>
-
-        <mat-toolbar-row class="view-main-mat-toolbar-row-menu">
-          <button mat-raised-button color="primary">
-            <mat-icon class="material-icons-outlined">note_add</mat-icon>
-            {{ mobileQuery.matches ? "" : "New Note" }}
-          </button>
-          <button mat-button color="primary">
-            <mat-icon aria-label="Archive" class="material-icons-outlined">archive</mat-icon>
-          </button>
-          <button mat-button color="primary">
-            <mat-icon aria-label="Delete" class="material-icons-outlined">delete</mat-icon>
-          </button>
-
-          <span class="fill-remaining-space"></span>
-
-          <form class="search">
-            <mat-form-field>
-              <mat-icon matPrefix>search</mat-icon>
-              <input matInput type="search" tabindex="1">
-            </mat-form-field>
-          </form>
-        </mat-toolbar-row>
-      </mat-toolbar>
       <app-notes></app-notes>
     </mat-sidenav-content>
   </mat-sidenav-container>

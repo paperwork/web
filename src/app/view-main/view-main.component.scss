@@ -1,7 +1,7 @@
-.is-mobile .view-main-sidenav-container {
-  flex: 1 0 auto;
-}
+@import "paperwork-theme.scss";
 
-.fill-remaining-space {
-  flex: 1 1 auto;
+.view-main-sidenav-container {
+  .mat-drawer-side {
+    border-right: 0px;
+  }
 }

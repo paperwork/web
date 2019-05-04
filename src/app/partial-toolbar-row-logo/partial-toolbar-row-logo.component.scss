@@ -1,0 +1,38 @@
+@import "paperwork-theme.scss";
+
+:host(.background-plain) {
+  .mat-toolbar, .mat-toolbar-row {
+    background: $background-plain;
+  }
+}
+
+:host(.background-alternative) {
+  .mat-toolbar, .mat-toolbar-row {
+    background: $background-alternative;
+  }
+}
+
+.mat-toolbar {
+  .mat-toolbar-row {
+    width: 100%;
+    padding: 0px;
+    margin: 74px 0px 0px 0px;
+
+    button.toolbar-row-logo-sidebar-toggle {
+      color: $color-only-grey;
+
+      .mat-button-wrapper {
+        .mat-icon {
+          font-size: 2.8em;
+          text-align: left;
+        }
+      }
+    }
+
+    img.logo {
+      display: block;
+      width: 48px;
+      height: 48px;
+    }
+  }
+}
