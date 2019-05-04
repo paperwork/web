@@ -9,6 +9,7 @@
 <!-- TODO: Add a nice animation when switching tabs -->
 <mat-tab-group [selectedIndex]="selected" class="no-tabs">
   <mat-tab *ngFor="let tab of tabs" label="{{ tab.label }}">
-    <app-sidebar-navigation *ngIf="tab.id == 'notes'"></app-sidebar-navigation>
+    <partial-sidebar-navigation *ngIf="tab.id == 'notes'"></partial-sidebar-navigation>
+    <partial-sidebar-folders *ngIf="tab.id == 'folders'"></partial-sidebar-folders>
   </mat-tab>
 </mat-tab-group>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-sidebar-navigation',
+  selector: 'partial-sidebar-navigation',
   templateUrl: './partial-sidebar-navigation.component.html',
   styleUrls: ['./partial-sidebar-navigation.component.scss']
 })

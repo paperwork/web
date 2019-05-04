@@ -66,6 +66,7 @@ import { PartialSidebarNavigationComponent } from './partial-sidebar-navigation/
 
 import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
+import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partial-sidebar-folders.component';
 
 
 export function jwtOptionsFactory(envService) {
@@ -93,7 +94,8 @@ PartialSidebarComponent,
     ViewMainComponent,
     UsersComponent,
     ViewLoginComponent,
-    PartialAlertComponent
+    PartialAlertComponent,
+    PartialSidebarFoldersComponent
   ],
   imports: [
     BrowserModule,
