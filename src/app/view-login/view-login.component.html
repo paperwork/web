@@ -1,12 +1,12 @@
 <section class="modal-fullscreen mat-typography">
 
-  <div class="modal-box">
+  <div class="modal-box {{ mobileQuery.matches ? 'modal-box-mobile' : 'modal-box-desktop' }}">
 
     <mat-grid-list cols="3" rowHeight="640px">
-      <mat-grid-tile colspan="1" class="modal-box-left">
+      <mat-grid-tile colspan="{{ mobileQuery.matches ? 0 : 1 }}" class="modal-box-left">
         <img class="logo" src="/assets/images/paperwork-logo.png" alt="Paperwork">
       </mat-grid-tile>
-      <mat-grid-tile colspan="2" class="modal-box-right">
+      <mat-grid-tile colspan="{{ mobileQuery.matches ? 3 : 2 }}" class="modal-box-right">
 
         <form [formGroup]="currentRoute === 'login' ? loginForm : registerForm" (ngSubmit)="onSubmit()">
 

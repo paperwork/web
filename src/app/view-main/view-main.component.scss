@@ -3,13 +3,20 @@
 .view-main-sidenav-container {
   .mat-drawer-side {
     border-right: 0px;
+    // box-shadow: 0px 5px 10px 10px rgba(200, 200, 200, 0.1);
   }
 }
 
 .sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  z-index: 999;
   transition: 0.2s ease-in all;
 
   button {
+    background-color: $background-plain;
+    color: $color-only-grey;
+
     .mat-button-wrapper {
       .mat-icon {
         font-size: 2.8em;
@@ -20,15 +27,19 @@
 }
 
 .sidebar-toggle-opened {
-  position: absolute;
-  bottom: 20px;
-  left: 300px;
-  z-index: 999;
+  left: $sidebar-width - 20px;
+
+  button {
+    background-color: $background-plain;
+    box-shadow: unset;
+  }
 }
 
 .sidebar-toggle-closed {
-  position: absolute;
-  bottom: 20px;
   left: 20px;
-  z-index: 999;
+
+  button {
+    background-color: $background-alternative;
+    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.1), 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  }
 }

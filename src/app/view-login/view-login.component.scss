@@ -9,8 +9,15 @@
   background: rgb(3,169,244);
   background: radial-gradient(circle, rgba(3,169,244,1) 0%, rgba(172,229,255,1) 100%);
 
-  .modal-box {
+  .modal-box-mobile {
+    width: 100%;
+  }
+
+  .modal-box-desktop {
     width: 40%;
+  }
+
+  .modal-box {
     background: $background-plain;
     box-shadow: 0px 8px 10px 6px rgba(60, 60, 60, 0.1);
     font-size: 14px;

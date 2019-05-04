@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -11,7 +12,8 @@ import { AlertService } from '../partial-alert/alert.service';
   templateUrl: './view-login.component.html',
   styleUrls: ['./view-login.component.scss']
 })
-export class ViewLoginComponent implements OnInit {
+export class ViewLoginComponent implements OnInit, OnDestroy {
+  mobileQuery: MediaQueryList;
   loginForm: FormGroup;
   registerForm: FormGroup;
   loading = false;
@@ -19,7 +21,11 @@ export class ViewLoginComponent implements OnInit {
   returnUrl: string;
   currentRoute: string;
 
+  private _mobileQueryListener: () => void;
+
   constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
@@ -31,6 +37,10 @@ export class ViewLoginComponent implements OnInit {
     if(this.currentRoute !== 'logout' && this.usersService.isLoggedIn) {
       this.router.navigate(['/']);
     }
+
+    this.mobileQuery = media.matchMedia('(max-width: 980px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
@@ -73,6 +83,10 @@ export class ViewLoginComponent implements OnInit {
     case 'register':
       return this.registerForm.controls;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
   onSubmit() {
