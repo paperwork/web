@@ -6,8 +6,9 @@
   </mat-card-header>
 </mat-card>
 
-<mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)" class="no-tabs">
+<!-- TODO: Add a nice animation when switching tabs -->
+<mat-tab-group [selectedIndex]="selected" class="no-tabs">
   <mat-tab *ngFor="let tab of tabs" label="{{ tab.label }}">
-    <app-sidebar-navigation *ngIf="tab.id == 'navigation'"></app-sidebar-navigation>
+    <app-sidebar-navigation *ngIf="tab.id == 'notes'"></app-sidebar-navigation>
   </mat-tab>
 </mat-tab-group>

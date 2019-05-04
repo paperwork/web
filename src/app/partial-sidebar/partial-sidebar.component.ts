@@ -14,8 +14,8 @@ export class PartialSidebarComponent implements OnInit {
       label: 'Notifications',
     },
     {
-      id: 'navigation',
-      label: 'Navigation',
+      id: 'notes',
+      label: 'notes',
     },
     {
       id: 'folders',
@@ -26,25 +26,21 @@ export class PartialSidebarComponent implements OnInit {
       label: 'Tags',
     },
   ];
-  selected = new FormControl(1);
+  selected: number;
+  currentRoute: string;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    this.currentRoute = this.router.url.replace('/', '');
+    let tab = this.tabs.find(tab => tab.id === this.currentRoute);
+
+    if(tab === null) {
+      return;
+    }
+
+    let indexOfTab: number = this.tabs.indexOf(tab);
+    this.selected = indexOfTab; // TODO: Add a nice animation when switching tabs
+  }
 
   ngOnInit() {
-    this.router.events.subscribe((routerEvent: RouterEvent) => {
-      if(routerEvent instanceof NavigationEnd) {
-        console.log(routerEvent);
-        let tab = this.tabs.find(tab => tab.id === routerEvent.urlAfterRedirects.replace('/', ''));
-        console.log(tab);
-        if(tab === null) {
-          return;
-        }
-
-        let indexOfTab: number = this.tabs.indexOf(tab);
-        console.log(indexOfTab);
-        this.selected.setValue(indexOfTab); // TODO: This doesn't seem to work
-        console.log(this.selected.value);
-      }
-    });
   }
 }
