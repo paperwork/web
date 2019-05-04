@@ -1,6 +1,5 @@
 <section class="notes background-alternative">
-  <partial-toolbar-logo class="background-alternative"></partial-toolbar-logo>
-  <partial-toolbar-notes-list class="background-alternative"></partial-toolbar-notes-list>
+  <partial-toolbar-main class="background-alternative"></partial-toolbar-main>
 
   <mat-table class="notes-mat-table" matSort [dataSource]="dataSource">
     <mat-header-row *cdkHeaderRowDef="['select', 'title', 'created_at']"></mat-header-row>
@@ -14,20 +13,23 @@
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell class="notes-table-checkbox-col" *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)">
-        </mat-checkbox>
+        <section>
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+        </section>
+
       </mat-cell>
     </ng-container>
 
     <ng-container cdkColumnDef="title">
       <mat-header-cell mat-sort-header *cdkHeaderCellDef>Title</mat-header-cell>
       <mat-cell *cdkCellDef="let row">
-        <section class="mat-typography">
+        <a class="note mat-typography" [routerLink]="'/notes/' + row.id">
           <h2>{{row.title}}</h2>
           <span class="caption">{{row.body}}</span>
-        </section>
+        </a>
       </mat-cell>
     </ng-container>
 

@@ -1,0 +1,109 @@
+@import "paperwork-theme.scss";
+
+:host(.background-plain) {
+  .mat-toolbar, .mat-toolbar-row {
+    background: $background-plain;
+  }
+}
+
+:host(.background-alternative) {
+  .mat-toolbar, .mat-toolbar-row {
+    background: $background-alternative;
+  }
+}
+
+:host-context(.is-mobile) {
+  .mat-toolbar {
+    .mat-toolbar-row {
+      button.mat-raised-button.mat-primary {
+        min-width: 54px;
+
+        .text {
+          display: none;
+        }
+      }
+
+      img.logo {
+        display: none;
+      }
+    }
+  }
+}
+
+.mat-toolbar {
+  margin: 74px 0px 32px 0px;
+
+  .mat-toolbar-row {
+    padding: 0px 0px 0px 16px;
+
+    .mat-checkbox {
+      margin: 0px 48px 0px 8px;
+    }
+
+    button {
+      border-radius: 20px;
+
+      .mat-button-ripple, .mat-button-focus-overlay {
+        border-radius: 20px;
+      }
+    }
+
+    button.mat-button {
+      margin-right: 8px;
+      min-width: 36px;
+      padding: 0px 6px;
+    }
+
+    button.mat-button-back {
+      margin-right: 36px;
+    }
+
+    button.mat-raised-button.mat-primary {
+      min-width: 120px;
+      margin-right: 16px;
+      .mat-icon {
+        line-height: 20px;
+      }
+    }
+
+    form.search {
+      width: 50%;
+      color: $color-only-grey;
+
+      // TODO: This is such a bullshit.
+      ::ng-deep .mat-form-field-wrapper { padding-bottom: 0px !important;}
+      ::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0px 0px 10px 0px !important;}
+      ::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+      ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+          transform: translateY(-1.1em) scale(.75);
+          width: 133.33333%;
+      }
+
+      .search-field {
+        width: 100%;
+
+        .mat-icon {
+          font-size: 1em;
+          width: 24px;
+          height: 24px;
+        }
+
+        input.mat-input-element {
+          font-size: 0.8em;
+        }
+
+        .mat-form-field-label {
+          font-size: 0.8em;
+        }
+
+      }
+    }
+
+    img.logo {
+      display: block;
+      width: 48px;
+      height: 48px;
+    }
+
+  }
+}

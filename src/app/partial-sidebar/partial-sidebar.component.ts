@@ -8,6 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./partial-sidebar.component.scss']
 })
 export class PartialSidebarComponent implements OnInit {
+  currentRoute: string;
   tabs = [
     {
       id: 'notifications',
@@ -27,9 +28,11 @@ export class PartialSidebarComponent implements OnInit {
     },
   ];
   selected: number;
-  currentRoute: string;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
     this.currentRoute = activatedRoute.snapshot.url[0].path;
     this.setNavigationFromRoute(this.currentRoute);
   }

@@ -23,6 +23,7 @@
     }
 
     .mat-header-row {
+      display: none; // TODO: Disable the header row completely?;
       border-bottom-color: transparent;
     }
 
@@ -53,15 +54,24 @@
 
     .mat-row {
       margin-bottom: 18px;
+      align-items: flex-start;
+
+      .mat-cell {
+        align-items: flex-start;
+      }
 
       .mat-column-select {
         color: $primary;
+
+        section {
+          margin-top: 6px;
+        }
       }
 
       .mat-column-title, .mat-column-created_at {
         // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
-        section.mat-typography {
+        a.note {
           margin-bottom: 18px;
 
           h2 {
@@ -71,13 +81,15 @@
       }
 
       .mat-column-title {
-        section.mat-typography {
+        a.note {
           width: 90%;
+          text-decoration: none;
 
           h2 {
             font-size: (mat-font-size($paperwork-typography, title) - 1);
             font-weight: 500;
             color: $color-only-dark-grey;
+            text-decoration: none;
           }
 
           .caption {

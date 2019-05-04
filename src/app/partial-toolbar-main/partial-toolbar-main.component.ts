@@ -2,14 +2,13 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
-  selector: 'partial-toolbar-logo',
-  templateUrl: './partial-toolbar-logo.component.html',
-  styleUrls: ['./partial-toolbar-logo.component.scss']
+  selector: 'partial-toolbar-main',
+  templateUrl: './partial-toolbar-main.component.html',
+  styleUrls: ['./partial-toolbar-main.component.scss']
 })
-export class PartialToolbarLogoComponent implements OnInit, OnDestroy {
+export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
-  opened: boolean = true; // TODO: Load from user prefs
-  events: string[] = [];
+  firstIcon: number = 1;
 
   private _mobileQueryListener: () => void;
 

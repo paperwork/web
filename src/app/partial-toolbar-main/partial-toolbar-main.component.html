@@ -1,0 +1,47 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <mat-checkbox *ngIf="firstIcon === 1">
+    </mat-checkbox>
+    <button mat-button color="primary" class="mat-button-back" *ngIf="firstIcon === 2">
+      <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
+    </button>
+    <button mat-raised-button color="primary">
+      <mat-icon class="material-icons-outlined">note_add</mat-icon>
+      <span class="text">New Note</span>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Edit" class="material-icons-outlined">edit</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Duplicate" class="material-icons-outlined">file_copy</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Move" class="material-icons-outlined">forward</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Print" class="material-icons-outlined">print</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Export" class="material-icons-outlined">save_alt</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Share" class="material-icons-outlined">share</mat-icon>
+    </button>
+    <button mat-button color="primary">
+      <mat-icon aria-label="Delete" class="material-icons-outlined">delete</mat-icon>
+    </button>
+
+    <span class="fill-remaining-space"></span>
+
+    <form class="search">
+      <mat-form-field class="search-field" appearance="outline">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="search" tabindex="1">
+      </mat-form-field>
+    </form>
+
+    <span class="fill-remaining-space"></span>
+
+    <img class="logo" src="assets/images/paperwork-logo.png">
+  </mat-toolbar-row>
+</mat-toolbar>
