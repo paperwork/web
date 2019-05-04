@@ -58,24 +58,19 @@ $color-only-grey: #ABB3BC;
 $color-only-dark-grey: #6D7278;
 $color-only-ultra-light-blue: #F6FAFD;
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
 $paperwork-primary: mat-palette($mat-light-blue);
 $paperwork-accent:  mat-palette($mat-light-blue);
-
-// The warn palette is optional (defaults to red).
 $paperwork-warn:    mat-palette($mat-red);
 
-// Create the theme object (a Sass map containing all of the palettes).
 $paperwork-theme: mat-light-theme($paperwork-primary, $paperwork-accent, $paperwork-warn);
 
 $primary: mat-color($paperwork-primary);
 $accent: mat-color($paperwork-accent);
 $warn: mat-color($paperwork-warn);
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
+
+$background-plain: #FFFFFF;
+$background-alternative: $color-only-ultra-light-blue;
+
 @include angular-material-theme($paperwork-theme);
 
 a[color=primary] {
@@ -85,7 +80,7 @@ a[color=primary] {
 }
 
 .view-main-sidenav-container, .view-main-mat-toolbar {
-  background-color: $color-only-ultra-light-blue;
+  background-color: $background-alternative;
 }
 
 .view-main-sidenav-container {
@@ -197,7 +192,7 @@ a[color=primary] {
     position: absolute;
     content:"";
     width: 86px;
-    border-top: 1px solid $color-only-ultra-light-blue;
+    border-top: 1px solid $background-alternative;
     left: 0px;
     bottom: -49px;
   }
@@ -325,7 +320,7 @@ mat-card.profile {
 
 .snackbar-type-info {
   color: $color-only-grey;
-  background: #fff;
+  background: $background-plain;
 }
 
 .snackbar-type-error {
