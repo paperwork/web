@@ -1,6 +1,28 @@
 {
   "name": "web",
+  "description": "Paperwork Web UI",
   "version": "0.0.0",
+  "homepage": "https://paperwork.cloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paperwork/web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/paperwork/web/issues"
+  },
+  "author": {
+    "name": "Marius",
+    "email": "marius@twostairs.co",
+    "url": "https://twostairs.co"
+  },
+  "contributors": [],
+  "engines": {
+    "node": ">=11.0.0 <12.0.0"
+  },
+  "license": {
+    "type": "AGPL-3.0-only",
+    "url": "https://github.com/paperwork/web/blob/master/LICENSE"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
