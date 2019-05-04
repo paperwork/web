@@ -2,7 +2,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
-  selector: 'app-view-main',
+  selector: 'view-main',
   templateUrl: './view-main.component.html',
   styleUrls: ['./view-main.component.scss']
 })

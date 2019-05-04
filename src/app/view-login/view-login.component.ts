@@ -8,7 +8,7 @@ import { UsersService } from '../users/users.service';
 import { AlertService } from '../partial-alert/alert.service';
 
 @Component({
-  selector: 'app-view-login',
+  selector: 'view-login',
   templateUrl: './view-login.component.html',
   styleUrls: ['./view-login.component.scss']
 })

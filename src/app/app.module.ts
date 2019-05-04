@@ -6,7 +6,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NotesComponent } from './notes/notes.component';
+import { PartialNotesListComponent } from './partial-notes-list/partial-notes-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -67,8 +67,8 @@ import { PartialSidebarNavigationComponent } from './partial-sidebar-navigation/
 import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
 import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partial-sidebar-folders.component';
-import { PartialToolbarRowLogoComponent } from './partial-toolbar-row-logo/partial-toolbar-row-logo.component';
-import { PartialToolbarRowNotesListComponent } from './partial-toolbar-row-notes-list/partial-toolbar-row-notes-list.component';
+import { PartialToolbarLogoComponent } from './partial-toolbar-logo/partial-toolbar-logo.component';
+import { PartialToolbarNotesListComponent } from './partial-toolbar-notes-list/partial-toolbar-notes-list.component';
 
 
 export function jwtOptionsFactory(envService) {
@@ -90,7 +90,7 @@ export function init_env(envService: EnvService) {
 @NgModule({
   declarations: [
     AppComponent,
-    NotesComponent,
+    PartialNotesListComponent,
 PartialSidebarComponent,
     PartialSidebarNavigationComponent,
     ViewMainComponent,
@@ -98,8 +98,8 @@ PartialSidebarComponent,
     ViewLoginComponent,
     PartialAlertComponent,
     PartialSidebarFoldersComponent,
-    PartialToolbarRowLogoComponent,
-    PartialToolbarRowNotesListComponent
+    PartialToolbarLogoComponent,
+    PartialToolbarNotesListComponent
   ],
   imports: [
     BrowserModule,

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotesComponent } from './notes.component';
+import { PartialNotesListComponent } from './partial-notes-list.component';
 
-describe('NotesComponent', () => {
-  let component: NotesComponent;
-  let fixture: ComponentFixture<NotesComponent>;
+describe('PartialNotesListComponent', () => {
+  let component: PartialNotesListComponent;
+  let fixture: ComponentFixture<PartialNotesListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NotesComponent ]
+      declarations: [ PartialNotesListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NotesComponent);
+    fixture = TestBed.createComponent(PartialNotesListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

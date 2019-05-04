@@ -2,15 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
-import { Note } from './note';
-import { MockNotes } from './mock';
+import { Note } from '../notes/note';
+import { MockNotes } from '../notes/mock';
 
 @Component({
   selector: 'app-notes',
-  templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss']
+  templateUrl: './partial-notes-list.component.html',
+  styleUrls: ['./partial-notes-list.component.scss']
 })
-export class NotesComponent implements OnInit {
+export class PartialNotesListComponent implements OnInit {
   dataSource = new MatTableDataSource(MockNotes);
   @ViewChild(MatSort) sort: MatSort;
   selection = null;
