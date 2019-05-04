@@ -8,14 +8,9 @@ import { Component, OnInit } from '@angular/core';
 export class PartialSidebarNavigationComponent implements OnInit {
   navigationElements = [
     {
-      id: 'account',
-      label: 'Account',
-      icon: 'face',
-    },
-    {
-      id: 'notifications',
-      label: 'Notifications',
-      icon: 'notifications_none',
+      id: 'notes',
+      label: 'All Notes',
+      icon: 'inbox',
     },
     {
       id: 'folders',
@@ -26,6 +21,11 @@ export class PartialSidebarNavigationComponent implements OnInit {
       id: 'tags',
       label: 'Tags',
       icon: 'bookmarks',
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: 'notifications_none',
     },
     {
       id: 'settings',
