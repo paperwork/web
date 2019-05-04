@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import { Router, RouterEvent, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -29,9 +29,13 @@ export class PartialSidebarComponent implements OnInit {
   selected: number;
   currentRoute: string;
 
-  constructor(private router: Router) {
-    this.currentRoute = this.router.url.replace('/', '');
-    let tab = this.tabs.find(tab => tab.id === this.currentRoute);
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    this.currentRoute = activatedRoute.snapshot.url[0].path;
+    this.setNavigationFromRoute(this.currentRoute);
+  }
+
+  setNavigationFromRoute(route: string) {
+    let tab = this.tabs.find(tab => tab.id === route);
 
     if(tab === null) {
       return;
