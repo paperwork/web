@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import {Location} from '@angular/common';
 import { ToolbarService } from './toolbar.service';
 
 @Component({
@@ -16,6 +17,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
+    private location: Location,
     private toolbarService: ToolbarService
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 980px)');

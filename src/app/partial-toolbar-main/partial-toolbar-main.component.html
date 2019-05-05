@@ -5,7 +5,7 @@
       [checked]="state === 3"
       [indeterminate]="state === 2">
     </mat-checkbox>
-    <button *ngIf="state === 0" mat-button color="primary" class="mat-button-back">
+    <button *ngIf="state === 0" mat-button color="primary" class="mat-button-back" (click)="location.back();">
       <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
     </button>
     <button mat-raised-button color="primary">
