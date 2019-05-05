@@ -1,42 +1,44 @@
-<section class="notes background-alternative">
-  <partial-toolbar-main class="background-alternative"></partial-toolbar-main>
+<div class="background-wrapper background-alternative">
+  <section class="notes">
+    <partial-toolbar-main class="background-alternative"></partial-toolbar-main>
 
-  <mat-table class="notes-mat-table" matSort [dataSource]="dataSource">
-    <mat-header-row *cdkHeaderRowDef="['select', 'title', 'created_at']"></mat-header-row>
-    <mat-row *cdkRowDef="let row; columns: ['select', 'title', 'created_at']"></mat-row>
+    <mat-table class="notes-mat-table" matSort [dataSource]="dataSource">
+      <mat-header-row *cdkHeaderRowDef="['select', 'title', 'created_at']"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['select', 'title', 'created_at']"></mat-row>
 
-    <ng-container matColumnDef="select">
-      <mat-header-cell class="notes-table-checkbox-col" *matHeaderCellDef>
-      </mat-header-cell>
-      <mat-cell class="notes-table-checkbox-col" *matCellDef="let row">
-        <section>
-            <mat-checkbox (click)="$event.stopPropagation()"
-                          (change)="$event ? toggleRow(row) : null"
-                          [checked]="selection.isSelected(row)">
-            </mat-checkbox>
-        </section>
+      <ng-container matColumnDef="select">
+        <mat-header-cell class="notes-table-checkbox-col" *matHeaderCellDef>
+        </mat-header-cell>
+        <mat-cell class="notes-table-checkbox-col" *matCellDef="let row">
+          <section>
+              <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? toggleRow(row) : null"
+                            [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+          </section>
 
-      </mat-cell>
-    </ng-container>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container cdkColumnDef="title">
-      <mat-header-cell mat-sort-header *cdkHeaderCellDef>Title</mat-header-cell>
-      <mat-cell *cdkCellDef="let row">
-        <a class="note mat-typography" [routerLink]="'/notes/' + row.id">
-          <h2>{{row.title}}</h2>
-          <span class="caption">{{row.body}}</span>
-        </a>
-      </mat-cell>
-    </ng-container>
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell mat-sort-header *cdkHeaderCellDef>Title</mat-header-cell>
+        <mat-cell *cdkCellDef="let row">
+          <a class="note mat-typography" [routerLink]="'/notes/' + row.id">
+            <h2>{{row.title}}</h2>
+            <span class="caption">{{row.body}}</span>
+          </a>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container cdkColumnDef="created_at">
-      <mat-header-cell mat-sort-header class="notes-table-date-col" *cdkHeaderCellDef>Date</mat-header-cell>
-      <mat-cell class="notes-table-date-col" *cdkCellDef="let row">
-        <section class="mat-typography">
-          <h2>{{row.created_at | date:'shortDate'}}</h2>
-          <span class="caption">&nbsp;<br>&nbsp;</span>
-        </section>
-      </mat-cell>
-    </ng-container>
-  </mat-table>
-</section>
+      <ng-container cdkColumnDef="created_at">
+        <mat-header-cell mat-sort-header class="notes-table-date-col" *cdkHeaderCellDef>Date</mat-header-cell>
+        <mat-cell class="notes-table-date-col" *cdkCellDef="let row">
+          <section class="mat-typography">
+            <h2>{{row.created_at | date:'shortDate'}}</h2>
+            <span class="caption">&nbsp;<br>&nbsp;</span>
+          </section>
+        </mat-cell>
+      </ng-container>
+    </mat-table>
+  </section>
+</div>

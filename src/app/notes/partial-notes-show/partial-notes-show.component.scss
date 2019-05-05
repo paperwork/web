@@ -1,107 +1,111 @@
 @import "paperwork-theme.scss";
 
-.note {
-  display: block;
+.background-wrapper {
   height: 100vh;
-  padding: 0px 80px 0px 32px;
 
-  .view {
-    margin: 0px 0px 0px 86px;
+  .note {
+    display: block;
+    padding: 74px 80px 0px 32px;
 
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      color: $color-only-grey;
+    .view {
+      margin: 0px 0px 0px 86px;
 
-      .updated_at-time {
-        width: 20%;
-      }
-
-      .updated_at-date {
-        width: 68px;
-        margin-left: auto;
-        text-align: right;
-      }
-    }
-
-    .title {
-      display: flex;
-      justify-content: space-between;
-
-      h1 {
-        margin-top: 8px;
-      }
-
-      .shared-to {
+      .meta {
         display: flex;
-        justify-content: flex-start;
-        flex-direction: row-reverse;
-        width: 30%;
-        margin-left: auto;
-        text-align: right;
+        justify-content: space-between;
+        color: $color-only-grey;
 
-        button:first-child {
-          right: 0px;
+        .updated_at-time {
+          width: 20%;
         }
 
-        button {
-          right: -8px;
+        .updated_at-date {
+          width: 68px;
+          margin-left: auto;
+          text-align: right;
+        }
+      }
+
+      .title {
+        display: flex;
+        justify-content: space-between;
+
+        h1 {
+          margin-top: 8px;
         }
 
-        @for $i from 1 through 100 {
-          button:nth-child(#{$i}) {
-            background-color: hsl(random(360),20 + random(70 + -20), 30 + random(90 + -30));
+        .shared-to {
+          display: flex;
+          justify-content: flex-start;
+          flex-direction: row-reverse;
+          width: 30%;
+          margin-left: auto;
+          text-align: right;
+
+          button:first-child {
+            right: 0px;
+          }
+
+          button {
+            right: -8px;
+          }
+
+          @for $i from 1 through 100 {
+            button:nth-child(#{$i}) {
+              background-color: hsl(random(360),20 + random(70 + -20), 30 + random(90 + -30));
+            }
+          }
+        }
+
+      }
+
+      .tags {
+        .mat-chip-list {
+          .tag {
+            background-color: transparent;
+            color: $color-only-dark-grey;
+            border: 1px solid $color-only-dark-grey;
+            border-radius: 5px;
+            min-height: 26px;
+          }
+
+          .tag.mat-chip-selected { // TODO: Doesn't work
+            background-color: transparent !important;
+          }
+
+          .tag.mat-chip-focused { // TODO: Doesn't work
+            background-color: transparent !important;
+          }
+        }
+      }
+
+      .body {
+        margin: 40px 0px 40px 0px;
+        form.editor {
+          .mat-form-field {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+
+      .attachments {
+        margin: 40px 0px 0px 0px;
+        padding: 20px 8px;
+        border-top: 1px dashed $color-only-grey;
+
+        .mat-chip-list {
+          .mat-chip {
+            background-color: transparent;
+
+            .mat-icon {
+              color: $primary;
+            }
           }
         }
       }
 
     }
-
-    .tags {
-      .mat-chip-list {
-        .tag {
-          background-color: transparent;
-          color: $color-only-dark-grey;
-          border: 1px solid $color-only-dark-grey;
-          border-radius: 5px;
-          min-height: 26px;
-        }
-
-        .tag.mat-chip-selected { // TODO: Doesn't work
-          background-color: transparent !important;
-        }
-
-        .tag.mat-chip-focused { // TODO: Doesn't work
-          background-color: transparent !important;
-        }
-      }
-    }
-
-    .body {
-      margin: 40px 0px 40px 0px;
-      form.editor {
-        .mat-form-field {
-          width: 100%;
-          height: 100%;
-        }
-      }
-    }
-
-    .attachments {
-      margin: 40px 0px 0px 0px;
-      padding: 20px 8px;
-      border-top: 1px dashed $color-only-grey;
-
-      .mat-chip-list {
-        .mat-chip {
-          background-color: transparent;
-
-          .mat-icon {
-            color: $primary;
-          }
-        }
-      }
-    }
-
   }
+
 }

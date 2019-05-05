@@ -1,114 +1,117 @@
 @import "paperwork-theme.scss";
 
-.notes {
-  display: block;
+.background-wrapper {
   height: 100vh;
-  padding: 0px 80px 0px 32px;
 
-  .mat-table {
-    background: transparent;
+  .notes {
+    display: block;
+    padding: 74px 80px 0px 32px;
 
-    .mat-checkbox-frame {
-      border-color: rgba(0, 0, 0, 0.2);
-    }
+    .mat-table {
+      background: transparent;
 
-    .mat-row:after {
-      display: inline-block;
-      position: absolute;
-      content:"";
-      width: 86px;
-      border-top: 1px solid $background-alternative;
-      left: 0px;
-      bottom: -49px;
-    }
-
-    .mat-header-row {
-      display: none; // TODO: Disable the header row completely?;
-      border-bottom-color: transparent;
-    }
-
-    .mat-row, .mat-header-row {
-      position: relative;
-
-      .mat-column-select {
-        max-width: 64px;
+      .mat-checkbox-frame {
+        border-color: rgba(0, 0, 0, 0.2);
       }
 
-      .mat-column-created_at {
-        max-width: 34px;
+      .mat-row:after {
+        display: inline-block;
+        position: absolute;
+        content:"";
+        width: 86px;
+        border-top: 1px solid $background-alternative;
+        left: 0px;
+        bottom: -49px;
       }
-    }
 
-    .mat-header-row {
-      .mat-column-select {
-        color: $color-only-grey;
+      .mat-header-row {
+        display: none; // TODO: Disable the header row completely?;
+        border-bottom-color: transparent;
       }
 
-      .mat-column-title {
-        color: $color-only-grey;
-      }
-      .mat-column-created_at {
-        color: $color-only-grey;
-      }
-    }
+      .mat-row, .mat-header-row {
+        position: relative;
 
-    .mat-row {
-      margin-bottom: 18px;
-      align-items: flex-start;
+        .mat-column-select {
+          max-width: 64px;
+        }
 
-      .mat-cell {
+        .mat-column-created_at {
+          max-width: 34px;
+        }
+      }
+
+      .mat-header-row {
+        .mat-column-select {
+          color: $color-only-grey;
+        }
+
+        .mat-column-title {
+          color: $color-only-grey;
+        }
+        .mat-column-created_at {
+          color: $color-only-grey;
+        }
+      }
+
+      .mat-row {
+        margin-bottom: 18px;
         align-items: flex-start;
-      }
 
-      .mat-column-select {
-        color: $primary;
-
-        section {
-          margin-top: 6px;
+        .mat-cell {
+          align-items: flex-start;
         }
-      }
 
-      .mat-column-title, .mat-column-created_at {
-        // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        .mat-column-select {
+          color: $primary;
 
-        a.note {
-          margin-bottom: 18px;
-
-          h2 {
-            margin-bottom: 2px;
+          section {
+            margin-top: 6px;
           }
         }
-      }
 
-      .mat-column-title {
-        a.note {
-          width: 90%;
-          text-decoration: none;
+        .mat-column-title, .mat-column-created_at {
+          // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
-          h2 {
-            font-size: (mat-font-size($paperwork-typography, title) - 1);
-            font-weight: 500;
-            color: $color-only-dark-grey;
+          a.note {
+            margin-bottom: 18px;
+
+            h2 {
+              margin-bottom: 2px;
+            }
+          }
+        }
+
+        .mat-column-title {
+          a.note {
+            width: 90%;
             text-decoration: none;
-          }
 
-          .caption {
-            color: $color-only-grey;
+            h2 {
+              font-size: (mat-font-size($paperwork-typography, title) - 1);
+              font-weight: 500;
+              color: $color-only-dark-grey;
+              text-decoration: none;
+            }
+
+            .caption {
+              color: $color-only-grey;
+            }
           }
         }
-      }
 
-      .mat-column-created_at {
-        section.mat-typography {
-          h2 {
-            color: $primary;
-            font-size: mat-font-size($paperwork-typography, caption);
-            letter-spacing: 2px;
+        .mat-column-created_at {
+          section.mat-typography {
+            h2 {
+              color: $primary;
+              font-size: mat-font-size($paperwork-typography, caption);
+              letter-spacing: 2px;
+            }
           }
         }
       }
     }
+
   }
 
 }
-
