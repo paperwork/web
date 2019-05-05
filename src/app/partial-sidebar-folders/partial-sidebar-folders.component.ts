@@ -4,6 +4,7 @@ import {MatTreeNestedDataSource} from '@angular/material/tree';
 import { forEach, get, lowerCase } from 'lodash';
 import { Note } from '../notes/note';
 import { MockNotes } from '../notes/mock';
+import { SidebarService } from '../partial-sidebar/sidebar.service';
 
 interface PathNode {
   name: string;
@@ -20,7 +21,9 @@ export class PartialSidebarFoldersComponent implements OnInit {
   treeControl = new NestedTreeControl<PathNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<PathNode>();
 
-  constructor() {
+  constructor(
+    private sidebarService: SidebarService
+  ) {
     this.dataSource.data = this.pathNodesFromNotes(MockNotes);
   }
 
@@ -89,4 +92,8 @@ export class PartialSidebarFoldersComponent implements OnInit {
   }
 
   hasChild = (_: number, node: PathNode) => !!node.children && node.children.length > 0;
+
+  navigate(id: string) {
+    this.sidebarService.setNavigationToId(id);
+  }
 }
