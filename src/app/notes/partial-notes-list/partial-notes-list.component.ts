@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { ToolbarService } from '../partial-toolbar-main/toolbar.service';
+import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
 
-import { Note } from '../notes/note';
-import { MockNotes } from '../notes/mock';
+import { Note } from '../note';
+import { MockNotes } from '../mock';
 
 @Component({
-  selector: 'app-notes',
+  selector: 'partial-notes-list',
   templateUrl: './partial-notes-list.component.html',
   styleUrls: ['./partial-notes-list.component.scss']
 })
@@ -29,6 +29,7 @@ export class PartialNotesListComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource.sort = this.sort;
+    this.setState();
   }
 
   setState() {

@@ -6,7 +6,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PartialNotesListComponent } from './partial-notes-list/partial-notes-list.component';
+import { PartialNotesListComponent } from './notes/partial-notes-list/partial-notes-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -68,7 +68,6 @@ import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
 import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partial-sidebar-folders.component';
 import { PartialToolbarMainComponent } from './partial-toolbar-main/partial-toolbar-main.component';
-import { PartialNotesShowComponent } from './partial-notes-show/partial-notes-show.component';
 
 
 export function jwtOptionsFactory(envService) {
