@@ -6,7 +6,6 @@
   </mat-card-header>
 </mat-card>
 
-<!-- TODO: Add a nice animation when switching tabs -->
 <mat-tab-group [selectedIndex]="selected" class="no-tabs">
   <mat-tab *ngFor="let tab of sidebarService.tabs" label="{{ tab.label }}">
     <partial-sidebar-navigation *ngIf="tab.id == 'notes'"></partial-sidebar-navigation>
