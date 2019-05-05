@@ -7,15 +7,11 @@
 
     <ng-container matColumnDef="select">
       <mat-header-cell class="notes-table-checkbox-col" *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
       </mat-header-cell>
       <mat-cell class="notes-table-checkbox-col" *matCellDef="let row">
         <section>
             <mat-checkbox (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
+                          (change)="$event ? toggleRow(row) : null"
                           [checked]="selection.isSelected(row)">
             </mat-checkbox>
         </section>

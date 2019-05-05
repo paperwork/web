@@ -7,7 +7,6 @@ import { SidebarService } from '../partial-sidebar/sidebar.service';
   styleUrls: ['./partial-sidebar-navigation.component.scss']
 })
 export class PartialSidebarNavigationComponent implements OnInit {
-  private _sidebarService: SidebarService;
   navigationElements = [
     {
       id: 'notes',
@@ -44,13 +43,12 @@ export class PartialSidebarNavigationComponent implements OnInit {
   constructor(
     private sidebarService: SidebarService
   ) {
-    this._sidebarService = sidebarService;
   }
 
   ngOnInit() {
   }
 
   navigate(id: string) {
-    this._sidebarService.setNavigationToId(id);
+    this.sidebarService.setNavigationToId(id);
   }
 }

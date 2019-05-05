@@ -1,8 +1,11 @@
 <mat-toolbar>
   <mat-toolbar-row>
-    <mat-checkbox *ngIf="firstIcon === 1">
+    <mat-checkbox *ngIf="state >= 1 && state <= 3"
+      (change)="$event ? changeAll() : null"
+      [checked]="state === 3"
+      [indeterminate]="state === 2">
     </mat-checkbox>
-    <button mat-button color="primary" class="mat-button-back" *ngIf="firstIcon === 2">
+    <button *ngIf="state === 0" mat-button color="primary" class="mat-button-back">
       <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
     </button>
     <button mat-raised-button color="primary">

@@ -1,5 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { ToolbarService } from './toolbar.service';
 
 @Component({
   selector: 'partial-toolbar-main',
@@ -8,14 +9,22 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 })
 export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
-  firstIcon: number = 1;
+  state: number;
 
   private _mobileQueryListener: () => void;
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
+    private toolbarService: ToolbarService
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 980px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+
+    this.toolbarService.state$.subscribe((state: number) => {
+      this.state = state;
+    });
   }
 
   ngOnInit() {
@@ -23,5 +32,13 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+  changeAll() {
+    if(this.state === 3) {
+      this.toolbarService.state = 1;
+    } else {
+      this.toolbarService.state = 3;
+    }
   }
 }
