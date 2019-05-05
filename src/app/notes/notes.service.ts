@@ -27,4 +27,18 @@ export class NotesService {
     let note: Note = MockNotes.find(note => note.id === id);
     note[field] = value;
   }
+
+  public pushToField(id: string, field: string, value: any) {
+    let note: Note = MockNotes.find(note => note.id === id);
+    note[field].push(value);
+  }
+
+  public popFromField(id: string, field: string, value: any) {
+    let note: Note = MockNotes.find(note => note.id === id);
+    const idx = note[field].indexOf(value);
+
+    if(idx >= 0) {
+      note[field].splice(idx, 1);
+    }
+  }
 }
