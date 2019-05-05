@@ -5,34 +5,41 @@
       [checked]="state === 3"
       [indeterminate]="state === 2">
     </mat-checkbox>
-    <button *ngIf="state === 0" mat-button color="primary" class="mat-button-back" (click)="location.back();">
+    <button *ngIf="state === 0 || state === 4" mat-button color="primary" class="mat-button-back" (click)="location.back();">
       <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
     </button>
     <button mat-raised-button color="primary">
       <mat-icon class="material-icons-outlined">note_add</mat-icon>
       <span class="text">New Note</span>
     </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Edit" class="material-icons-outlined">edit</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Duplicate" class="material-icons-outlined">file_copy</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Move" class="material-icons-outlined">forward</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Print" class="material-icons-outlined">print</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Export" class="material-icons-outlined">save_alt</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Share" class="material-icons-outlined">share</mat-icon>
-    </button>
-    <button mat-button color="primary">
-      <mat-icon aria-label="Delete" class="material-icons-outlined">delete</mat-icon>
-    </button>
+
+    <div class="actions state-{{ state }}">
+      <button mat-button color="{{ state === 4 ? 'warn' : 'primary' }}" (click)="toggleEditState();" class="actions-if-any-selected">
+        <mat-icon aria-label="Edit" class="material-icons-outlined">edit</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Duplicate" class="material-icons-outlined">file_copy</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Move" class="material-icons-outlined">forward</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Print" class="material-icons-outlined">print</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Export" class="material-icons-outlined">save_alt</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Share" class="material-icons-outlined">share</mat-icon>
+      </button>
+      <button mat-button color="primary" class="actions-if-any-selected">
+        <mat-icon aria-label="Delete" class="material-icons-outlined">delete</mat-icon>
+      </button>
+
+      <button mat-button color="primary" class="actions-if-none-selected">
+        <mat-icon aria-label="Sort" class="material-icons-outlined">sort_by_alpha</mat-icon>
+      </button>
+    </div>
 
     <span class="fill-remaining-space"></span>
 

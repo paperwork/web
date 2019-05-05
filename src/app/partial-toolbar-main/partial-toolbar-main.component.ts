@@ -10,7 +10,8 @@ import { ToolbarService } from './toolbar.service';
 })
 export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
-  state: number;
+  state: number = 0;
+  previousState: number = 0;
 
   private _mobileQueryListener: () => void;
 
@@ -25,6 +26,8 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
 
     this.toolbarService.state$.subscribe((state: number) => {
+      console.log("current state: %s, previousState: %s, received state: %s", this.state, this.previousState, state);
+      this.previousState = this.state;
       this.state = state;
     });
   }
@@ -41,6 +44,19 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       this.toolbarService.state = 1;
     } else {
       this.toolbarService.state = 3;
+    }
+  }
+
+  setState(state: number) {
+    console.log("setting state:");
+    this.toolbarService.state = state;
+  }
+
+  toggleEditState() {
+    if(this.state !== 4) {
+      this.setState(4);
+    } else {
+      this.setState(this.previousState);
     }
   }
 }

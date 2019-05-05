@@ -40,6 +40,36 @@
       margin: 0px 48px 0px 8px;
     }
 
+    .actions {
+      display: flex;
+      align-items: flex-start;
+      width: 308px;
+
+      .actions-if {
+
+      }
+
+      .actions-if-none-selected {
+        visibility: hidden;
+        display: none;
+      }
+
+      .actions-if-any-selected {
+        visibility: hidden;
+        display: none;
+      }
+    }
+
+    .actions.state-1 > .actions-if-none-selected {
+      visibility: visible;
+      display: block;
+    }
+
+    .actions.state-0 > .actions-if-any-selected, .actions.state-2 > .actions-if-any-selected, .actions.state-3 > .actions-if-any-selected, .actions.state-4 > .actions-if-any-selected {
+      visibility: visible;
+      display: block;
+    }
+
     button {
       border-radius: 20px;
 
