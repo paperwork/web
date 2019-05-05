@@ -23,7 +23,12 @@
     </section>
 
     <section class="body">
-      {{ note.body }}
+      <markdown *ngIf="!modeEdit" [data]="note.body"></markdown>
+      <form *ngIf="modeEdit" class="editor" [formGroup]="editor">
+        <mat-form-field appearance="outline">
+          <textarea matInput formControlName="body"></textarea>
+        </mat-form-field>
+      </form>
     </section>
 
     <section class="attachments">
