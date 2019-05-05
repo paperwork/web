@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
+import { Router } from '@angular/router';
 
 import { Note } from '../note';
 import { MockNotes } from '../mock';
@@ -18,11 +19,16 @@ export class PartialNotesListComponent implements OnInit {
   toolbarState: number;
 
   constructor(
+    private router: Router,
     private toolbarService: ToolbarService
   ) {
     this.selection = new SelectionModel<Note>(true, []);
 
     this.toolbarService.state$.subscribe((state: number) => {
+      if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT
+      && this.selection.selected.length === 1) {
+        return this.router.navigate(['notes', this.selection.selected[0].id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
+      }
       this.setAll(state);
     });
   }
@@ -33,19 +39,21 @@ export class PartialNotesListComponent implements OnInit {
   }
 
   setState() {
-    if(this.selection.hasValue() && this.isAllSelected()) {
-      this.toolbarService.state = 3;
-    } else if(this.selection.hasValue() && !this.isAllSelected()) {
-      this.toolbarService.state = 2;
-    } else if(!this.selection.hasValue() && !this.isAllSelected()) {
-      this.toolbarService.state = 1;
+    if(this.selection.hasValue() && this.isAllSelected() && !this.isOneSelected()) {
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED;
+    } else if(this.selection.hasValue() && !this.isAllSelected() && !this.isOneSelected()) {
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_SOME_SELECTED;
+    } else if(this.selection.hasValue() && !this.isAllSelected() && this.isOneSelected()) {
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED;
+    } else if(!this.selection.hasValue() && !this.isAllSelected() && !this.isOneSelected()) {
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED;
     }
   }
 
   setAll(state: number) {
-    if(state === 1) {
+    if(state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED) {
       this.selection.clear();
-    } else if(state === 3) {
+    } else if(state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED) {
       this.dataSource.data.forEach(row => this.selection.select(row));
     }
 
@@ -61,5 +69,9 @@ export class PartialNotesListComponent implements OnInit {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected == numRows;
+  }
+
+  isOneSelected() {
+    return this.selection.selected.length === 1;
   }
 }

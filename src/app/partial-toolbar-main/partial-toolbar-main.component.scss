@@ -60,12 +60,12 @@
       }
     }
 
-    .actions.state-1 > .actions-if-none-selected {
+    .actions.state-20 > .actions-if-none-selected {
       visibility: visible;
       display: block;
     }
 
-    .actions.state-0 > .actions-if-any-selected, .actions.state-2 > .actions-if-any-selected, .actions.state-3 > .actions-if-any-selected, .actions.state-4 > .actions-if-any-selected {
+    .actions.state-0 > .actions-if-any-selected, .actions.state-10 > .actions-if-any-selected, .actions.state-21 > .actions-if-any-selected, .actions.state-22 > .actions-if-any-selected, .actions.state-23 > .actions-if-any-selected {
       visibility: visible;
       display: block;
     }

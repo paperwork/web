@@ -1,6 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 import { ToolbarService } from './toolbar.service';
 
 @Component({
@@ -26,9 +26,11 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
 
     this.toolbarService.state$.subscribe((state: number) => {
-      console.log("current state: %s, previousState: %s, received state: %s", this.state, this.previousState, state);
-      this.previousState = this.state;
-      this.state = state;
+      if(this.state !== state) {
+        console.log("current state: %s, previousState: %s, received state: %s", this.state, this.previousState, state);
+        this.previousState = this.state;
+        this.state = state;
+      }
     });
   }
 
@@ -40,10 +42,10 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   changeAll() {
-    if(this.state === 3) {
-      this.toolbarService.state = 1;
+    if(this.state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED) {
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED;
     } else {
-      this.toolbarService.state = 3;
+      this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED;
     }
   }
 
@@ -53,8 +55,8 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   toggleEditState() {
-    if(this.state !== 4) {
-      this.setState(4);
+    if(this.state !== this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT) {
+      this.setState(this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT);
     } else {
       this.setState(this.previousState);
     }
