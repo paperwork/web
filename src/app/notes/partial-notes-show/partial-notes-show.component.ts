@@ -38,7 +38,7 @@ export class PartialNotesShowComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setAll(get(history, 'state.toolbarState', this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT));
+    this.toolbarService.state = get(history, 'state.toolbarState', this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT);
 
     this.note$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
@@ -52,6 +52,7 @@ export class PartialNotesShowComponent implements OnInit {
   }
 
   setAll(state: number) {
+    console.log("Setting state:", state);
     this.toolbarState = state;
     if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT) {
       this.modeEdit = true;
