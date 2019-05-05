@@ -10,6 +10,14 @@ export const MockNotes: Array<Note> = [
     meta: {
       mimetype: "md"
     },
+    access: {
+      '5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37': {
+        can_leave: false,
+        can_read: true,
+        can_share: true,
+        can_write: true
+      }
+    },
     path: "my folder/my subfolder",
     created_at: new Date("2019-04-27T15:40:09.028Z"),
     created_by: "5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37"
@@ -22,6 +30,14 @@ export const MockNotes: Array<Note> = [
     tags: ["yolo"],
     meta: {
       mimetype: "md"
+    },
+    access: {
+      '5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37': {
+        can_leave: false,
+        can_read: true,
+        can_share: true,
+        can_write: true
+      }
     },
     path: "my folder/my subfolder",
     created_at: new Date("2019-04-27T15:40:09.028Z"),
