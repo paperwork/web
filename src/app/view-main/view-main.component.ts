@@ -13,6 +13,7 @@ export class ViewMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   opened: boolean = true; // TODO: Load from user prefs
   toggleOpened: boolean = true;
+  noteId: string;
 
   private _mobileQueryListener: () => void;
 
@@ -23,14 +24,14 @@ export class ViewMainComponent implements OnInit, OnDestroy {
     private media: MediaMatcher
   ) {
     this.currentRoute = activatedRoute.snapshot.url[0].path;
-    console.log(activatedRoute.snapshot.url[0]);
+
     this.mobileQuery = media.matchMedia('(max-width: 980px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
-    console.log(this.activatedRoute.snapshot.paramMap.get('id'));
+    this.noteId = this.activatedRoute.snapshot.paramMap.get('id');
   }
 
   ngOnDestroy(): void {

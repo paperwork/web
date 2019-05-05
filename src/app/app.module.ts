@@ -68,6 +68,7 @@ import { UsersService } from './users/users.service';
 import { UsersComponent } from './users/users.component';
 import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partial-sidebar-folders.component';
 import { PartialToolbarMainComponent } from './partial-toolbar-main/partial-toolbar-main.component';
+import { PartialNotesShowComponent } from './notes/partial-notes-show/partial-notes-show.component';
 
 
 export function jwtOptionsFactory(envService) {

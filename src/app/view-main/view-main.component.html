@@ -11,7 +11,8 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="view-main-mat-sidenav-content">
-      <app-notes></app-notes>
+      <partial-notes-list *ngIf="noteId === null"></partial-notes-list>
+      <partial-notes-show *ngIf="noteId !== null"></partial-notes-show>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

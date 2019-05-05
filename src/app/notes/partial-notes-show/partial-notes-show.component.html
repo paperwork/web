@@ -1,0 +1,39 @@
+<section class="note background-alternative mat-typography">
+  <partial-toolbar-main class="background-alternative"></partial-toolbar-main>
+
+  <section *ngIf="note$ | async as note" class="view">
+    <section class="meta">
+      <small class="updated_at-time">Last change: {{ note.created_at | date:'shortTime' }}</small>
+      <small class="updated_at-date">{{ note.created_at | date:'shortDate' }}</small>
+    </section>
+
+    <section class="title">
+      <h1>{{ note.title }}</h1>
+      <div class="shared-to">
+        <button mat-mini-fab *ngFor="let access of note.access | keyvalue">
+          <mat-icon [attr.aria-label]="'firstname lastname'" class="material-icons-outlined">face</mat-icon>
+        </button>
+      </div>
+    </section>
+
+    <section class="tags">
+      <mat-chip-list>
+        <mat-chip *ngFor="let tag of note.tags">{{ tag }}</mat-chip>
+      </mat-chip-list>
+    </section>
+
+    <section class="body">
+      {{ note.body }}
+    </section>
+
+    <section class="attachments">
+      <mat-chip-list>
+        <mat-chip *ngFor="let attachment of note.attachments">
+          <mat-icon [attr.aria-label]="'Attachment: ' + attachment" class="material-icons-outlined">attach_file</mat-icon>
+          {{ attachment }}
+        </mat-chip>
+      </mat-chip-list>
+    </section>
+
+  </section>
+</section>

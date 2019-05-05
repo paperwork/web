@@ -1,0 +1,97 @@
+@import "paperwork-theme.scss";
+
+.note {
+  display: block;
+  height: 100vh;
+  padding: 0px 80px 0px 32px;
+
+  .view {
+    margin: 0px 0px 0px 86px;
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      color: $color-only-grey;
+
+      .updated_at-time {
+        width: 20%;
+      }
+
+      .updated_at-date {
+        width: 68px;
+        margin-left: auto;
+        text-align: right;
+      }
+    }
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+
+      h1 {
+        margin-top: 8px;
+      }
+
+      .shared-to {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: row-reverse;
+        width: 30%;
+        margin-left: auto;
+        text-align: right;
+
+        button:first-child {
+          right: 0px;
+        }
+
+        button {
+          right: -8px;
+        }
+
+        @for $i from 1 through 100 {
+          button:nth-child(#{$i}) {
+            background-color: hsl(random(360),20 + random(70 + -20), 30 + random(90 + -30));
+          }
+        }
+      }
+
+    }
+
+    .tags {
+      .mat-chip-list {
+        .mat-chip {
+          background-color: transparent;
+          color: $color-only-dark-grey;
+          border: 1px solid $color-only-dark-grey;
+          border-radius: 5px;
+          min-height: 26px;
+
+          .mat-icon {
+            color: $primary;
+          }
+        }
+      }
+    }
+
+    .body {
+      margin: 40px 0px 40px 0px;
+    }
+
+    .attachments {
+      margin: 40px 0px 0px 0px;
+      padding: 20px 8px;
+      border-top: 1px dashed $color-only-grey;
+
+      .mat-chip-list {
+        .mat-chip {
+          background-color: transparent;
+
+          .mat-icon {
+            color: $primary;
+          }
+        }
+      }
+    }
+
+  }
+}
