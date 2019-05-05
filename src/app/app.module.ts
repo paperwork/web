@@ -70,6 +70,7 @@ import { PartialSidebarFoldersComponent } from './partial-sidebar-folders/partia
 import { PartialToolbarMainComponent } from './partial-toolbar-main/partial-toolbar-main.component';
 import { PartialNotesShowComponent } from './notes/partial-notes-show/partial-notes-show.component';
 
+import { MarkdownModule } from 'ngx-markdown';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -159,6 +160,8 @@ PartialSidebarComponent,
     MatTreeModule,
     PortalModule,
     ScrollingModule,
+
+    MarkdownModule.forRoot(),
   ],
   providers: [
     EnvService,
