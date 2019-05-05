@@ -47,7 +47,6 @@ export class SidebarService {
     }
 
     let indexOfTab: number = this._tabs.indexOf(tab);
-    console.log(indexOfTab)
     this.selected = indexOfTab; // TODO: Add a nice animation when switching tabs
   }
 }
