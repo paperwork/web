@@ -5,6 +5,8 @@ import { switchMap, tap } from 'rxjs/operators';
 import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Note } from '../note';
 import { get } from 'lodash';
 
@@ -19,6 +21,7 @@ export class PartialNotesShowComponent implements OnInit {
   toolbarState: number;
   modeEdit: boolean;
   editor: FormGroup;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +36,8 @@ export class PartialNotesShowComponent implements OnInit {
 
     this.editor = formBuilder.group({
       color: 'primary',
-      body: ['', Validators.min(10)],
+      title: ['', Validators.required],
+      body: ['', Validators.required],
     });
   }
 
@@ -49,6 +53,7 @@ export class PartialNotesShowComponent implements OnInit {
     );
 
     this.editor.get('body').valueChanges.subscribe(value => this.notesService.updateField(this.noteId, 'body', value));
+    this.editor.get('title').valueChanges.subscribe(value => this.notesService.updateField(this.noteId, 'title', value));
   }
 
   setAll(state: number) {
@@ -60,5 +65,26 @@ export class PartialNotesShowComponent implements OnInit {
       this.modeEdit = false;
       console.log(this.editor)
     }
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
+    if((value || '').trim()) {
+      this.notesService.pushToField(this.noteId, 'tags', value.trim());
+    }
+
+    if(input) {
+      input.value = '';
+    }
+  }
+
+  removeTag(tag: string): void {
+    this.notesService.popFromField(this.noteId, 'tags', tag);
+  }
+
+  removeAttachment(attachment: string): void {
+    this.notesService.popFromField(this.noteId, 'attachments', attachment);
   }
 }

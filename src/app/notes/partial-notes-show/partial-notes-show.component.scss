@@ -1,16 +1,27 @@
 @import "paperwork-theme.scss";
 
 .background-wrapper {
+  transition: all 1s;
   height: 100vh;
 
   .note {
-    display: block;
-    padding: 74px 80px 0px 32px;
+    padding: 0px 80px 0px 32px;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+
+    .spacer {
+      height: 74px;
+    }
 
     .view {
+      display: flex;
+      flex-flow: column;
       margin: 0px 0px 0px 86px;
+      height: 100%;
 
       .meta {
+        flex-grow: 0;
         display: flex;
         justify-content: space-between;
         color: $color-only-grey;
@@ -27,11 +38,33 @@
       }
 
       .title {
+        flex-grow: 0;
         display: flex;
         justify-content: space-between;
+        align-items: baseline;
+        margin-top: 29px;
 
-        h1 {
-          margin-top: 8px;
+        .viewer-title {
+          h1 {
+            margin-top: 7px;
+            margin-bottom: 0px;
+          }
+        }
+
+        .editor-title {
+          width: 100%;
+
+          // TODO: This is such a bullshit.
+          ::ng-deep .mat-form-field-wrapper { padding-bottom: 0px !important;}
+          ::ng-deep .mat-form-field-flex > .mat-form-field-infix { border-top: 0px;}
+          ::ng-deep .mat-form-field-label-wrapper { }
+          ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-label { }
+          ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline { display: none; bottom: 0.25em; };
+
+          .mat-form-field {
+            font-size: mat-font-size($paperwork-typography, headline);
+            width: 100%;
+          }
         }
 
         .shared-to {
@@ -60,7 +93,21 @@
       }
 
       .tags {
-        .mat-chip-list {
+        flex-grow: 0;
+        min-height: 10px;
+
+        .viewer-tags {
+          .mat-chip-list {
+            display: flex;
+            align-items: center;
+
+            .tag {
+              margin-top: 11px;
+            }
+          }
+        }
+
+        .viewer-tags .mat-chip-list, .editor-tags .mat-chip-list {
           .tag {
             background-color: transparent;
             color: $color-only-dark-grey;
@@ -77,19 +124,60 @@
             background-color: transparent !important;
           }
         }
-      }
 
-      .body {
-        margin: 40px 0px 40px 0px;
-        form.editor {
+        .editor-tags {
+          ::ng-deep .mat-form-field-flex > .mat-form-field-infix { border-top: 0px;}
+          ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline { display: none; };
+          ::ng-deep .mat-form-field-label-wrapper {
+            .mat-form-field-label {
+              font-size: mat-font-size($paperwork-typography, button);
+              margin: 7px 0px;
+            }
+          }
+
           .mat-form-field {
             width: 100%;
-            height: 100%;
+
+            input.mat-input-element {
+              margin: 0px;
+              padding: 10px 0px 10px 5px;
+            }
           }
         }
       }
 
+      .body {
+        display: flex;
+        flex-grow: 1;
+        height: 100%;
+        margin: 0px 0px 0px 0px;
+        min-height: 360px;
+
+        .viewer-body {
+          padding-top: 46px;
+
+          font-size: mat-font-size($paperwork-typography, body-1) + 2px;
+          line-height: mat-line-height($paperwork-typography, body-1) + 2px;
+        }
+
+        .editor-body {
+          display: flex;
+          flex-grow: 1;
+          height: 100%;
+          padding-top: 31px;
+
+          textarea {
+            height: 100%;
+            min-height: 320px;
+            font-size: mat-font-size($paperwork-typography, body-1) + 2px;
+            line-height: mat-line-height($paperwork-typography, body-1) + 2px;
+          }
+
+        }
+      }
+
       .attachments {
+        flex-grow: 0;
         margin: 40px 0px 0px 0px;
         padding: 20px 8px;
         border-top: 1px dashed $color-only-grey;

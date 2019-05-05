@@ -1,16 +1,16 @@
 @import "paperwork-theme.scss";
 
-:host(.background-plain) {
-  .mat-toolbar, .mat-toolbar-row {
-    background: $background-plain;
-  }
-}
+// :host(.background-plain) {
+//   .mat-toolbar, .mat-toolbar-row {
+//     background: $background-plain;
+//   }
+// }
 
-:host(.background-alternative) {
-  .mat-toolbar, .mat-toolbar-row {
-    background: $background-alternative;
-  }
-}
+// :host(.background-alternative) {
+//   .mat-toolbar, .mat-toolbar-row {
+//     background: $background-alternative;
+//   }
+// }
 
 :host-context(.is-mobile) {
   .mat-toolbar {
@@ -31,9 +31,11 @@
 }
 
 .mat-toolbar {
+  background: transparent;
   margin: 0px 0px 32px 0px;
 
   .mat-toolbar-row {
+    background: transparent;
     padding: 0px 0px 0px 16px;
 
     .mat-checkbox {

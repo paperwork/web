@@ -15,7 +15,8 @@
     }
 
     .mat-card-title {
-      font-weight: 500;
+      font-size: mat-font-size($paperwork-typography, headline);
+      font-weight: mat-font-weight($paperwork-typography, headline);
     }
 
     .mat-card-subtitle {

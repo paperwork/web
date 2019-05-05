@@ -1,46 +1,83 @@
-<div class="background-wrapper background-alternative">
+<div class="background-wrapper {{ toolbarState == toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT ? 'background-plain' : 'background-alternative' }}">
   <section class="note mat-typography">
-    <partial-toolbar-main class="background-alternative"></partial-toolbar-main>
+    <div class="spacer"></div>
 
-    <section *ngIf="note$ | async as note" class="view">
-      <section class="meta">
+    <partial-toolbar-main></partial-toolbar-main>
+
+    <form *ngIf="note$ | async as note" class="view" [formGroup]="editor">
+
+<!--       <section class="meta">
         <small class="updated_at-time">Last change: {{ note.created_at | date:'shortTime' }}</small>
         <small class="updated_at-date">{{ note.created_at | date:'shortDate' }}</small>
-      </section>
+      </section> -->
 
       <section class="title">
-        <h1>{{ note.title }}</h1>
+
+        <div *ngIf="!modeEdit" class="viewer-title">
+          <h1>{{ note.title }}</h1>
+        </div>
+
+        <div *ngIf="modeEdit" class="editor-title">
+          <mat-form-field floatLabel="never">
+            <input matInput placeholder="Add title" formControlName="title">
+          </mat-form-field>
+        </div>
+
         <div class="shared-to">
           <button mat-mini-fab *ngFor="let access of note.access | keyvalue">
             <mat-icon [attr.aria-label]="'firstname lastname'" class="material-icons-outlined">face</mat-icon>
           </button>
         </div>
+
       </section>
 
       <section class="tags">
-        <mat-chip-list>
-          <mat-chip *ngFor="let tag of note.tags" class="tag">{{ tag }}</mat-chip>
-        </mat-chip-list>
+        <div *ngIf="!modeEdit" class="viewer-tags">
+          <mat-chip-list *ngIf="!modeEdit">
+            <mat-chip *ngFor="let tag of note.tags" class="tag">{{ tag }}</mat-chip>
+          </mat-chip-list>
+        </div>
+
+        <div *ngIf="modeEdit" class="editor-tags">
+          <mat-form-field floatLabel="never">
+            <mat-chip-list #tags>
+              <mat-chip *ngFor="let tag of note.tags" [selectable]="true" [removable]="true" (removed)="removeTag(tag)" class="tag">
+                {{tag}}
+                <mat-icon matChipRemove class="material-icons-outlined">cancel</mat-icon>
+              </mat-chip>
+              <input placeholder="Add tags"
+                     [matChipInputFor]="tags"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     [matChipInputAddOnBlur]="true"
+                     (matChipInputTokenEnd)="addTag($event)">
+            </mat-chip-list>
+          </mat-form-field>
+        </div>
       </section>
 
       <section class="body">
-        <markdown *ngIf="!modeEdit" [data]="note.body"></markdown>
-        <form *ngIf="modeEdit" class="editor" [formGroup]="editor">
-          <mat-form-field appearance="outline">
-            <textarea matInput formControlName="body"></textarea>
-          </mat-form-field>
-        </form>
+        <div *ngIf="!modeEdit" class="viewer-body">
+          <markdown  [data]="note.body"></markdown>
+        </div>
+        <div *ngIf="modeEdit" class="editor-body">
+<!--           <mat-form-field floatLabel="never">
+            <textarea matInput placeholder="Write your note here" formControlName="body"></textarea>
+          </mat-form-field> -->
+          <textarea matInput placeholder="Write your note here" formControlName="body"></textarea>
+
+        </div>
       </section>
 
       <section class="attachments">
         <mat-chip-list>
-          <mat-chip *ngFor="let attachment of note.attachments">
-            <mat-icon [attr.aria-label]="'Attachment: ' + attachment" class="material-icons-outlined">attach_file</mat-icon>
+          <mat-chip *ngFor="let attachment of note.attachments" [removable]="modeEdit" (removed)="removeAttachment(attachment)">
+            <mat-icon *ngIf="!modeEdit" [attr.aria-label]="'Attachment: ' + attachment" class="material-icons-outlined">attach_file</mat-icon>
+            <mat-icon *ngIf="modeEdit" matChipRemove class="material-icons-outlined">cancel</mat-icon>
             {{ attachment }}
           </mat-chip>
         </mat-chip-list>
       </section>
 
-    </section>
+    </form>
   </section>
 </div>
