@@ -59,16 +59,20 @@
 
     .tags {
       .mat-chip-list {
-        .mat-chip {
+        .tag {
           background-color: transparent;
           color: $color-only-dark-grey;
           border: 1px solid $color-only-dark-grey;
           border-radius: 5px;
           min-height: 26px;
+        }
 
-          .mat-icon {
-            color: $primary;
-          }
+        .tag.mat-chip-selected { // TODO: Doesn't work
+          background-color: transparent !important;
+        }
+
+        .tag.mat-chip-focused { // TODO: Doesn't work
+          background-color: transparent !important;
         }
       }
     }
