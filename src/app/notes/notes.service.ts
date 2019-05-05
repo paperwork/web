@@ -22,4 +22,9 @@ export class NotesService {
       map((notes: Note[]) => notes.find(note => note.id === id))
     );
   }
+
+  public updateField(id: string, field: string, value: any) {
+    let note: Note = MockNotes.find(note => note.id === id);
+    note[field] = value;
+  }
 }
