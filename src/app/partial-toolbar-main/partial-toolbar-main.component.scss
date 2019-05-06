@@ -1,17 +1,5 @@
 @import "paperwork-theme.scss";
 
-// :host(.background-plain) {
-//   .mat-toolbar, .mat-toolbar-row {
-//     background: $background-plain;
-//   }
-// }
-
-// :host(.background-alternative) {
-//   .mat-toolbar, .mat-toolbar-row {
-//     background: $background-alternative;
-//   }
-// }
-
 :host-context(.is-mobile) {
   .mat-toolbar {
     .mat-toolbar-row {
