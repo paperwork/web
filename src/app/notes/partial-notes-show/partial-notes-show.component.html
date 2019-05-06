@@ -60,11 +60,23 @@
           <markdown  [data]="note.body"></markdown>
         </div>
         <div *ngIf="modeEdit" class="editor-body">
-<!--           <mat-form-field floatLabel="never">
-            <textarea matInput placeholder="Write your note here" formControlName="body"></textarea>
-          </mat-form-field> -->
-          <textarea matInput placeholder="Write your note here" formControlName="body"></textarea>
+          <div class="editor-markdown">
+            <textarea matInput placeholder="Write your note here" autofocus formControlName="body"></textarea>
 
+            <div class="editor-toolbar">
+              <button mat-button>Body</button>
+              <button mat-button>Heading 1</button>
+              <button mat-button>List</button>
+              <button mat-button>Blockquote</button>
+              <button mat-button>Bold</button>
+              <button mat-button>Italic</button>
+              <button mat-button>Strikethrough</button>
+              <button mat-button>Link</button>
+              <button mat-button>Image</button>
+              <button mat-button>Footnote</button>
+            </div>
+
+          </div>
         </div>
       </section>
 

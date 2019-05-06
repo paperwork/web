@@ -5,24 +5,19 @@
   height: 100vh;
 
   .note {
-    padding: 0px 80px 0px 32px;
-    display: flex;
-    flex-flow: column;
     height: 100%;
+    padding: 0px 50px 0px 32px;
 
     .spacer {
+      flex-grow: 0;
       height: 74px;
     }
 
     .view {
-      display: flex;
-      flex-flow: column;
-      margin: 0px 0px 0px 86px;
-      height: 100%;
+      margin: 0px 0px 0px 26px;
+      height: calc(100% - 170px);
 
       .meta {
-        flex-grow: 0;
-        display: flex;
         justify-content: space-between;
         color: $color-only-grey;
 
@@ -38,11 +33,10 @@
       }
 
       .title {
-        flex-grow: 0;
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        margin-top: 29px;
+        margin-top: 50px;
 
         .viewer-title {
           h1 {
@@ -93,10 +87,11 @@
       }
 
       .tags {
-        flex-grow: 0;
-        min-height: 10px;
+        overflow-x: scroll;
+        height: 36px;
 
         .viewer-tags {
+
           .mat-chip-list {
             display: flex;
             align-items: center;
@@ -108,6 +103,10 @@
         }
 
         .viewer-tags .mat-chip-list, .editor-tags .mat-chip-list {
+          ::ng-deep .mat-chip-list-wrapper {
+            flex-wrap: nowrap;
+          }
+
           .tag {
             background-color: transparent;
             color: $color-only-dark-grey;
@@ -135,6 +134,11 @@
             }
           }
 
+          .mat-chip-list {
+            display: flex;
+            align-items: center;
+          }
+
           .mat-form-field {
             width: 100%;
 
@@ -149,37 +153,34 @@
       .body {
         display: flex;
         flex-grow: 1;
-        height: 100%;
+        height: calc(100% - 260px);
         margin: 0px 0px 0px 0px;
         min-height: 360px;
 
         .viewer-body {
           padding-top: 46px;
+          padding-bottom: 32px;
 
           font-size: mat-font-size($paperwork-typography, body-1) + 2px;
           line-height: mat-line-height($paperwork-typography, body-1) + 2px;
         }
 
         .editor-body {
-          display: flex;
-          flex-grow: 1;
-          height: 100%;
-          padding-top: 31px;
+          width: 100%;
+          // display: flex;
+          // flex-grow: 1;
+          // height: 100%;
+          padding-top: 45px;
 
-          textarea {
-            height: 100%;
-            min-height: 320px;
-            font-size: mat-font-size($paperwork-typography, body-1) + 2px;
-            line-height: mat-line-height($paperwork-typography, body-1) + 2px;
-          }
-
+          // EDITOR MARKDOWN
         }
       }
 
       .attachments {
         flex-grow: 0;
-        margin: 40px 0px 0px 0px;
-        padding: 20px 8px;
+        height: 120px;
+        margin: 4px 0px 0px 0px;
+        padding: 20px 8px 20px 8px;
         border-top: 1px dashed $color-only-grey;
 
         .mat-chip-list {
@@ -196,4 +197,27 @@
     }
   }
 
+}
+
+// Keeping things separated in order to split them up later
+.editor-markdown {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+
+  textarea {
+    flex-grow: 1;
+    width: 100%;
+    // height: 90%;
+    min-height: 320px;
+    font-size: mat-font-size($paperwork-typography, body-1) + 2px;
+    line-height: mat-line-height($paperwork-typography, body-1) + 2px;
+  }
+
+  .editor-toolbar {
+    flex-grow: 0;
+    width: 100%;
+    height: 32px;
+  }
 }
