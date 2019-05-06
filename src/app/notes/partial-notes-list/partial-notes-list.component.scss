@@ -1,11 +1,17 @@
 @import "paperwork-theme.scss";
 
 .background-wrapper {
+  transition: all 1s;
   height: 100vh;
 
   .notes {
-    display: block;
-    padding: 74px 80px 0px 32px;
+    height: 100%;
+    padding: 0px 50px 0px 32px;
+
+    .spacer {
+      flex-grow: 0;
+      height: 74px;
+    }
 
     .mat-table {
       margin-top: 56px;
