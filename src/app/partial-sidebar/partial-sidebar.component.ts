@@ -23,4 +23,8 @@ export class PartialSidebarComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  navigate(id: string) {
+    this.sidebarService.setNavigationToId(id);
+  }
 }

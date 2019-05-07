@@ -88,7 +88,7 @@
 
     form.search {
       width: 50%;
-      color: $color-only-grey;
+      color: $default-font-color-grey;
 
       // TODO: This is such a bullshit.
       ::ng-deep .mat-form-field-wrapper { padding-bottom: 0px !important;}
@@ -99,10 +99,19 @@
           width: 133.33333%;
       }
 
+      .search-field.mat-focused {
+        .mat-icon {
+          color: $primary;
+        }
+      }
+
       .search-field {
+        transition: all 0.2s;
         width: 100%;
 
         .mat-icon {
+          transition: all 0.5s ease-out;
+          color: $default-font-color-ultra-light;
           font-size: 1em;
           width: 24px;
           height: 24px;

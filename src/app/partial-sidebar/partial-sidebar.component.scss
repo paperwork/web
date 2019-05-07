@@ -8,10 +8,40 @@
     display: block;
 
     .mat-card-avatar {
-      background: url('/assets/images/avatar-default.png');
+      transition: all 0.5s;
       width: 100px;
       height: 100px;
       margin: 48px 74px 0px 74px;
+      background: url('/assets/images/avatar-default.png');
+      background-size: 100px 100px;
+    }
+
+    .blurred {
+      transition: all 0.1s;
+      filter: blur(2px);
+    }
+
+    .back-button {
+      display: block;
+      opacity: 0;
+      transition: all 0.1s;
+      cursor: pointer;
+      color: #fff;
+      font-size: 70px;
+      text-align: center;
+      vertical-align: middle;
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      line-height: 110px;
+      background-color: rgba(255, 255, 255, 0.2);
+      top: -5px;
+      left: 70px;
+    }
+
+    .back-button-on {
+      transition: all 0.1s;
+      opacity: 1;
     }
 
     .mat-card-title {
@@ -21,7 +51,7 @@
 
     .mat-card-subtitle {
       font-size: mat-font-size($paperwork-typography, subheading-2);
-      color: $color-only-grey;
+      color: $default-font-color-light;
     }
 
   }

@@ -54,9 +54,10 @@ $paperwork-typography: mat-typography-config(
 // );
 // $my-app-primary: mat-palette($my-custom-primary-color);
 
-$color-only-grey: #ABB3BC;
-$color-only-dark-grey: #6D7278;
-$color-only-ultra-light-blue: #F6FAFD;
+$default-font-color-regular: rgba(0, 0, 0, 0.87);
+$default-font-color-grey: rgba(0, 0, 0, 0.54);
+$default-font-color-light: rgba(0, 0, 0, 0.34);
+$default-font-color-ultra-light: rgba(0, 0, 0, 0.1);
 
 $paperwork-primary: mat-palette($mat-light-blue);
 $paperwork-accent:  mat-palette($mat-light-blue);
@@ -69,7 +70,7 @@ $accent: mat-color($paperwork-accent);
 $warn: mat-color($paperwork-warn);
 
 $background-plain: #FFFFFF;
-$background-alternative: $color-only-ultra-light-blue;
+$background-alternative: #F6FAFD;
 
 @include angular-material-theme($paperwork-theme);
 
@@ -99,7 +100,7 @@ a[color=primary] {
 }
 
 .snackbar-type-info {
-  color: $color-only-grey;
+  color: $default-font-color-grey;
   background: $background-plain;
 }
 

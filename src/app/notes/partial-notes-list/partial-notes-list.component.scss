@@ -50,14 +50,14 @@
 
       .mat-header-row {
         .mat-column-select {
-          color: $color-only-grey;
+          color: $default-font-color-grey;
         }
 
         .mat-column-title {
-          color: $color-only-grey;
+          color: $default-font-color-grey;
         }
         .mat-column-created_at {
-          color: $color-only-grey;
+          color: $default-font-color-grey;
         }
       }
 
@@ -97,12 +97,12 @@
             h2 {
               font-size: (mat-font-size($paperwork-typography, title) - 1);
               font-weight: 500;
-              color: $color-only-dark-grey;
+              color: $default-font-color-regular;
               text-decoration: none;
             }
 
             .caption {
-              color: $color-only-grey;
+              color: $default-font-color-grey;
             }
           }
         }
@@ -110,7 +110,7 @@
         .mat-column-created_at {
           section.mat-typography {
             h2 {
-              color: $primary;
+              color: $default-font-color-light;
               font-size: mat-font-size($paperwork-typography, caption);
               letter-spacing: 2px;
             }

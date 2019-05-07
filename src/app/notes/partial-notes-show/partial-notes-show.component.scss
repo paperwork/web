@@ -19,7 +19,7 @@
 
       .meta {
         justify-content: space-between;
-        color: $color-only-grey;
+        color: $default-font-color-grey;
 
         .updated_at-time {
           width: 20%;
@@ -109,8 +109,8 @@
 
           .tag {
             background-color: transparent;
-            color: $color-only-dark-grey;
-            border: 1px solid $color-only-dark-grey;
+            color: $primary;
+            border: 1px solid $primary;
             border-radius: 5px;
             min-height: 26px;
           }
@@ -163,6 +163,7 @@
 
           font-size: mat-font-size($paperwork-typography, body-1) + 2px;
           line-height: mat-line-height($paperwork-typography, body-1) + 2px;
+          color: $default-font-color-regular;
         }
 
         .editor-body {
@@ -181,7 +182,7 @@
         height: 120px;
         margin: 4px 0px 0px 0px;
         padding: 20px 8px 20px 8px;
-        border-top: 1px dashed $color-only-grey;
+        border-top: 1px dashed $default-font-color-ultra-light;
 
         .mat-chip-list {
           .mat-chip {

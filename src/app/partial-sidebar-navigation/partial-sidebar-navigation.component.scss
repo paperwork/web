@@ -1,13 +1,31 @@
 @import "paperwork-theme.scss";
 
 .mat-nav-list {
+  .list-item-active {
+    color: $primary !important;
+    background: $background-alternative;
+
+    a {
+      font-weight: 500;
+    }
+  }
+
+  .mat-list-item:hover {
+    background: $background-alternative;
+  }
+
   .mat-list-item {
-    color: $color-only-grey;
+    color: $default-font-color-grey;
     height: 74px !important; // TODO: Y U NO WORK W/O !IMPORTANT?!?!?!
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
     ::ng-deep .mat-list-item-content {
       padding: 0px 10px 0px 67px;
     }
+
+    ::ng-deep .mat-ripple-element {
+      background-color: rgba(69, 167, 238, 0.1);
+    }
+
   }
 }

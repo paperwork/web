@@ -1,10 +1,42 @@
-.example-tree-invisible {
-  display: none;
-}
+@import "paperwork-theme.scss";
 
-.example-tree ul,
-.example-tree li {
-  margin-top: 0;
-  margin-bottom: 0;
-  list-style-type: none;
+.background-wrapper {
+  padding: 0px 10px 0px 64px;
+
+  .tree-invisible {
+    display: none;
+  }
+
+  .mat-tree {
+    ul, li {
+      margin-top: 0;
+      margin-bottom: 0;
+      list-style-type: none;
+    }
+
+    ul {
+      padding-inline-start: 8px;
+    }
+
+    li {
+      .mat-tree-node {
+        min-height: 40px;
+
+        button {
+          .mat-icon {
+            color: $default-font-color-grey;
+          }
+        }
+        a {
+          display: inline-block;
+          margin-left: 6px;
+          color: $default-font-color-grey;
+          font-size: 14px;
+          text-decoration: none;
+        }
+
+      }
+    }
+  }
+
 }

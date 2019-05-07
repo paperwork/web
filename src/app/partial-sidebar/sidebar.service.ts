@@ -5,6 +5,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SidebarService {
+  public SIDEBAR_SELECTED_DEFAULT: number = 1;
+
   private _tabs = [
     {
       id: 'notifications',
@@ -24,7 +26,7 @@ export class SidebarService {
     },
   ];
 
-  private readonly _selected = new BehaviorSubject<number>(1);
+  private readonly _selected = new BehaviorSubject<number>(this.SIDEBAR_SELECTED_DEFAULT);
   readonly selected$ = this._selected.asObservable();
 
   constructor(

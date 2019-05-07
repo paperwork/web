@@ -18,7 +18,7 @@ export const MockNotes: Array<Note> = [
         can_write: true
       }
     },
-    path: "my folder/my subfolder",
+    path: "My folder/My subfolder",
     created_at: new Date("2019-04-27T15:40:09.028Z"),
     created_by: "5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37"
   },
@@ -39,7 +39,7 @@ export const MockNotes: Array<Note> = [
         can_write: true
       }
     },
-    path: "my folder/my second subfolder",
+    path: "My folder/My second subfolder",
     created_at: new Date("2019-04-27T15:40:09.028Z"),
     created_by: "5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37"
   },
@@ -60,7 +60,7 @@ export const MockNotes: Array<Note> = [
         can_write: true
       }
     },
-    path: "my folder/my subfolder",
+    path: "My folder/My subfolder",
     created_at: new Date("2019-04-27T15:40:09.028Z"),
     created_by: "5cc477a52bb6216e7b352b4e@f6849bf4-261a-4a4f-bd71-87134d334c37"
   }
