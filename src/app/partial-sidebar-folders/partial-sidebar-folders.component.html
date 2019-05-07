@@ -1,9 +1,5 @@
 <div class="background-wrapper">
-<!--   <button mat-button (click)="navigate('notes')">
-    <mat-icon aria-label="Back" class="material-icons-outlined">chevron_left</mat-icon>
-    Back
-  </button>
- -->
+
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
