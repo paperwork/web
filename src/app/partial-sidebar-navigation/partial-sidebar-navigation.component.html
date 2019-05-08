@@ -1,7 +1,11 @@
 <mat-nav-list>
-  <mat-list-item *ngFor="let navigationElement of navigationElements"  routerLinkActive="list-item-active">
+  <mat-list-item
+    *ngFor="let navigationElement of navigationElements"
+    [routerLink]="(navigationElement.type === 'route' ? '/' + navigationElement.id : null)"
+    [routerLinkActive]="(navigationElement.type === 'route' ? 'list-item-active' : '')"
+    (click)="(navigationElement.type === 'state' ? navigate(navigationElement.id) : null)"
+  >
     <mat-icon class="material-icons-outlined" mat-list-icon>{{ navigationElement.icon }}</mat-icon>
-    <a *ngIf="navigationElement.type === 'route'" matLine [routerLink]="'/' + navigationElement.id">{{ navigationElement.label }}</a>
-    <a *ngIf="navigationElement.type === 'state'" matLine (click)="navigate(navigationElement.id)">{{ navigationElement.label }}</a>
+    {{ navigationElement.label }}
   </mat-list-item>
 </mat-nav-list>
