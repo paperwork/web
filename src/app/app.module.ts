@@ -71,6 +71,9 @@ import { PartialToolbarMainComponent } from './partial-toolbar-main/partial-tool
 import { PartialNotesShowComponent } from './notes/partial-notes-show/partial-notes-show.component';
 
 import { MarkdownModule } from 'ngx-markdown';
+import { PartialSidebarTagsComponent } from './partial-sidebar-tags/partial-sidebar-tags.component';
+import { PartialSidebarNotificationsComponent } from './partial-sidebar-notifications/partial-sidebar-notifications.component';
+import { GroupByPipe } from './group-by.pipe';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -100,7 +103,10 @@ PartialSidebarComponent,
     PartialAlertComponent,
     PartialSidebarFoldersComponent,
     PartialToolbarMainComponent,
-    PartialNotesShowComponent
+    PartialNotesShowComponent,
+    PartialSidebarTagsComponent,
+    PartialSidebarNotificationsComponent,
+    GroupByPipe,
   ],
   imports: [
     BrowserModule,
