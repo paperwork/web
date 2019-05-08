@@ -28,6 +28,7 @@ export class PartialSidebarFoldersComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.treeControl.expandAll(); // TODO: This doesn't seem to work.
   }
 
   buildPathNode(name: string, path: string): PathNode {
