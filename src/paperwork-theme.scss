@@ -76,6 +76,11 @@ $background-alternative: #F6FAFD;
 
 $sidebar-width: 366px;
 
+a {
+  color: $primary;
+  text-decoration: none;
+}
+
 a[color=primary] {
   font-weight: mat-font-weight($paperwork-typography, button);
   color: $primary;
@@ -115,4 +120,36 @@ a[color=primary] {
 
 .fill-remaining-space {
   flex: 1 1 auto;
+}
+
+.semibold {
+  font-weight: 500;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.italic {
+  font-style: italic;
+}
+
+
+.mat-chip-list.tag-list {
+  .tag {
+    background-color: transparent;
+    color: $primary;
+    border: 1px solid $primary;
+    border-radius: 5px;
+    min-height: 26px;
+  }
+
+  .tag.mat-chip-selected { // TODO: Doesn't work
+    background-color: transparent !important;
+  }
+
+  .tag.mat-chip-focused { // TODO: Doesn't work
+    background-color: transparent !important;
+  }
+
 }
