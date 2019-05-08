@@ -1,0 +1,16 @@
+<div class="background-wrapper">
+  <mat-list>
+    <div *ngFor="let notificationGroup of notifications | groupBy">
+      <div class="date">
+        <mat-icon class="material-icons-outlined">
+          access_time
+        </mat-icon>
+        <h3 mat-subheader>{{ notificationGroup.created_at | date:'shortDate' }}</h3>
+      </div>
+      <mat-list-item *ngFor="let notification of notificationGroup.items">
+        <mat-icon mat-list-icon *ngFor="let icon of notification.icons">{{ icon.uri }}</mat-icon>
+        <h4 mat-line [innerHTML]="notification.body"></h4>
+      </mat-list-item>
+    </div>
+  </mat-list>
+</div>

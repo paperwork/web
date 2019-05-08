@@ -1,0 +1,50 @@
+@import "paperwork-theme.scss";
+
+.background-wrapper {
+  .mat-list-base {
+    width: $sidebar-width;
+
+    .date {
+      display: flex;
+      align-items: center;
+      padding: 0px 10px 0px 73px;
+      margin-bottom: 26px;
+      letter-spacing: 2px;
+      background-color: $background-alternative;
+
+      .mat-icon {
+        color: $default-font-color-light;
+        font-size: mat-font-size($paperwork-typography, subheading-2);
+        width: mat-font-size($paperwork-typography, subheading-2);
+        height: mat-font-size($paperwork-typography, subheading-2);
+      }
+
+      h3 {
+        color: $default-font-color-light;
+        padding: 0px 8px;
+        height: mat-font-size($paperwork-typography, subheading-2) + 4;
+      }
+    }
+
+    ::ng-deep  .mat-list-item-content { padding: 0px 10px 0px 68px; }
+    .mat-list-item {
+      margin-bottom: 32px;
+
+      .mat-line {
+        white-space: normal;
+        color: $default-font-color-grey;
+
+        ::ng-deep .semibold {
+          color: $default-font-color-regular;
+        }
+
+        ::ng-deep a {
+          color: $default-font-color-grey;
+          text-decoration: underline;
+        }
+
+      }
+
+    }
+  }
+}
