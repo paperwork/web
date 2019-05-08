@@ -90,9 +90,19 @@
         overflow-x: scroll;
         height: 36px;
 
-        .viewer-tags {
+        .viewer-tags, .editor-tags {
+          .mat-chip-list.tag-list {
+            display: flex;
+            align-items: center;
 
-          .mat-chip-list {
+            ::ng-deep .mat-chip-list-wrapper {
+              flex-wrap: nowrap;
+            }
+          }
+        }
+
+        .viewer-tags {
+          .mat-chip-list.tag-list {
             display: flex;
             align-items: center;
 
@@ -102,29 +112,13 @@
           }
         }
 
-        .viewer-tags .mat-chip-list, .editor-tags .mat-chip-list {
-          ::ng-deep .mat-chip-list-wrapper {
-            flex-wrap: nowrap;
-          }
-
-          .tag {
-            background-color: transparent;
-            color: $primary;
-            border: 1px solid $primary;
-            border-radius: 5px;
-            min-height: 26px;
-          }
-
-          .tag.mat-chip-selected { // TODO: Doesn't work
-            background-color: transparent !important;
-          }
-
-          .tag.mat-chip-focused { // TODO: Doesn't work
-            background-color: transparent !important;
-          }
-        }
-
         .editor-tags {
+          .mat-chip-list.tag-list {
+            .mat-icon {
+              color: $primary;
+            }
+          }
+
           ::ng-deep .mat-form-field-flex > .mat-form-field-infix { border-top: 0px;}
           ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline { display: none; };
           ::ng-deep .mat-form-field-label-wrapper {

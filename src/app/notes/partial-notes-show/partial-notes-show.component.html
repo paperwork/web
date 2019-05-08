@@ -33,14 +33,14 @@
 
       <section class="tags">
         <div *ngIf="!modeEdit" class="viewer-tags">
-          <mat-chip-list *ngIf="!modeEdit">
+          <mat-chip-list *ngIf="!modeEdit" class="tag-list">
             <mat-chip *ngFor="let tag of note.tags" class="tag">{{ tag }}</mat-chip>
           </mat-chip-list>
         </div>
 
         <div *ngIf="modeEdit" class="editor-tags">
           <mat-form-field floatLabel="never">
-            <mat-chip-list #tags>
+            <mat-chip-list #tags class="tag-list">
               <mat-chip *ngFor="let tag of note.tags" [selectable]="true" [removable]="true" (removed)="removeTag(tag)" class="tag">
                 {{tag}}
                 <mat-icon matChipRemove class="material-icons-outlined">cancel</mat-icon>
