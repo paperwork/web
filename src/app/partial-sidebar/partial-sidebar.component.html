@@ -1,9 +1,13 @@
 <mat-card class="mat-elevation-z profile">
   <mat-card-header>
+
     <div mat-card-avatar class="avatar" [class.blurred]="selected !== sidebarService.SIDEBAR_SELECTED_DEFAULT"></div>
-    <mat-icon class="material-icons-outlined back-button" [class.back-button-on]="selected !== sidebarService.SIDEBAR_SELECTED_DEFAULT" (click)="navigate('notes')">
-      arrow_back
-    </mat-icon>
+    <div class="back-button" [class.back-button-on]="selected !== sidebarService.SIDEBAR_SELECTED_DEFAULT">
+      <mat-icon class="material-icons-outlined" (click)="navigate('notes')">
+        {{ getBackButtonIcon() }}
+      </mat-icon>
+    </div>
+
     <mat-card-title>John Doe</mat-card-title>
     <mat-card-subtitle>Usage: 1.21GB</mat-card-subtitle>
   </mat-card-header>

@@ -27,4 +27,14 @@ export class PartialSidebarComponent implements OnInit {
   navigate(id: string) {
     this.sidebarService.setNavigationToId(id);
   }
+
+  getBackButtonIcon(): string {
+    if(this.selected < this.sidebarService.SIDEBAR_SELECTED_DEFAULT) {
+      return 'arrow_forward';
+    } else if(this.selected > this.sidebarService.SIDEBAR_SELECTED_DEFAULT) {
+      return 'arrow_back';
+    } else {
+      return '';
+    }
+  }
 }
