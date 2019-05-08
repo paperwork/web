@@ -1,0 +1,12 @@
+@import "paperwork-theme.scss";
+
+$padding-left: 72px;
+$padding-right: 10px;
+
+.background-wrapper {
+  padding: 0px $padding-right 0px $padding-left;
+
+  .mat-chip-list.tag-list {
+    ::ng-deep .mat-chip-list-wrapper { max-width: ($sidebar-width - $padding-left - $padding-right);}
+  }
+}
