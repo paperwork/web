@@ -53,6 +53,16 @@ export class SidebarService {
     }
 
     let indexOfTab: number = this._tabs.indexOf(tab);
-    this.selected = indexOfTab;
+
+    if(indexOfTab > this.selected) {
+      for(let i = (this.selected + 1); i <= indexOfTab; i++) {
+        setTimeout(() => { this.selected = i; }, 500 * (i - this.selected - 1));
+      }
+    } else if(indexOfTab < this.selected) {
+      for(let i = (this.selected - 1); i >= indexOfTab; i--) {
+        setTimeout(() => { this.selected = i; }, 500 * (this.selected - i - 1));
+      }
+    }
+
   }
 }
