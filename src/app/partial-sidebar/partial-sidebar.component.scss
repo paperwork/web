@@ -27,16 +27,21 @@
       transition: all 0.1s;
       cursor: pointer;
       color: #fff;
-      font-size: 70px;
       text-align: center;
       vertical-align: middle;
       position: absolute;
       width: 110px;
       height: 110px;
-      line-height: 110px;
       background-color: rgba(255, 255, 255, 0.2);
       top: -5px;
       left: 70px;
+
+      .mat-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 70px;
+        margin-top: 20px;
+      }
     }
 
     .back-button-on {
