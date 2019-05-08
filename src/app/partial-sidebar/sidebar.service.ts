@@ -41,6 +41,10 @@ export class SidebarService {
     this._selected.next(val);
   }
 
+  private get selected(): number {
+    return this._selected.getValue();
+  }
+
   setNavigationToId(id: string) {
     let tab = this._tabs.find(tab => tab.id === id);
 
