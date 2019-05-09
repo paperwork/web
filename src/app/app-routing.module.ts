@@ -9,6 +9,8 @@ const routes: Routes = [
   { path: 'notes', component:  ViewMainComponent, canActivate: [AuthGuard] },
   { path: 'notes/:id', component:  ViewMainComponent, canActivate: [AuthGuard] },
 
+  { path: 'settings', component:  ViewMainComponent, canActivate: [AuthGuard] },
+
   { path: 'register', component: ViewLoginComponent },
   { path: 'login', component: ViewLoginComponent },
   { path: 'logout', component: ViewLoginComponent },

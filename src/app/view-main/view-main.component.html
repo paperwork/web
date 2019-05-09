@@ -11,8 +11,12 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="view-main-mat-sidenav-content">
-      <partial-notes-list *ngIf="noteId === null"></partial-notes-list>
-      <partial-notes-show *ngIf="noteId !== null"></partial-notes-show>
+
+      <partial-notes-list *ngIf="isViewForRoute('notes-list')"></partial-notes-list>
+      <partial-notes-show *ngIf="isViewForRoute('notes-show')"></partial-notes-show>
+
+      <partial-users-settings-show *ngIf="isViewForRoute('users-settings-show')"></partial-users-settings-show>
+
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
