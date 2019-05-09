@@ -74,6 +74,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { PartialSidebarTagsComponent } from './partial-sidebar-tags/partial-sidebar-tags.component';
 import { PartialSidebarNotificationsComponent } from './partial-sidebar-notifications/partial-sidebar-notifications.component';
 import { GroupByPipe } from './group-by.pipe';
+import { PartialUsersSettingsShowComponent } from './users/partial-users-settings-show/partial-users-settings-show.component';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -107,6 +108,7 @@ PartialSidebarComponent,
     PartialSidebarTagsComponent,
     PartialSidebarNotificationsComponent,
     GroupByPipe,
+    PartialUsersSettingsShowComponent,
   ],
   imports: [
     BrowserModule,

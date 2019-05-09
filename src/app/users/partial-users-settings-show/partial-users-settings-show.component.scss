@@ -1,0 +1,65 @@
+@import "paperwork-theme.scss";
+
+.background-wrapper {
+  transition: all 1s;
+  height: 100vh;
+
+  .spacer {
+    flex-grow: 0;
+    height: 196px;
+  }
+
+  .settings {
+    padding: 0px 50px 0px 58px;
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+
+      .group {
+        margin: 0px 76px 56px 0px;
+
+        > h2 {
+          margin: 0px;
+          height: 28px;
+        }
+
+        > h3 {
+          color: $default-font-color-grey;
+          margin: 0px 0px 32px 0px;
+        }
+
+        .mat-list {
+          padding: 0px;
+
+          .mat-list-item {
+            ::ng-deep .mat-list-item-content {
+              padding: 0px;
+            }
+
+            .mat-slide-toggle {
+              min-width: 376px;
+              ::ng-deep .mat-slide-toggle-label {
+                flex-direction: row-reverse;
+
+                .mat-slide-toggle-content {
+                  width: 100%;
+
+                  h3 {
+                    // font-weight: 500;
+                    margin: 0px;
+                  }
+                }
+              }
+            }
+
+          }
+
+        }
+
+      }
+    }
+
+  }
+
+}

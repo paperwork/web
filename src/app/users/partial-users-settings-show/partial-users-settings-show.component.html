@@ -1,0 +1,61 @@
+<div class="background-wrapper background-alternative">
+  <div class="spacer"></div>
+
+  <section class="settings mat-typography">
+    <form [formGroup]="settings">
+
+      <div class="group">
+
+        <h2>Notifications</h2>
+        <h3>E-mail me when ...</h3>
+
+        <mat-list>
+
+          <mat-list-item>
+            <mat-slide-toggle formControlName="emailWhenSomeoneSharedNoteWithMe" disabled>
+              <h3>Someone shared a note with me</h3>
+            </mat-slide-toggle>
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-slide-toggle formControlName="emailWhenSomeoneAddedToSharedNote" disabled>
+              <h3>Someone was added to a shared note</h3>
+            </mat-slide-toggle>
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-slide-toggle formControlName="emailWhenSomeoneLeftSharedNote" disabled>
+              <h3>Someone left a shared note</h3>
+            </mat-slide-toggle>
+          </mat-list-item>
+
+        </mat-list>
+
+      </div>
+
+      <div class="group">
+
+        <h2>Display</h2>
+        <h3>Look & Feel</h3>
+
+        <mat-list>
+
+          <mat-list-item>
+            <mat-slide-toggle formControlName="displayThemeAlwaysDark" disabled>
+              <h3>Always use dark theme</h3>
+            </mat-slide-toggle>
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-slide-toggle formControlName="displayThemeAutoDark" disabled>
+              <h3>Automatically use dark theme</h3>
+            </mat-slide-toggle>
+          </mat-list-item>
+
+        </mat-list>
+
+      </div>
+
+    </form>
+  </section>
+</div>
