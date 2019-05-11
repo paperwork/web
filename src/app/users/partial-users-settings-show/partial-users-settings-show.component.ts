@@ -11,11 +11,11 @@ export class PartialUsersSettingsShowComponent implements OnInit {
 
   constructor(formBuilder: FormBuilder) {
     this.settings = formBuilder.group({
-      emailWhenSomeoneSharedNoteWithMe: '',
-      emailWhenSomeoneAddedToSharedNote: '',
-      emailWhenSomeoneLeftSharedNote: '',
-      displayThemeAlwaysDark: '',
-      displayThemeAutoDark: '',
+      emailWhenSomeoneSharedNoteWithMe: {value: '', disabled: true},
+      emailWhenSomeoneAddedToSharedNote: {value: '', disabled: true},
+      emailWhenSomeoneLeftSharedNote: {value: '', disabled: true},
+      displayThemeAlwaysDark: {value: '', disabled: true},
+      displayThemeAutoDark: {value: '', disabled: true},
     });
   }
 
