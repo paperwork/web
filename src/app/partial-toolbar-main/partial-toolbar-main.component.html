@@ -8,7 +8,7 @@
     <button *ngIf="state === toolbarService.TOOLBAR_STATE_BACK_DEFAULT || state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT" mat-button color="primary" class="mat-button-back" (click)="location.back();">
       <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
     </button>
-    <button mat-raised-button color="primary">
+    <button mat-raised-button color="primary" (click)="newNote();">
       <mat-icon class="material-icons-outlined">note_add</mat-icon>
       <span class="text">New Note</span>
     </button>

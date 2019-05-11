@@ -74,4 +74,16 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       this.setState(this.previousState);
     }
   }
+
+  async newNote(): Promise<boolean> {
+    const id: string|null = this.notesService.newNote();
+
+    if(id === null) {
+      this.alertService.error('Could not create new note!');
+      return false;
+    }
+
+    return this.router.navigate(['notes', id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
+  }
+
 }
