@@ -6,6 +6,8 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
+import { NotesService } from './notes/notes.service';
 import { PartialNotesListComponent } from './notes/partial-notes-list/partial-notes-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -76,6 +78,8 @@ import { PartialSidebarNotificationsComponent } from './partial-sidebar-notifica
 import { GroupByPipe } from './group-by.pipe';
 import { PartialUsersSettingsShowComponent } from './users/partial-users-settings-show/partial-users-settings-show.component';
 
+import { ITCollectionService } from '../lib/collection.service';
+
 export function jwtOptionsFactory(envService) {
   return {
     tokenGetter: () => {
@@ -96,7 +100,7 @@ export function init_env(envService: EnvService) {
   declarations: [
     AppComponent,
     PartialNotesListComponent,
-PartialSidebarComponent,
+    PartialSidebarComponent,
     PartialSidebarNavigationComponent,
     ViewMainComponent,
     UsersComponent,
@@ -173,7 +177,8 @@ PartialSidebarComponent,
   ],
   providers: [
     EnvService,
-    UsersService
+    {provide: ITCollectionService, useClass: UsersService, multi: true},
+    {provide: ITCollectionService, useClass: NotesService, multi: true},
   ],
   bootstrap: [AppComponent]
 })
