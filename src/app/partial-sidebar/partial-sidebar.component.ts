@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SidebarService } from './sidebar.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,6 +10,7 @@ import { SidebarService } from './sidebar.service';
   styleUrls: ['./partial-sidebar.component.scss']
 })
 export class PartialSidebarComponent implements OnInit {
+  private sidebarServiceSelectedSubscription: Subscription;
   selected: number;
 
   constructor(
@@ -16,12 +18,18 @@ export class PartialSidebarComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private sidebarService: SidebarService
   ) {
-    this.sidebarService.selected$.subscribe(num =>
+  }
+
+  ngOnInit() {
+    this.sidebarServiceSelectedSubscription = this.sidebarService.selected$.subscribe(num =>
       this.selected = num
     );
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    if(typeof this.sidebarServiceSelectedSubscription !== 'undefined') {
+      this.sidebarServiceSelectedSubscription.unsubscribe();
+    }
   }
 
   navigate(id: string) {
