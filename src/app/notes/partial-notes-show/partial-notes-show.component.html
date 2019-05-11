@@ -14,7 +14,7 @@
       <section class="title">
 
         <div *ngIf="!modeEdit" class="viewer-title">
-          <h1>{{ note.title }}</h1>
+          <h1>{{ editor.controls.title.value }}</h1>
         </div>
 
         <div *ngIf="modeEdit" class="editor-title">
@@ -23,26 +23,26 @@
           </mat-form-field>
         </div>
 
-        <div class="shared-to">
+<!--         <div class="shared-to">
           <button mat-mini-fab *ngFor="let access of note.access | keyvalue">
             <mat-icon [attr.aria-label]="'firstname lastname'" class="material-icons-outlined">face</mat-icon>
           </button>
         </div>
-
+ -->
       </section>
 
       <section class="tags">
         <div *ngIf="!modeEdit" class="viewer-tags">
-          <mat-chip-list *ngIf="!modeEdit" class="tag-list">
-            <mat-chip *ngFor="let tag of note.tags" class="tag">{{ tag }}</mat-chip>
+          <mat-chip-list *ngIf="!modeEdit" class="tag-list" formArrayName="tags">
+            <mat-chip *ngFor="let tag of editor.controls.tags.controls; index as i" class="tag">{{ tag.value }}</mat-chip>
           </mat-chip-list>
         </div>
 
         <div *ngIf="modeEdit" class="editor-tags">
           <mat-form-field floatLabel="never">
-            <mat-chip-list #tags class="tag-list">
-              <mat-chip *ngFor="let tag of note.tags" [selectable]="true" [removable]="true" (removed)="removeTag(tag)" class="tag">
-                {{tag}}
+            <mat-chip-list #tags class="tag-list" formArrayName="tags">
+              <mat-chip *ngFor="let tag of editor.controls.tags.controls; index as i" [selectable]="true" [removable]="true" (removed)="removeTag(i)" class="tag">
+                {{ tag.value }}
                 <mat-icon matChipRemove class="material-icons-outlined">cancel</mat-icon>
               </mat-chip>
               <input placeholder="Add tags"
@@ -57,7 +57,7 @@
 
       <section class="body">
         <div *ngIf="!modeEdit" class="viewer-body">
-          <markdown  [data]="note.body"></markdown>
+          <markdown [data]="editor.controls.body.value"></markdown>
         </div>
         <div *ngIf="modeEdit" class="editor-body">
           <div class="editor-markdown">
@@ -81,14 +81,14 @@
       </section>
 
       <section class="attachments">
-        <mat-chip-list>
+<!--         <mat-chip-list>
           <mat-chip *ngFor="let attachment of note.attachments" [removable]="modeEdit" (removed)="removeAttachment(attachment)">
             <mat-icon *ngIf="!modeEdit" [attr.aria-label]="'Attachment: ' + attachment" class="material-icons-outlined">attach_file</mat-icon>
             <mat-icon *ngIf="modeEdit" matChipRemove class="material-icons-outlined">cancel</mat-icon>
             {{ attachment }}
           </mat-chip>
         </mat-chip-list>
-      </section>
+ -->      </section>
 
     </form>
   </section>

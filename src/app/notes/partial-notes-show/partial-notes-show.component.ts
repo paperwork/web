@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Note } from '../note';
 import { get } from 'lodash';
+import { Record } from 'immutable';
 
 @Component({
   selector: 'partial-notes-show',
@@ -16,6 +17,8 @@ import { get } from 'lodash';
   styleUrls: ['./partial-notes-show.component.scss']
 })
 export class PartialNotesShowComponent implements OnInit {
+  private toolbarStateSubscription: Subscription;
+
   noteId: string;
   note$: Observable<Note>;
   toolbarState: number;
@@ -30,61 +33,95 @@ export class PartialNotesShowComponent implements OnInit {
     private toolbarService: ToolbarService,
     private formBuilder: FormBuilder
   ) {
-    this.toolbarService.state$.subscribe((state: number) => {
-      this.setAll(state);
-    });
-
     this.editor = formBuilder.group({
       color: 'primary',
       title: ['', Validators.required],
       body: ['', Validators.required],
+      tags: formBuilder.array([])
     });
   }
 
   ngOnInit() {
-    this.toolbarService.state = get(history, 'state.toolbarState', this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT);
-
     this.note$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.noteId = params.get('id');
         return this.notesService.show(this.noteId);
       }),
-      tap(note => this.editor.patchValue(note))
+      tap((note?: Note) => {
+        if(typeof note !== 'object') {
+          return this.router.navigate(['/notes']);
+        }
+
+        const noteObject = note.toJS();
+        const additionalTagControlsRequired: number = noteObject.tags.length - this.tags.length;
+        for(let i = 0; i < additionalTagControlsRequired; i++) {
+          this.tags.push(new FormControl());
+        }
+
+        this.editor.patchValue(noteObject);
+      })
     );
 
-    this.editor.get('body').valueChanges.subscribe(value => this.notesService.updateField(this.noteId, 'body', value));
-    this.editor.get('title').valueChanges.subscribe(value => this.notesService.updateField(this.noteId, 'title', value));
+    this.toolbarStateSubscription = this.toolbarService.state$.subscribe((state: number) => {
+      this.setAll(state);
+    });
+
+    this.toolbarService.state = get(history, 'state.toolbarState', this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT);
+  }
+
+  ngOnDestroy() {
+    if(typeof this.toolbarStateSubscription !== 'undefined') {
+      this.toolbarStateSubscription.unsubscribe();
+    }
   }
 
   setAll(state: number) {
-    console.log("Setting state:", state);
     this.toolbarState = state;
     if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT) {
       this.modeEdit = true;
     } else {
       this.modeEdit = false;
-      console.log(this.editor)
+
+      // Store all values
+      this.notesService.updateFields(this.noteId, {
+        'title': this.editor.get(['title']).value,
+        'tags': this.tags.controls.map((tagControl) => tagControl.value),
+        'body': this.editor.get(['body']).value
+      });
     }
+  }
+
+  get tags(): FormArray {
+    return this.editor.get('tags') as FormArray;
   }
 
   addTag(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
 
-    if((value || '').trim()) {
-      this.notesService.pushToField(this.noteId, 'tags', value.trim());
+    if((value || '').trim().length > 0) {
+      this.tags.push(this.formBuilder.control(value.trim()));
     }
 
-    if(input) {
+    if(typeof input !== 'undefined') {
       input.value = '';
     }
   }
 
-  removeTag(tag: string): void {
-    this.notesService.popFromField(this.noteId, 'tags', tag);
+  removeTag(tagIndex: number): void {
+    this.tags.removeAt(tagIndex);
   }
 
-  removeAttachment(attachment: string): void {
-    this.notesService.popFromField(this.noteId, 'attachments', attachment);
+
+  get attachments(): FormArray {
+    return this.editor.get('attachments') as FormArray;
+  }
+
+  // TODO
+  addAttachment(): void {
+  }
+
+  removeAttachment(attachmentIndex: number): void {
+    this.attachments.removeAt(attachmentIndex);
   }
 }
