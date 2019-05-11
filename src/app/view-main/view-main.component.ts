@@ -41,8 +41,7 @@ export class ViewMainComponent implements OnInit, OnDestroy {
   getViewForRoute(): string {
     switch(this.currentRoute) {
     case 'notes':
-      if(typeof this.currentResourceId !== 'undefined'
-      && this.currentResourceId !== null) {
+      if(typeof this.currentResourceId === 'string') {
         return 'notes-show';
       } else {
         return 'notes-list';
