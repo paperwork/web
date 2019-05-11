@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
   private async observeDatabase(db: Dexie): Promise<Dexie> {
     // db.on('changes', async (changes) => {
     //   changes.forEach(async (change) => {
-    //     const collectionService: ICollectionService = this.getCollectionSerive(change.table);
+    //     const collectionService: ICollectionService = this.getCollectionService(change.table);
 
     //     if(collectionService.constructor.prototype.hasOwnProperty('onCollectionChange')) {
     //       await collectionService.onCollectionChange({
@@ -123,7 +123,7 @@ export class AppComponent implements OnInit {
     return this.injector.get(ITCollectionService);
   }
 
-  private getCollectionSerive(name: string): ICollectionService|null {
+  private getCollectionService(name: string): ICollectionService|null {
     const collectionService: ICollectionService|undefined = this.getCollectionServices().find(collectionService => collectionService.collectionName === name);
 
     if(typeof collectionService === 'undefined') {
