@@ -3,15 +3,26 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { CollectionService } from '../../lib/collection.service';
 import { Note } from './note';
 import { MockNotes } from './mock';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotesService {
+export class NotesService extends CollectionService {
+  collectionName: string = 'notes';
+  index: string = 'id,created_at';
 
-  constructor() { }
+  constructor() {
+    super();
+  }
+
+  async onCollectionInit(): Promise<boolean> {
+    const test = await this.collection.toArray();
+    console.log(test);
+    return true;
+  }
 
   getNotes(): Observable<Note[]> {
     return of(MockNotes);
