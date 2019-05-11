@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <mat-checkbox *ngIf="state >= toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED && state <= toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED"
       (change)="$event ? changeAll() : null"
-      [checked]="state === toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED"
+      [checked]="state === toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED || state === toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED"
       [indeterminate]="state === toolbarService.TOOLBAR_STATE_CHECKBOX_SOME_SELECTED || state === toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED">
     </mat-checkbox>
     <button *ngIf="state === toolbarService.TOOLBAR_STATE_BACK_DEFAULT || state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT" mat-button color="primary" class="mat-button-back" (click)="location.back();">
@@ -14,7 +14,7 @@
     </button>
 
     <div class="actions state-{{ state }}">
-      <button mat-button color="{{ state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT ? 'warn' : 'primary' }}" (click)="toggleEditState();" class="actions-if-any-selected" [disabled]="state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED && state !== toolbarService.TOOLBAR_STATE_BACK_DEFAULT && state !== toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT">
+      <button mat-button color="{{ state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT ? 'warn' : 'primary' }}" (click)="toggleEditState();" class="actions-if-any-selected" [disabled]="(state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED && state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED) && state !== toolbarService.TOOLBAR_STATE_BACK_DEFAULT && state !== toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT">
         <mat-icon aria-label="Edit" class="material-icons-outlined">edit</mat-icon>
       </button>
       <button mat-button color="primary" class="actions-if-any-selected">
