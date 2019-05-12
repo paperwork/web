@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SidebarService } from './sidebar.service';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './partial-sidebar.component.html',
   styleUrls: ['./partial-sidebar.component.scss']
 })
-export class PartialSidebarComponent implements OnInit {
+export class PartialSidebarComponent implements OnInit, OnDestroy {
   private sidebarServiceSelectedSubscription: Subscription;
   selected: number;
 
