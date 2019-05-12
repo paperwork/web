@@ -79,7 +79,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     this.toolbarState = state;
     if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT) {
       this.modeEdit = true;
-    } else {
+    } else if(state === this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT) {
       this.modeEdit = false;
 
       // Store all values
