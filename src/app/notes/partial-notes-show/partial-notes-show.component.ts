@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -16,7 +16,7 @@ import { Record } from 'immutable';
   templateUrl: './partial-notes-show.component.html',
   styleUrls: ['./partial-notes-show.component.scss']
 })
-export class PartialNotesShowComponent implements OnInit {
+export class PartialNotesShowComponent implements OnInit, OnDestroy {
   private toolbarStateSubscription: Subscription;
 
   noteId: string;
