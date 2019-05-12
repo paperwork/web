@@ -10,7 +10,7 @@
             folder_open
           </mat-icon>
         </button>
-        <a routerLink="/notes" [queryParams]="{path: node.path }">
+        <a routerLink="/notes" [queryParams]="{'search': '$path=/^' + node.path + '$/' }">
           {{node.name}}
         </a>
       </li>
@@ -25,7 +25,7 @@
               {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}}
             </mat-icon>
           </button>
-          <a routerLink="/notes" [queryParams]="{path: node.path }">
+          <a routerLink="/notes" [queryParams]="{'search': '$path=/^' + node.path + '$/' }">
             {{node.name}}
           </a>
         </div>
