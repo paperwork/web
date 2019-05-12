@@ -27,26 +27,33 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 ## Development
 
+### Prerequisites
+
+In order to start development, you need to have the following tools installed:
+
+- Node.js ([Mac](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-and-create-a-local-development-environment-on-macos) | [Ubuntu Linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04) | [Windows](https://www.wikihow.com/Install-Node.Js-on-Windows))
+- make (Mac: `xcode-select --install` | Ubuntu Linux: `apt-get install make` | [Windows](http://gnuwin32.sourceforge.net/install.html))
+
 ### Development server
 
-Run `make local-run-develop` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
+Open a terminal/command line and `cd` into this directory. Run `make local-run-develop` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
 
 ### Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Open a terminal/command line and `cd` into this directory. Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ### Building
 
-Run `make local-build-develop` to build the project. The build artifacts will be stored in the `dist/` directory. Use `make local-build` for a production build.
+Open a terminal/command line and `cd` into this directory. Run `make local-build-develop` to build the project. The build artifacts will be stored in the `dist/` directory. Use `make local-build` for a production build.
 
 ### Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Open a terminal/command line and `cd` into this directory. Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ### Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Open a terminal/command line and `cd` into this directory. Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
 ### Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Open a terminal/command line and `cd` into this directory. To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
