@@ -8,45 +8,69 @@
     <button *ngIf="state === toolbarService.TOOLBAR_STATE_BACK_DEFAULT || state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT" mat-button color="primary" class="mat-button-back" (click)="location.back();">
       <mat-icon aria-label="Back" class="material-icons-outlined">arrow_back</mat-icon>
     </button>
-    <button mat-raised-button color="primary" (click)="newNote();">
+    <button mat-raised-button color="primary" (click)="buttonNewNote();">
       <mat-icon class="material-icons-outlined">note_add</mat-icon>
       <span class="text">New Note</span>
     </button>
 
     <div class="actions state-{{ state }}">
-      <button mat-button color="{{ state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT ? 'warn' : 'primary' }}" (click)="toggleEditState();" class="actions-if-any-selected" [disabled]="(state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED && state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED) && state !== toolbarService.TOOLBAR_STATE_BACK_DEFAULT && state !== toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT">
+      <button
+        mat-button color="{{ state === toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT ? 'warn' : 'primary' }}"
+        (click)="toggleEditState();" class="actions-if-any-selected"
+        [disabled]="(state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_SELECTED && state !== toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED) && state !== toolbarService.TOOLBAR_STATE_BACK_DEFAULT && state !== toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT"
+        matTooltip="Edit"
+      >
         <mat-icon aria-label="Edit" class="material-icons-outlined">edit</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Duplicate">
         <mat-icon aria-label="Duplicate" class="material-icons-outlined">file_copy</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
-        <mat-icon aria-label="Move" class="material-icons-outlined">forward</mat-icon>
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Move to folder" (click)="buttonMove()">
+        <mat-icon aria-label="Move to folder" class="material-icons-outlined">forward</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Print">
         <mat-icon aria-label="Print" class="material-icons-outlined">print</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Export">
         <mat-icon aria-label="Export" class="material-icons-outlined">save_alt</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Share">
         <mat-icon aria-label="Share" class="material-icons-outlined">share</mat-icon>
       </button>
-      <button mat-button color="primary" class="actions-if-any-selected">
+      <button mat-button color="primary" class="actions-if-any-selected" matTooltip="Delete">
         <mat-icon aria-label="Delete" class="material-icons-outlined">delete</mat-icon>
       </button>
 
-      <button mat-button color="primary" class="actions-if-none-selected">
+      <button mat-button color="primary" class="actions-if-none-selected" [matMenuTriggerFor]="sortMenu" matTooltip="Sort">
         <mat-icon aria-label="Sort" class="material-icons-outlined">sort_by_alpha</mat-icon>
       </button>
+      <mat-menu #sortMenu="matMenu">
+        <button mat-menu-item>
+          <mat-icon class="material-icons-outlined">arrow_downward</mat-icon>
+          <span>Title (A-Z)</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="material-icons-outlined">arrow_upward</mat-icon>
+          <span>Title (Z-A)</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item>
+          <mat-icon class="material-icons-outlined">arrow_downward</mat-icon>
+          <span>Date (newest on top)</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="material-icons-outlined">arrow_upward</mat-icon>
+          <span>Date (oldest on top)</span>
+        </button>
+      </mat-menu>
     </div>
 
     <span class="fill-remaining-space"></span>
 
-    <form class="search">
+    <form class="search" [formGroup]="search">
       <mat-form-field class="search-field" appearance="outline">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="search" tabindex="1">
+        <input matInput type="search" tabindex="1" formControlName="searchInput">
       </mat-form-field>
     </form>
 

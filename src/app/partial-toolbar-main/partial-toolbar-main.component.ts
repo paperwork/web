@@ -1,11 +1,14 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
-import { ToolbarService } from './toolbar.service';
+import { ToolbarService, ToolbarAction } from './toolbar.service';
 import { NotesService } from '../notes/notes.service';
 import { AlertService } from '../partial-alert/alert.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { FormGroup, FormControl } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogMoveComponent } from './dialog-move/dialog-move.component';
 
 @Component({
   selector: 'partial-toolbar-main',
@@ -15,20 +18,28 @@ import { Subscription } from 'rxjs';
 export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private toolbarServiceStateSubscription: Subscription;
+  private searchInputValueSubscription: Subscription;
+  private routeQueryParamsSubscription: Subscription;
 
   state: number = 0;
   previousState: number = 0;
+
+  search = new FormGroup({
+    searchInput: new FormControl(''),
+  });
 
   private _mobileQueryListener: () => void;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
     private location: Location,
     private toolbarService: ToolbarService,
     private notesService: NotesService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private dialog: MatDialog
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 980px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -43,6 +54,14 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
         this.state = state;
       }
     });
+
+    this.searchInputValueSubscription = this.search.get(['searchInput']).valueChanges.subscribe((value: string) => {
+      this.toolbarService.search = value;
+    });
+
+    this.routeQueryParamsSubscription = this.route.queryParams.subscribe(params => {
+      this.setSearch(params['search']);
+    });
   }
 
   ngOnDestroy(): void {
@@ -50,6 +69,14 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
     if(typeof this.toolbarServiceStateSubscription !== 'undefined') {
       this.toolbarServiceStateSubscription.unsubscribe();
+    }
+
+    if(typeof this.searchInputValueSubscription !== 'undefined') {
+      this.searchInputValueSubscription.unsubscribe();
+    }
+
+    if(typeof this.routeQueryParamsSubscription !== 'undefined') {
+      this.routeQueryParamsSubscription.unsubscribe();
     }
   }
 
@@ -75,7 +102,11 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     }
   }
 
-  async newNote(): Promise<boolean> {
+  setSearch(value: string) {
+    this.search.get(['searchInput']).setValue(value);
+  }
+
+  async buttonNewNote(): Promise<boolean> {
     const id: string|null = this.notesService.newNote();
 
     if(id === null) {
@@ -85,5 +116,24 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
     return this.router.navigate(['notes', id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
   }
+
+  buttonMove() {
+    const dialogRef = this.dialog.open(DialogMoveComponent, {
+      width: '350px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(path => {
+      if(typeof path !== 'string') {
+        return;
+      }
+
+      console.log('The dialog was closed with path:');
+      console.log(path);
+
+      this.toolbarService.trigger = new ToolbarAction('move', { 'path': path });
+    });
+  }
+
 
 }
