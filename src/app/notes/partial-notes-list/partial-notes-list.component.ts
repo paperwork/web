@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
-import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
+import { ToolbarService, ToolbarAction, ToolbarActionPayload } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
 import { Router } from '@angular/router';
 import { List } from 'immutable';
@@ -17,6 +17,8 @@ import { Note } from '../note';
 export class PartialNotesListComponent implements OnInit, OnDestroy {
   private notesServiceSubscription: Subscription;
   private toolbarServiceStateSubscription: Subscription;
+  private toolbarServiceSearchSubscription: Subscription;
+  private toolbarServiceActionsSubscription: Subscription;
 
   searchEngine: SearchEngine = new SearchEngine();
   dataSource = new MatTableDataSource();
@@ -41,14 +43,28 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
     })
 
     this.toolbarServiceStateSubscription = this.toolbarService.state$.subscribe((state: number) => {
-      if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT
-      && this.selection.selected.length === 1) {
-        return this.router.navigate(['notes', this.selection.selected[0].id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
-      }
       this.setAll(state);
     });
 
-    this.dataSource.sort = this.sort;
+    this.toolbarServiceSearchSubscription = this.toolbarService.search$.subscribe((search?: string) => {
+      if(typeof search != 'string') {
+        search = '';
+      }
+
+      this.dataSource.filter = search;
+    });
+
+    this.toolbarServiceActionsSubscription = this.toolbarService.actions$.subscribe((toolbarAction: ToolbarAction) => {
+      switch(toolbarAction.action) {
+      case 'move':
+        this.toolbarActionMove(toolbarAction.payload);
+        break;
+      default:
+        console.log('Unhandled action: %s', toolbarAction.action);
+        break;
+      }
+    });
+
     this.setState();
   }
 
@@ -60,15 +76,31 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
     if(typeof this.toolbarServiceStateSubscription !== 'undefined') {
       this.toolbarServiceStateSubscription.unsubscribe();
     }
+
+    if(typeof this.toolbarServiceSearchSubscription !== 'undefined') {
+      this.toolbarServiceSearchSubscription.unsubscribe();
+    }
+
+    if(typeof this.toolbarServiceActionsSubscription !== 'undefined') {
+      this.toolbarServiceActionsSubscription.unsubscribe();
+    }
   }
 
   setAll(state: number) {
-    if(state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED) {
+    const numberOfEntries: number = this.dataSource.data.length;
+
+    if(state === this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT
+    && this.selection.selected.length === 1) {
+      return this.router.navigate(['notes', this.selection.selected[0].id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
+    } else if(state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED) {
       this.selection.clear();
     } else if(state === this.toolbarService.TOOLBAR_STATE_CHECKBOX_ALL_SELECTED) {
-      if(this.dataSource.data.length === 1) {
+      if(numberOfEntries === 1) {
         // TODO: Find another way around this hack
-        setTimeout(() => { this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED }, 200);
+        setTimeout(() => { this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_ONE_OF_ONE_SELECTED }, 100);
+      } else if(numberOfEntries === 0) {
+        // TODO: Find another way around this hack
+        setTimeout(() => { this.toolbarService.state = this.toolbarService.TOOLBAR_STATE_CHECKBOX_NONE_SELECTED }, 100);
       }
 
       this.dataSource.data.forEach(row => this.selection.select(row));
@@ -108,5 +140,19 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
   isOneSelected() {
     return this.selection.selected.length === 1;
+  }
+
+  private toolbarActionMove(payload: ToolbarActionPayload) {
+    if(this.selection.selected.length === 0
+    || typeof payload.path !== 'string') {
+      return;
+    }
+
+    this.selection.selected.forEach((note: Note) => {
+      const updatedNote: Note = note.set('path', payload.path);
+      this.notesService.update(note.id, updatedNote);
+    });
+
+    this.setState();
   }
 }
