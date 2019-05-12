@@ -1,10 +1,12 @@
-import {NestedTreeControl} from '@angular/cdk/tree';
-import {MatTreeNestedDataSource} from '@angular/material/tree';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NestedTreeControl } from '@angular/cdk/tree';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { forEach, get, lowerCase } from 'lodash';
+import { Subscription } from 'rxjs';
+import { NotesService } from '../notes/notes.service';
 import { Note } from '../notes/note';
-import { MockNotes } from '../notes/mock';
 import { SidebarService } from '../partial-sidebar/sidebar.service';
+import { List } from 'immutable';
 
 interface PathNode {
   name: string;
@@ -18,17 +20,29 @@ interface PathNode {
   styleUrls: ['./partial-sidebar-folders.component.scss']
 })
 export class PartialSidebarFoldersComponent implements OnInit, OnDestroy {
+  private notesServiceSubscription: Subscription;
   treeControl = new NestedTreeControl<PathNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<PathNode>();
 
   constructor(
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private notesService: NotesService
   ) {
-    this.dataSource.data = this.pathNodesFromNotes(MockNotes);
   }
 
   ngOnInit() {
+    this.notesServiceSubscription = this.notesService.entries.subscribe((notes: List<Note>) => {
+      this.dataSource.data = this.pathNodesFromNotes(notes.toArray());
+    })
+
     // this.treeControl.expandAll(); // TODO: This doesn't seem to work.
+
+  }
+
+  ngOnDestroy() {
+    if(typeof this.notesServiceSubscription !== 'undefined') {
+      this.notesServiceSubscription.unsubscribe();
+    }
   }
 
   buildPathNode(name: string, path: string): PathNode {
@@ -65,7 +79,8 @@ export class PartialSidebarFoldersComponent implements OnInit, OnDestroy {
 
     forEach(notes, (note: Note): boolean => {
       const path: string|null = get(note, 'path', null);
-      if(path === null) {
+      if(path === null
+      || path.trim() === '') {
         return true;
       }
 
