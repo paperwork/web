@@ -1,0 +1,18 @@
+<div class="mat-typography">
+  <h1 mat-dialog-title>Move note into folder ...</h1>
+  <div mat-dialog-content>
+    <p>Select the folder you would like to move the note into or enter a new one:</p>
+  <mat-form-field class="example-full-width">
+    <input matInput type="text" placeholder="Folder" aria-label="Number" [matAutocomplete]="auto" [(ngModel)]="data.folder">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let folder of data.folders" [value]="folder">
+        {{ folder }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data.folder" cdkFocusInitial>Move</button>
+  </div>
+</div>

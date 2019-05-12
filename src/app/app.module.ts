@@ -79,6 +79,7 @@ import { GroupByPipe } from './group-by.pipe';
 import { PartialUsersSettingsShowComponent } from './users/partial-users-settings-show/partial-users-settings-show.component';
 
 import { ITCollectionService } from '../lib/collection.service';
+import { DialogMoveComponent } from './partial-toolbar-main/dialog-move/dialog-move.component';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -113,6 +114,7 @@ export function init_env(envService: EnvService) {
     PartialSidebarNotificationsComponent,
     GroupByPipe,
     PartialUsersSettingsShowComponent,
+    DialogMoveComponent,
   ],
   imports: [
     BrowserModule,
@@ -179,6 +181,9 @@ export function init_env(envService: EnvService) {
     EnvService,
     {provide: ITCollectionService, useClass: UsersService, multi: true},
     {provide: ITCollectionService, useClass: NotesService, multi: true},
+  ],
+  entryComponents: [
+    DialogMoveComponent
   ],
   bootstrap: [AppComponent]
 })
