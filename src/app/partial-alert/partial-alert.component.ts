@@ -9,7 +9,7 @@ import { AlertService } from './alert.service';
   templateUrl: './partial-alert.component.html',
   styleUrls: ['./partial-alert.component.scss']
 })
-export class PartialAlertComponent implements OnInit {
+export class PartialAlertComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   durationInSeconds: number = 100;
 
