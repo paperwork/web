@@ -6,7 +6,7 @@ import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
 import { Router } from '@angular/router';
 import { List } from 'immutable';
-
+import { SearchEngine } from '../../../lib/search.helper';
 import { Note } from '../note';
 
 @Component({
@@ -18,6 +18,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
   private notesServiceSubscription: Subscription;
   private toolbarServiceStateSubscription: Subscription;
 
+  searchEngine: SearchEngine = new SearchEngine();
   dataSource = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   selection = null;
@@ -31,6 +32,9 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.filterPredicate = (note: Note, filter: string) => this.searchEngine.filterPredicate(note, filter);
+
     this.notesServiceSubscription = this.notesService.entries.subscribe((notes: List<Note>) => {
       this.dataSource.data = notes.toArray();
       this.selection = new SelectionModel<Note>(true, []);
