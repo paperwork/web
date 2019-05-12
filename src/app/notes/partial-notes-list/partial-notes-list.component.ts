@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
@@ -14,7 +14,7 @@ import { Note } from '../note';
   templateUrl: './partial-notes-list.component.html',
   styleUrls: ['./partial-notes-list.component.scss']
 })
-export class PartialNotesListComponent implements OnInit {
+export class PartialNotesListComponent implements OnInit, OnDestroy {
   private notesServiceSubscription: Subscription;
   private toolbarServiceStateSubscription: Subscription;
 
