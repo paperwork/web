@@ -1,11 +1,23 @@
 import { List, Record } from 'immutable';
 
-type TNoteAccessPermissions = {
-    can_leave: boolean;
-    can_read: boolean;
-    can_share: boolean;
-    can_write: boolean;
+type TNoteAccessUser = {
+  user?: {
+    email: string;
+    name: {
+      first_name: string;
+      last_name: string;
+    }
   }
+}
+
+type TNoteAccessPermissions = {
+  can_leave: boolean;
+  can_read: boolean;
+  can_share: boolean;
+  can_write: boolean;
+}
+
+type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
 
 interface INote {
   id: string;
