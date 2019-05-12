@@ -1,7 +1,7 @@
 <div class="background-wrapper">
 
   <mat-chip-list class="tag-list">
-    <mat-chip *ngFor="let tag of tags" class="tag" routerLink="/notes" [queryParams]="{'tag': tag }">{{ tag }}</mat-chip>
+    <mat-chip *ngFor="let tag of tags" class="tag" routerLink="/notes" [queryParams]="{'search': '$tags=/^' + tag + '$/' }">{{ tag }}</mat-chip>
   </mat-chip-list>
 
 </div>
