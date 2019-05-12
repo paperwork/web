@@ -99,7 +99,7 @@ export class PartialNotesListComponent implements OnInit {
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
-    return numSelected == numRows;
+    return (numRows > 0 ? numSelected == numRows : false);
   }
 
   isOneSelected() {
