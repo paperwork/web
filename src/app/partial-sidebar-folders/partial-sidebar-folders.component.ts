@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {MatTreeNestedDataSource} from '@angular/material/tree';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { forEach, get, lowerCase } from 'lodash';
 import { Note } from '../notes/note';
 import { MockNotes } from '../notes/mock';
@@ -17,7 +17,7 @@ interface PathNode {
   templateUrl: './partial-sidebar-folders.component.html',
   styleUrls: ['./partial-sidebar-folders.component.scss']
 })
-export class PartialSidebarFoldersComponent implements OnInit {
+export class PartialSidebarFoldersComponent implements OnInit, OnDestroy {
   treeControl = new NestedTreeControl<PathNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<PathNode>();
 
