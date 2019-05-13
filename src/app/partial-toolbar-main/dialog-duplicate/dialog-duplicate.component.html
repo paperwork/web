@@ -1,0 +1,29 @@
+<div class="mat-typography">
+  <h1 mat-dialog-title i18n>Duplicate</h1>
+  <div mat-dialog-content>
+    <p i18n>
+      Select the the properties of the note(s) that should be copied into the duplicates.
+    </p>
+    <mat-list>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.title">Title</mat-checkbox>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.access">Access</mat-checkbox>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.tags">Tags</mat-checkbox>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.body">Body</mat-checkbox>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.attachments">Attachments</mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()" i18n>Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial i18n>Duplicate</button>
+  </div>
+</div>

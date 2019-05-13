@@ -80,6 +80,7 @@ import { PartialUsersSettingsShowComponent } from './users/partial-users-setting
 
 import { ITCollectionService } from '../lib/collection.service';
 import { DialogMoveComponent } from './partial-toolbar-main/dialog-move/dialog-move.component';
+import { DialogDuplicateComponent } from './partial-toolbar-main/dialog-duplicate/dialog-duplicate.component';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -115,6 +116,7 @@ export function init_env(envService: EnvService) {
     GroupByPipe,
     PartialUsersSettingsShowComponent,
     DialogMoveComponent,
+    DialogDuplicateComponent,
   ],
   imports: [
     BrowserModule,
@@ -183,7 +185,8 @@ export function init_env(envService: EnvService) {
     {provide: ITCollectionService, useClass: NotesService, multi: true},
   ],
   entryComponents: [
-    DialogMoveComponent
+    DialogMoveComponent,
+    DialogDuplicateComponent,
   ],
   bootstrap: [AppComponent]
 })
