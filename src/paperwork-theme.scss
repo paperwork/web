@@ -87,6 +87,11 @@ a[color=primary] {
   text-decoration: none;
 }
 
+a[color=white] {
+  color: #ffffff;
+  text-decoration: none;
+}
+
 .background-plain {
   background-color: $background-plain;
 }
