@@ -8,6 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogDuplicateComponent } from './dialog-duplicate/dialog-duplicate.component';
 import { DialogMoveComponent } from './dialog-move/dialog-move.component';
 
 @Component({
@@ -131,6 +132,30 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     }
 
     return this.router.navigate(['notes', id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
+  }
+
+  buttonDuplicate() {
+    const dialogRef = this.dialog.open(DialogDuplicateComponent, {
+      width: '350px',
+      data: {
+        title: true,
+        access: false,
+        tags: true,
+        body: true,
+        attachments: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if(typeof data !== 'object') {
+        return;
+      }
+
+      console.log('The dialog was closed with data:');
+      console.log(data);
+
+      this.toolbarService.trigger = new ToolbarAction('duplicate', data);
+    });
   }
 
   buttonMove() {
