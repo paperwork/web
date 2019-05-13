@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { ToolbarService } from '../../partial-toolbar-main/toolbar.service';
+import { ToolbarService, ToolbarAction, ToolbarActionPayload } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material';
@@ -10,6 +10,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Note } from '../note';
 import { get } from 'lodash';
 import { Record } from 'immutable';
+import { AlertService } from '../../partial-alert/alert.service';
 
 @Component({
   selector: 'partial-notes-show',
@@ -18,6 +19,7 @@ import { Record } from 'immutable';
 })
 export class PartialNotesShowComponent implements OnInit, OnDestroy {
   private toolbarStateSubscription: Subscription;
+  private toolbarServiceActionsSubscription: Subscription;
 
   noteId: string;
   note$: Observable<Note>;
@@ -31,13 +33,15 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     private router: Router,
     private notesService: NotesService,
     private toolbarService: ToolbarService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private alertService: AlertService
   ) {
     this.editor = formBuilder.group({
       color: 'primary',
       title: ['', Validators.required],
+      tags: formBuilder.array([]),
       body: ['', Validators.required],
-      tags: formBuilder.array([])
+      path: ['']
     });
   }
 
@@ -66,12 +70,30 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       this.setAll(state);
     });
 
+    this.toolbarServiceActionsSubscription = this.toolbarService.actions$.subscribe((toolbarAction: ToolbarAction) => {
+      switch(toolbarAction.action) {
+      case 'duplicate':
+        this.toolbarActionDuplicate(toolbarAction.payload);
+        break;
+      case 'move':
+        this.toolbarActionMove(toolbarAction.payload);
+        break;
+      default:
+        console.log('Unhandled action: %s', toolbarAction.action);
+        break;
+      }
+    });
+
     this.toolbarService.state = get(history, 'state.toolbarState', this.toolbarService.TOOLBAR_STATE_BACK_DEFAULT);
   }
 
   ngOnDestroy() {
     if(typeof this.toolbarStateSubscription !== 'undefined') {
       this.toolbarStateSubscription.unsubscribe();
+    }
+
+    if(typeof this.toolbarServiceActionsSubscription !== 'undefined') {
+      this.toolbarServiceActionsSubscription.unsubscribe();
     }
   }
 
@@ -83,12 +105,37 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       this.modeEdit = false;
 
       // Store all values
-      this.notesService.updateFields(this.noteId, {
-        'title': this.editor.get(['title']).value,
-        'tags': this.tags.controls.map((tagControl) => tagControl.value),
-        'body': this.editor.get(['body']).value
-      });
+      this.saveNote();
     }
+  }
+
+  saveNote(id?: string, fieldsToSave?: object) {
+    if(typeof id !== 'string') {
+      id = this.noteId;
+    }
+
+    let allFields = {
+      'title': this.editor.get(['title']).value,
+      'tags': this.tags.controls.map((tagControl) => tagControl.value),
+      'body': this.editor.get(['body']).value,
+      'path': this.editor.get(['path']).value
+    };
+
+    let toBeSavedFields: Object = allFields;
+
+    if(typeof fieldsToSave === 'object') {
+      toBeSavedFields = Object.keys(allFields).reduce((newFields: object, field: string) => {
+        if(fieldsToSave[field] === false) {
+          delete newFields[field];
+        }
+
+        return newFields;
+      }, allFields);
+    }
+
+    console.log(toBeSavedFields);
+
+    this.notesService.updateFields(id, toBeSavedFields);
   }
 
   get tags(): FormArray {
@@ -124,4 +171,23 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
   removeAttachment(attachmentIndex: number): void {
     this.attachments.removeAt(attachmentIndex);
   }
+
+  private toolbarActionDuplicate(payload: ToolbarActionPayload) {
+    const id: string|null = this.notesService.newNote();
+
+    if(id === null) {
+      this.alertService.error('Could not duplicate note!');
+      return false;
+    }
+
+    this.saveNote(id, payload);
+    this.alertService.success(`Duplicated note! <a color="white" href="/notes/${id}">Click here to open duplicate now.</a>`);
+  }
+
+  private toolbarActionMove(payload: ToolbarActionPayload) {
+    this.editor.get(['path']).setValue(payload.path);
+    this.saveNote();
+    this.alertService.success(`Moved note to folder '${payload.path}'!`);
+  }
+
 }
