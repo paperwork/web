@@ -18,6 +18,7 @@ import { DialogMoveComponent } from './dialog-move/dialog-move.component';
 export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private toolbarServiceStateSubscription: Subscription;
+  private toolbarServiceSearchSubscription: Subscription;
   private searchInputValueSubscription: Subscription;
   private routeQueryParamsSubscription: Subscription;
 
@@ -32,7 +33,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
     private location: Location,
@@ -55,12 +56,23 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.toolbarServiceSearchSubscription = this.toolbarService.search$.subscribe((search?: string) => {
+      if(this.search.get(['searchInput']).value === search
+      || typeof search !== 'string') {
+        return false;
+      }
+
+      this.setSearch(search);
+    });
+
     this.searchInputValueSubscription = this.search.get(['searchInput']).valueChanges.subscribe((value: string) => {
       this.toolbarService.search = value;
     });
 
-    this.routeQueryParamsSubscription = this.route.queryParams.subscribe(params => {
-      this.setSearch(params['search']);
+    this.routeQueryParamsSubscription = this.activatedRoute.queryParams.subscribe(params => {
+      if(typeof params.search === 'string') {
+        this.setSearch(params['search']);
+      }
     });
   }
 
@@ -69,6 +81,10 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
     if(typeof this.toolbarServiceStateSubscription !== 'undefined') {
       this.toolbarServiceStateSubscription.unsubscribe();
+    }
+
+    if(typeof this.toolbarServiceSearchSubscription !== 'undefined') {
+      this.toolbarServiceSearchSubscription.unsubscribe();
     }
 
     if(typeof this.searchInputValueSubscription !== 'undefined') {
@@ -134,6 +150,5 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       this.toolbarService.trigger = new ToolbarAction('move', { 'path': path });
     });
   }
-
 
 }
