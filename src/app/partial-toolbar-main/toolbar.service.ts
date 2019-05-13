@@ -48,12 +48,13 @@ export class ToolbarService {
     this._search.next(val);
   }
 
-  private readonly _actions = new BehaviorSubject<ToolbarAction>(new ToolbarAction('', {}));
+  private readonly _actions = new BehaviorSubject<ToolbarAction>(new ToolbarAction('0x90', {}));
 
   public readonly actions$ = this._actions.asObservable();
 
   public set trigger(toolbarAction: ToolbarAction) {
     this._actions.next(toolbarAction);
+    this._actions.next(new ToolbarAction('0x90', {}));
   }
 
 }
