@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { List } from 'immutable';
 import { SearchEngine } from '../../../lib/search.helper';
 import { Note } from '../note';
+import { AlertService } from '../../partial-alert/alert.service';
 
 @Component({
   selector: 'partial-notes-list',
@@ -29,7 +30,8 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private toolbarService: ToolbarService,
-    private notesService: NotesService
+    private notesService: NotesService,
+    private alertService: AlertService
   ) {
   }
 
@@ -143,7 +145,8 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
   }
 
   private toolbarActionMove(payload: ToolbarActionPayload) {
-    if(this.selection.selected.length === 0
+    const selectedNumber: number = this.selection.selected.length;
+    if(selectedNumber === 0
     || typeof payload.path !== 'string') {
       return;
     }
@@ -153,6 +156,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
       this.notesService.update(note.id, updatedNote);
     });
 
+    this.alertService.success(`Moved ${selectedNumber} notes to folder '${payload.path}'!`);
     this.setState();
   }
 }
