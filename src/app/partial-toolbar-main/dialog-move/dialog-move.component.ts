@@ -37,7 +37,7 @@ export class DialogMoveComponent implements OnInit, OnDestroy {
     }
   }
 
-  onNoClick(): void {
+  onCancel(): void {
     this.dialogRef.close();
   }
 

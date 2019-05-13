@@ -1,8 +1,13 @@
 <div class="mat-typography">
-  <h1 mat-dialog-title>Move note into folder ...</h1>
+  <h1 mat-dialog-title i18n>Move</h1>
   <div mat-dialog-content>
-    <p>Select the folder you would like to move the note into or enter a new one:</p>
-  <mat-form-field class="example-full-width">
+    <p i18n>
+      Select the folder you would like to move the note(s) into or enter a new one.<br>
+      You can create a folder structure by using the <b>/</b>-separator, e.g. <i>Parent Folder/Child Folder</i>.<br>
+      <br>
+      In order to move a note out of any folder, simply leave the <i>Folder</i> textfield empty.
+    </p>
+  <mat-form-field class="full-width">
     <input matInput type="text" placeholder="Folder" aria-label="Number" [matAutocomplete]="auto" [(ngModel)]="data.folder">
     <mat-autocomplete #auto="matAutocomplete">
       <mat-option *ngFor="let folder of data.folders" [value]="folder">
@@ -12,7 +17,7 @@
   </mat-form-field>
   </div>
   <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="data.folder" cdkFocusInitial>Move</button>
+    <button mat-button (click)="onCancel()" i18n>Cancel</button>
+    <button mat-button [mat-dialog-close]="data.folder" cdkFocusInitial i18n>Move</button>
   </div>
 </div>
