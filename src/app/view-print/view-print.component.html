@@ -1,0 +1,6 @@
+<div class="background-plain mat-typography">
+  <div *ngFor="let entity of entities" class="entity">
+    {{ entity.title }}
+    <markdown [data]="entity.body"></markdown>
+  </div>
+</div>

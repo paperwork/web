@@ -78,6 +78,9 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       case 'move':
         this.toolbarActionMove(toolbarAction.payload);
         break;
+      case 'print':
+        this.toolbarActionPrint(toolbarAction.payload);
+        break;
       default:
         console.log('Unhandled action: %s', toolbarAction.action);
         break;
@@ -190,4 +193,9 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     this.alertService.success(`Moved note to folder '${payload.path}'!`);
   }
 
+  private toolbarActionPrint(payload: ToolbarActionPayload) {
+    return this.router.navigate([]).then(result => {
+      window.open(`/print/notes/${this.noteId}`, '_blank');
+    });
+  }
 }

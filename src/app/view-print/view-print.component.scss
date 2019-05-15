@@ -1,0 +1,7 @@
+.entity {
+  page-break-after: always;
+}
+
+.entity:last-child {
+  page-break-after: avoid;
+}

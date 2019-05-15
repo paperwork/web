@@ -176,4 +176,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  buttonPrint() {
+    this.toolbarService.trigger = new ToolbarAction('print', {});
+  }
 }

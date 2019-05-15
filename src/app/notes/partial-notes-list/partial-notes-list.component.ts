@@ -64,6 +64,9 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
       case 'move':
         this.toolbarActionMove(toolbarAction.payload);
         break;
+      case 'print':
+        this.toolbarActionPrint(toolbarAction.payload);
+        break;
       default:
         console.log('Unhandled action: %s', toolbarAction.action);
         break;
@@ -189,5 +192,22 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
     this.alertService.success(`Moved ${selectedNumber} notes to folder '${payload.path}'!`);
     this.setState();
+  }
+
+  private toolbarActionPrint(payload: ToolbarActionPayload) {
+    const selectedNumber: number = this.selection.selected.length;
+    let ids: Array<string> = [];
+
+    if(selectedNumber === 0) {
+      return;
+    }
+
+    this.selection.selected.forEach((note: Note) => {
+      ids.push(note.id);
+    });
+
+    return this.router.navigate([]).then(result => {
+      window.open(`/print/notes/${ids.join(',')}`, '_blank');
+    });
   }
 }

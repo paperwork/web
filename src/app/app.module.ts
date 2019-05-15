@@ -81,6 +81,7 @@ import { PartialUsersSettingsShowComponent } from './users/partial-users-setting
 import { ITCollectionService } from '../lib/collection.service';
 import { DialogMoveComponent } from './partial-toolbar-main/dialog-move/dialog-move.component';
 import { DialogDuplicateComponent } from './partial-toolbar-main/dialog-duplicate/dialog-duplicate.component';
+import { ViewPrintComponent } from './view-print/view-print.component';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -117,6 +118,7 @@ export function init_env(envService: EnvService) {
     PartialUsersSettingsShowComponent,
     DialogMoveComponent,
     DialogDuplicateComponent,
+    ViewPrintComponent,
   ],
   imports: [
     BrowserModule,

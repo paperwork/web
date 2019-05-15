@@ -49,7 +49,11 @@ export class NotesService extends CollectionService implements ICollectionServic
     return true;
   }
 
-  public show(id: string) {
+  public listSnapshot(): List<Note> {
+    return this._entries.getValue();
+  }
+
+  public show(id: string): Observable<Note> {
     return this.entries.pipe(
       map((notes: List<Note>) => notes.find(note => note.id === id))
     );
