@@ -7,7 +7,7 @@ import { NotesService } from '../notes.service';
 import { Router } from '@angular/router';
 import { List } from 'immutable';
 import { SearchEngine } from '../../../lib/search.helper';
-import { Note } from '../note';
+import { Note, INote } from '../note';
 import { AlertService } from '../../partial-alert/alert.service';
 
 @Component({
@@ -58,6 +58,9 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
     this.toolbarServiceActionsSubscription = this.toolbarService.actions$.subscribe((toolbarAction: ToolbarAction) => {
       switch(toolbarAction.action) {
+      case 'duplicate':
+        this.toolbarActionDuplicate(toolbarAction.payload);
+        break;
       case 'move':
         this.toolbarActionMove(toolbarAction.payload);
         break;
@@ -142,6 +145,34 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
   isOneSelected() {
     return this.selection.selected.length === 1;
+  }
+
+  private toolbarActionDuplicate(payload: ToolbarActionPayload) {
+    const fieldsToSave: Object = payload;
+    const selectedNumber: number = this.selection.selected.length;
+    if(selectedNumber === 0) {
+      return;
+    }
+
+    this.selection.selected.forEach((note: Note) => {
+      const allFields: INote = note.toJS();
+      let toBeSavedFields: INote = allFields;
+
+      if(typeof fieldsToSave === 'object') {
+        toBeSavedFields = Object.keys(allFields).reduce((newFields: INote, field: string): INote => {
+          if(fieldsToSave[field] === false) {
+            delete newFields[field];
+          }
+
+          return newFields;
+        }, allFields);
+      }
+
+      const id: string|null = this.notesService.newNote(toBeSavedFields);
+    });
+
+    this.alertService.success(`Duplicated note(s)!`);
+    this.setState();
   }
 
   private toolbarActionMove(payload: ToolbarActionPayload) {

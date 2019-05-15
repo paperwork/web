@@ -19,21 +19,21 @@ type TNoteAccessPermissions = {
 
 type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
 
-interface INote {
+export interface INote {
   id: string;
-  title: string;
-  body: string;
-  attachments: Array<string>;
-  tags: Array<string>;
-  meta: {
+  title?: string;
+  body?: string;
+  attachments?: Array<string>;
+  tags?: Array<string>;
+  meta?: {
     [key: string]: any
   };
-  access: {
+  access?: {
     [userGid: string]: TNoteAccessPermissions
   }
-  path: string;
-  created_by: string;
-  created_at: Date;
+  path?: string;
+  created_by?: string;
+  created_at?: Date;
 }
 
 export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {

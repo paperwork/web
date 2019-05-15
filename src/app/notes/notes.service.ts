@@ -7,7 +7,7 @@ import { ObjectId } from '../../lib/objectid.helper';
 
 import { tokenGetDecoded } from '../../lib/token.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
-import { Note, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
+import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
 @Injectable({
   providedIn: 'root'
@@ -55,11 +55,16 @@ export class NotesService extends CollectionService implements ICollectionServic
     );
   }
 
-  public newNote(): string|null {
+  public newNote(fields?: INote): string|null {
     const objectId: ObjectId = new ObjectId();
     const id: string = objectId.toString();
     const userGid: string = (tokenGetDecoded()).userGid;
-    const note: Note = (new Note({ id: id }).addAccess(userGid, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER));
+    if(typeof fields === 'object') {
+      fields.id = id;
+    } else {
+      fields = { id: id };
+    }
+    const note: Note = (new Note(fields).addAccess(userGid, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER));
 
     if(this.create(note) === true) {
       return id;
