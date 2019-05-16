@@ -46,7 +46,7 @@
     "@angular/router": "~7.2.14",
     "@auth0/angular-jwt": "^2.1.0",
     "buffer": "^5.2.1",
-    "dexie": "^3.0.0-alpha.8",
+    "dexie": "^2.0.4",
     "dexie-observable": "^1.0.0-beta.5",
     "dexie-syncable": "^1.0.0-beta.4",
     "hammerjs": "^2.0.8",
