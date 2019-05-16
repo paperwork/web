@@ -4,7 +4,7 @@ import { EnvService } from './env/env.service';
 import { ITCollectionService, ICollectionService } from '../lib/collection.service';
 import { get } from 'lodash';
 import Dexie from 'dexie';
-// import 'dexie-observable';
+import 'dexie-observable';
 
 export class DexieStores {
   [key: string]: string
