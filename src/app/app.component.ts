@@ -48,23 +48,23 @@ export class AppComponent implements OnInit {
   }
 
   private async observeDatabase(db: Dexie): Promise<Dexie> {
-    // db.on('changes', async (changes) => {
-    //   changes.forEach(async (change) => {
-    //     const collectionService: ICollectionService = this.getCollectionService(change.table);
+    db.on('changes', async (changes) => {
+      changes.forEach(async (change) => {
+        const collectionService: ICollectionService = this.getCollectionService(change.table);
 
-    //     if(collectionService.constructor.prototype.hasOwnProperty('onCollectionChange')) {
-    //       await collectionService.onCollectionChange({
-    //         revision: change.rev | 0,
-    //         type: this.collectionChangeTypes[change.type],
-    //         entry: {
-    //           currentValue: get(change, 'obj', null),
-    //           previousValue: get(change, 'oldObj', null),
-    //           alteredProperties: get(change, 'mods', null)
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
+        if(collectionService.constructor.prototype.hasOwnProperty('onCollectionChange')) {
+          await collectionService.onCollectionChange({
+            // revision: change.rev | 0,
+            type: this.collectionChangeTypes[change.type],
+            entry: {
+              currentValue: get(change, 'obj', null),
+              previousValue: get(change, 'oldObj', null),
+              alteredProperties: get(change, 'mods', null)
+            }
+          });
+        }
+      });
+    });
 
     return db;
   }
