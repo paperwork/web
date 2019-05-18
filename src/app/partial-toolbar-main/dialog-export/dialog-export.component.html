@@ -19,7 +19,7 @@
 
     <mat-list>
       <mat-list-item>
-        <mat-checkbox [(ngModel)]="data.includeAttachments">Include attachments</mat-checkbox>
+        <mat-checkbox [(ngModel)]="data.includeAttachments" [disabled]="data.type === 'md'">Include attachments</mat-checkbox>
       </mat-list-item>
       <mat-list-item>
         <mat-checkbox [(ngModel)]="data.encrypt" [disabled]="data.type !== 'papernote'">Encrypt note</mat-checkbox>
