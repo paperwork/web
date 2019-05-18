@@ -1,0 +1,12 @@
+<div class="mat-typography">
+  <h1 mat-dialog-title i18n>Delete</h1>
+  <div mat-dialog-content>
+    <p i18n>
+      Do you really want to delete the note(s)? Deleting a note will also make it unavailable to anyone it is shared with.
+    </p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()" i18n>Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial i18n>Delete</button>
+  </div>
+</div>
