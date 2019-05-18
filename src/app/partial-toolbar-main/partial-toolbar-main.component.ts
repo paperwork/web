@@ -238,7 +238,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       console.log('The dialog was closed with path:');
       console.log(data);
 
-      this.toolbarService.trigger = new ToolbarAction('delete', { 'sure': data.sure });
+      this.toolbarService.trigger = new ToolbarAction('delete', data);
     });
   }
 
