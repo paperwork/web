@@ -52,7 +52,9 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
         return this.notesService.show(this.noteId);
       }),
       tap((note?: Note) => {
-        if(typeof note !== 'object') {
+        if(typeof note !== 'object'
+        || (note.deleted_at instanceof Date && note.deleted_at <= new Date())
+          ) {
           return this.router.navigate(['/notes']);
         }
 
@@ -72,18 +74,14 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
 
     this.toolbarServiceActionsSubscription = this.toolbarService.actions$.subscribe((toolbarAction: ToolbarAction) => {
       switch(toolbarAction.action) {
-      case 'duplicate':
-        this.toolbarActionDuplicate(toolbarAction.payload);
-        break;
-      case 'move':
-        this.toolbarActionMove(toolbarAction.payload);
-        break;
-      case 'print':
-        this.toolbarActionPrint(toolbarAction.payload);
-        break;
-      default:
-        console.log('Unhandled action: %s', toolbarAction.action);
-        break;
+        case 'duplicate': return this.toolbarActionDuplicate(toolbarAction.payload);
+        case 'move':      return this.toolbarActionMove(toolbarAction.payload);
+        case 'print':     return this.toolbarActionPrint(toolbarAction.payload);
+        case 'export':    return this.toolbarActionExport(toolbarAction.payload);
+        case 'share':     return this.toolbarActionShare(toolbarAction.payload);
+        case 'delete':    return this.toolbarActionDelete(toolbarAction.payload);
+        case '0x90':      return true;
+        default: return console.log('Unhandled action: %s', toolbarAction.action); return false;
       }
     });
 
@@ -139,6 +137,14 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     console.log(toBeSavedFields);
 
     this.notesService.updateFields(id, toBeSavedFields);
+  }
+
+  deleteNote(id?: string) {
+    if(typeof id !== 'string') {
+      id = this.noteId;
+    }
+
+    this.notesService.delete(id);
   }
 
   get tags(): FormArray {
@@ -198,4 +204,21 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       window.open(`/print/notes/${this.noteId}`, '_blank');
     });
   }
+
+  private toolbarActionExport(payload: ToolbarActionPayload) {
+    this.saveNote();
+    // TODO: Save to back-end, request export endpoint
+  }
+
+  private toolbarActionShare(payload: ToolbarActionPayload) {
+    // TODO: Adjust `access`.
+    this.saveNote();
+    this.alertService.success(`Shared note!`);
+  }
+
+  private toolbarActionDelete(payload: ToolbarActionPayload) {
+    this.deleteNote();
+    this.alertService.success(`Deleted note!`);
+  }
+
 }

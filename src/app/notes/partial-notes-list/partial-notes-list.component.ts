@@ -40,7 +40,9 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
     this.dataSource.filterPredicate = (note: Note, filter: string) => this.searchEngine.filterPredicate(note, filter);
 
     this.notesServiceSubscription = this.notesService.entries.subscribe((notes: List<Note>) => {
-      this.dataSource.data = notes.toArray();
+      this.dataSource.data = notes.filter((note: Note) =>
+        (typeof note.deleted_at === 'undefined' || note.deleted_at === null || note.deleted_at > new Date())
+      ).toArray();
       this.selection = new SelectionModel<Note>(true, []);
     })
 
@@ -58,18 +60,14 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
     this.toolbarServiceActionsSubscription = this.toolbarService.actions$.subscribe((toolbarAction: ToolbarAction) => {
       switch(toolbarAction.action) {
-      case 'duplicate':
-        this.toolbarActionDuplicate(toolbarAction.payload);
-        break;
-      case 'move':
-        this.toolbarActionMove(toolbarAction.payload);
-        break;
-      case 'print':
-        this.toolbarActionPrint(toolbarAction.payload);
-        break;
-      default:
-        console.log('Unhandled action: %s', toolbarAction.action);
-        break;
+        case 'duplicate': return this.toolbarActionDuplicate(toolbarAction.payload);
+        case 'move':      return this.toolbarActionMove(toolbarAction.payload);
+        case 'print':     return this.toolbarActionPrint(toolbarAction.payload);
+        case 'export':    return this.toolbarActionExport(toolbarAction.payload);
+        case 'share':     return this.toolbarActionShare(toolbarAction.payload);
+        case 'delete':    return this.toolbarActionDelete(toolbarAction.payload);
+        case '0x90':      return true;
+        default: return console.log('Unhandled action: %s', toolbarAction.action); return false;
       }
     });
 
@@ -209,5 +207,55 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
     return this.router.navigate([]).then(result => {
       window.open(`/print/notes/${ids.join(',')}`, '_blank');
     });
+  }
+
+  private toolbarActionExport(payload: ToolbarActionPayload) {
+    const selectedNumber: number = this.selection.selected.length;
+    let ids: Array<string> = [];
+
+    if(selectedNumber === 0
+    || typeof payload.path !== 'string') {
+      return;
+    }
+
+
+    this.selection.selected.forEach((note: Note) => {
+      ids.push(note.id);
+    });
+
+    return this.router.navigate([]).then(result => {
+      window.open(`/export/notes/${ids.join(',')}?type=${payload.type}`, '_blank');
+    });
+  }
+
+  private toolbarActionShare(payload: ToolbarActionPayload) {
+    const selectedNumber: number = this.selection.selected.length;
+    if(selectedNumber === 0
+    || typeof payload.access !== 'string') {
+      return;
+    }
+
+    this.selection.selected.forEach((note: Note) => {
+      const updatedNote: Note = note.set('access', payload.access);
+      this.notesService.update(note.id, updatedNote);
+    });
+
+    this.alertService.success(`Shared ${selectedNumber} notes!`);
+    this.setState();
+  }
+
+  private toolbarActionDelete(payload: ToolbarActionPayload) {
+    const selectedNumber: number = this.selection.selected.length;
+    if(selectedNumber === 0
+    || payload.sure !== true) {
+      return;
+    }
+
+    this.selection.selected.forEach((note: Note) => {
+      this.notesService.delete(note.id);
+    });
+
+    this.alertService.success(`Deleted ${selectedNumber} notes!`);
+    this.setState();
   }
 }

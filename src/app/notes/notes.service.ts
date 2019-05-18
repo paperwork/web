@@ -86,7 +86,9 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   public delete(id: string): boolean {
-    return this.changeEntry(this._entries, 'updated', id);
+    this.updateField(id, 'deleted_at', new Date());
+    // TODO: Try to sync to back-end & re-read, in order to receive a deleted event and remove it from local store as well
+    return true;
   }
 
   public updateFields(id: string, fieldsValuesMap: object): boolean {

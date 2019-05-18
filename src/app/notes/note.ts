@@ -34,6 +34,7 @@ export interface INote {
   path?: string;
   created_by?: string;
   created_at?: Date;
+  deleted_at?: Date;
 }
 
 export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {
@@ -55,7 +56,8 @@ const NoteRecord = Record({
   access: {},
   path: '',
   created_by: '',
-  created_at: new Date()
+  created_at: new Date(),
+  deleted_at: null
 });
 
 export class Note extends NoteRecord implements INote {

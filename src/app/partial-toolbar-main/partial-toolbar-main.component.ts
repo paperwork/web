@@ -10,6 +10,9 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogDuplicateComponent } from './dialog-duplicate/dialog-duplicate.component';
 import { DialogMoveComponent } from './dialog-move/dialog-move.component';
+// import { DialogExportComponent } from './dialog-export/dialog-export.component';
+// import { DialogShareComponent } from './dialog-share/dialog-share.component';
+import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
 
 @Component({
   selector: 'partial-toolbar-main',
@@ -179,4 +182,62 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   buttonPrint() {
     this.toolbarService.trigger = new ToolbarAction('print', {});
   }
+
+  buttonExport() {
+    // const dialogRef = this.dialog.open(DialogExportComponent, {
+    //   width: '350px',
+    //   data: {}
+    // });
+
+    // dialogRef.afterClosed().subscribe(data => {
+    //   if(typeof data.type !== 'string') {
+    //     return;
+    //   }
+
+    //   console.log('The dialog was closed with path:');
+    //   console.log(data);
+
+    //   this.toolbarService.trigger = new ToolbarAction('export', { 'type': data.type });
+    // });
+  }
+
+  buttonShare() {
+    // const dialogRef = this.dialog.open(DialogShareComponent, {
+    //   width: '350px',
+    //   data: {}
+    // });
+
+    // dialogRef.afterClosed().subscribe(data => {
+    //   if(typeof data.access !== 'object') {
+    //     return;
+    //   }
+
+    //   console.log('The dialog was closed with path:');
+    //   console.log(data);
+
+    //   this.toolbarService.trigger = new ToolbarAction('share', { 'access': data.access });
+    // });
+  }
+
+  buttonDelete() {
+    const dialogRef = this.dialog.open(DialogDeleteComponent, {
+      width: '350px',
+      data: {
+        sure: false
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if(typeof data === 'undefined'
+      || data.sure !== true) {
+        return;
+      }
+
+      console.log('The dialog was closed with path:');
+      console.log(data);
+
+      this.toolbarService.trigger = new ToolbarAction('delete', { 'sure': data.sure });
+    });
+  }
+
 }
