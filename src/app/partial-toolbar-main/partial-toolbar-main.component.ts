@@ -10,7 +10,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogDuplicateComponent } from './dialog-duplicate/dialog-duplicate.component';
 import { DialogMoveComponent } from './dialog-move/dialog-move.component';
-// import { DialogExportComponent } from './dialog-export/dialog-export.component';
+import { DialogExportComponent } from './dialog-export/dialog-export.component';
 // import { DialogShareComponent } from './dialog-share/dialog-share.component';
 import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
 
@@ -168,7 +168,8 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(data => {
-      if(typeof data.folder !== 'string') {
+      if(typeof data === 'undefined'
+      || typeof data.folder !== 'string') {
         return;
       }
 
@@ -184,21 +185,22 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   buttonExport() {
-    // const dialogRef = this.dialog.open(DialogExportComponent, {
-    //   width: '350px',
-    //   data: {}
-    // });
+    const dialogRef = this.dialog.open(DialogExportComponent, {
+      width: '350px',
+      data: {}
+    });
 
-    // dialogRef.afterClosed().subscribe(data => {
-    //   if(typeof data.type !== 'string') {
-    //     return;
-    //   }
+    dialogRef.afterClosed().subscribe(data => {
+      if(typeof data === 'undefined'
+      || typeof data.type !== 'string') {
+        return;
+      }
 
-    //   console.log('The dialog was closed with path:');
-    //   console.log(data);
+      console.log('The dialog was closed with path:');
+      console.log(data);
 
-    //   this.toolbarService.trigger = new ToolbarAction('export', { 'type': data.type });
-    // });
+      this.toolbarService.trigger = new ToolbarAction('export', data);
+    });
   }
 
   buttonShare() {

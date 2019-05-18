@@ -1,0 +1,33 @@
+<div class="mat-typography">
+  <h1 mat-dialog-title i18n>Export</h1>
+  <div mat-dialog-content>
+    <p i18n>
+      Select the type you would like the note(s) to be exported as and what the export should include.
+    </p>
+
+    <mat-form-field class="full-width">
+      <mat-label>Export Type</mat-label>
+      <mat-select [(ngModel)]="data.type" name="type" required>
+        <mat-option value="papernote">Paperwork Note (*.papernote)</mat-option>
+        <mat-option value="md">Markdown (*.md)</mat-option>
+        <mat-option value="pdf" disabled>PDF - Please use 'Print' for that!</mat-option>
+        <mat-option value="html" disabled>HTML - Please use 'Print' for that!</mat-option>
+        <mat-option value="enex">Evernote XML (*.enex)</mat-option>
+        <mat-option value="one">Microsoft OneNote (*.one)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-list>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.includeAttachments">Include attachments</mat-checkbox>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-checkbox [(ngModel)]="data.encrypt" [disabled]="data.type !== 'papernote'">Encrypt note</mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()" i18n>Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial i18n>Export</button>
+  </div>
+</div>
