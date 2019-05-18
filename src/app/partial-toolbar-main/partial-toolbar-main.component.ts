@@ -169,14 +169,14 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(data => {
       if(typeof data === 'undefined'
-      || typeof data.folder !== 'string') {
+      || typeof data.path !== 'string') {
         return;
       }
 
       console.log('The dialog was closed with path:');
       console.log(data);
 
-      this.toolbarService.trigger = new ToolbarAction('move', { 'path': data.folder });
+      this.toolbarService.trigger = new ToolbarAction('move', data);
     });
   }
 
