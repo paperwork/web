@@ -32,7 +32,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private notesService: NotesService,
-    private toolbarService: ToolbarService,
+    public toolbarService: ToolbarService,
     private formBuilder: FormBuilder,
     private alertService: AlertService
   ) {

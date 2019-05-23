@@ -46,7 +46,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
     private location: Location,
-    private toolbarService: ToolbarService,
+    public toolbarService: ToolbarService,
     private notesService: NotesService,
     private usersService: UsersService,
     private alertService: AlertService,

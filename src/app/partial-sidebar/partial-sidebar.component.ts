@@ -16,7 +16,7 @@ export class PartialSidebarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private sidebarService: SidebarService
+    public sidebarService: SidebarService
   ) {
   }
 

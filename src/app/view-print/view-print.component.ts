@@ -12,7 +12,7 @@ import { List } from 'immutable';
 export class ViewPrintComponent implements OnInit {
   private resource: string;
   private resourceIds: Array<string>;
-  private entities: List<any>;
+  public entities: List<any>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
