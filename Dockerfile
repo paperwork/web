@@ -24,7 +24,7 @@ ENV APP_NAME=${APP_NAME} \
 
 RUN apk update \
  && apk upgrade --no-cache \
- && apk add --no-cache make python g++
+ && apk add --no-cache make python g++ yarn
 
 WORKDIR /app
 COPY . .

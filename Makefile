@@ -36,11 +36,11 @@ run: ##@Docker Run service locally
 		--rm -it "$(strip $(APP_NAME)):latest"
 
 local-build-develop: ##@Local Build service (target: dev) locally
-	npm install
+	yarn install
 	./node_modules/@angular/cli/bin/ng build
 
 local-build: ##@Local Build service (target: prod) locally
-	npm install
+	yarn install
 	./node_modules/@angular/cli/bin/ng build --prod
 
 local-run-develop: ##@Local Run service (target: dev) locally
