@@ -1,0 +1,60 @@
+<div class="mat-typography">
+  <h1 mat-dialog-title i18n>Share</h1>
+  <div mat-dialog-content>
+    <p i18n>
+      Add the people you would like to share the note(s) with and configure their permissions.
+    </p>
+
+    <p i18n *ngIf="data.differences === true">
+      Warning: There were differences in the selected notes' sharing settings, meaning that the current selection of notes either contains of shares to different people or different sharing settings per person.
+      Paperwork tried merging those in the best way possible, however please make sure that the sharing settings below are the way you're intending them to be.
+    </p>
+
+    <p i18n *ngIf="data.skippedDueToPermissions === true">
+      Warning: Some of the selected notes were skipped due to the lack of permissions for modifying sharing settings on them.
+    </p>
+
+    <mat-accordion class="full-width">
+      <mat-expansion-panel *ngFor="let access of data.access | keyvalue">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ access.value.user.name.first_name }}&nbsp;{{ access.value.user.name.last_name }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ access.value.user.email }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <mat-list>
+          <mat-list-item>
+            <mat-checkbox [(ngModel)]="access.value.can_write" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can edit this note</mat-checkbox>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-checkbox [(ngModel)]="access.value.can_share" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can add others to this note</mat-checkbox>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-checkbox [(ngModel)]="access.value.can_leave" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can leave this note</mat-checkbox>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-checkbox [(ngModel)]="access.value.can_change_permissions" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can change permissions</mat-checkbox>
+          </mat-list-item>
+        </mat-list>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <mat-form-field class="full-width">
+      <input matInput type="text" placeholder="Share with person" aria-label="Share with person" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let user of data.users" [value]="user.gid">
+          {{ user.name.first_name }}&nbsp;{{ user.name.last_name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()" i18n>Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial i18n>Share</button>
+  </div>
+</div>
