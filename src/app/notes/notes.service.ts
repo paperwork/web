@@ -68,7 +68,9 @@ export class NotesService extends CollectionService implements ICollectionServic
     } else {
       fields = { id: id };
     }
-    const note: Note = (new Note(fields).addAccess(userGid, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER));
+
+    // TODO: Add real user data from session
+    const note: Note = (new Note(fields).addAccess(userGid, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER, { 'user': { 'email': 'test@example.com', 'name': { 'first_name': 'John', 'last_name': 'Doe' } } }));
 
     if(this.create(note) === true) {
       return id;
@@ -91,79 +93,11 @@ export class NotesService extends CollectionService implements ICollectionServic
     return true;
   }
 
-  public updateFields(id: string, fieldsValuesMap: object): boolean {
-    const note: Note|null = this.getEntryById(this._entries, id);
-
-    if(note === null) {
-      console.log('Entry with ID %s not found!', id);
-      return false;
-    }
-
-    const updatedNote: Note = note.merge(fieldsValuesMap);
-
-    return this.update(id, updatedNote);
-  }
-
   public updateField(id: string, field: string, value: any): boolean {
-    const note: Note|null = this.getEntryById(this._entries, id);
-
-    if(note === null) {
-      console.log('Entry with ID %s not found!', id);
-      return false;
-    }
-
-    const updatedNote: Note = note.merge({
-      [field]: value
-    });
-
-    return this.update(id, updatedNote);
+    return this.updateEntryField(this._entries, id, field, value);
   }
 
-  public pushToField<T>(id: string, field: string, value: T) {
-    const note: Note|null = this.getEntryById(this._entries, id);
-
-    if(note === null) {
-      console.log('Entry with ID %s not found!', id);
-      return false;
-    }
-
-    let fieldList: List<T>;
-    if(note[field].length > 0) {
-      fieldList = List.of(note[field]);
-    }  else {
-      fieldList = List();
-    }
-
-    const updatedNote: Note = note.merge({
-      [field]: fieldList.push(value).toArray()
-    });
-
-    return this.update(id, updatedNote);
-  }
-
-  public popFromField<T>(id: string, field: string, value: T) {
-    const note: Note|null = this.getEntryById(this._entries, id);
-
-    if(note === null) {
-      console.log('Entry with ID %s not found!', id);
-      return false;
-    }
-
-    if(note[field].length === 0) {
-      return false;
-    }
-
-    const currentValues: List<T> = List.of(note[field]);
-    const idx: number = currentValues.indexOf(value);
-
-    if(idx === -1) {
-      return false;
-    }
-
-    const updatedNote: Note = note.merge({
-      [field]: currentValues.delete(idx).toArray()
-    });
-
-    return this.update(id, updatedNote);
+  public updateFields(id: string, fieldsValuesMap: object): boolean {
+    return this.updateEntryFields(this._entries, id, fieldsValuesMap);
   }
 }

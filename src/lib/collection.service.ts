@@ -1,6 +1,6 @@
 import { Injectable, InjectionToken } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { List } from 'immutable';
+import { List, Record } from 'immutable';
 
 import Dexie from 'dexie';
 
@@ -95,4 +95,81 @@ export class CollectionService implements ICollectionService {
     entriesSubject.next(newEntries);
     return true;
   }
+
+  public updateEntryFields<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, fieldsValuesMap: object): boolean {
+    const entry: T|null = this.getEntryById(entriesSubject, id);
+
+    if(entry === null) {
+      console.log('Entry with ID %s not found!', id);
+      return false;
+    }
+
+    const updatedEntry: T = entry.merge(fieldsValuesMap);
+
+    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+  }
+
+  public updateEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: any): boolean {
+    const entry: T|null = this.getEntryById(entriesSubject, id);
+
+    if(entry === null) {
+      console.log('Entry with ID %s not found!', id);
+      return false;
+    }
+
+    const updatedEntry: T = entry.merge({
+      [field]: value
+    });
+
+    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+  }
+
+  public pushToEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: T) {
+    const entry: T|null = this.getEntryById(entriesSubject, id);
+
+    if(entry === null) {
+      console.log('Entry with ID %s not found!', id);
+      return false;
+    }
+
+    let fieldList: List<T>;
+    if(entry[field].length > 0) {
+      fieldList = List.of(entry[field]);
+    }  else {
+      fieldList = List();
+    }
+
+    const updatedEntry: T = entry.merge({
+      [field]: fieldList.push(value).toArray()
+    });
+
+    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+  }
+
+  public popFromEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: T) {
+    const entry: T|null = this.getEntryById(entriesSubject, id);
+
+    if(entry === null) {
+      console.log('Entry with ID %s not found!', id);
+      return false;
+    }
+
+    if(entry[field].length === 0) {
+      return false;
+    }
+
+    const currentValues: List<T> = List.of(entry[field]);
+    const idx: number = currentValues.indexOf(value);
+
+    if(idx === -1) {
+      return false;
+    }
+
+    const updatedEntry: T = entry.merge({
+      [field]: currentValues.delete(idx).toArray()
+    });
+
+    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+  }
+
 }

@@ -1,6 +1,7 @@
 import { List, Record } from 'immutable';
+import { merge } from 'lodash';
 
-type TNoteAccessUser = {
+export type TNoteAccessUser = {
   user?: {
     email: string;
     name: {
@@ -10,14 +11,15 @@ type TNoteAccessUser = {
   }
 }
 
-type TNoteAccessPermissions = {
+export type TNoteAccessPermissions = {
   can_leave: boolean;
   can_read: boolean;
   can_share: boolean;
   can_write: boolean;
+  can_change_permissions: boolean;
 }
 
-type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
+export type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
 
 export interface INote {
   id: string;
@@ -41,7 +43,8 @@ export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {
   can_leave: false,
   can_read: true,
   can_share: true,
-  can_write: true
+  can_write: true,
+  can_change_permissions: true,
 };
 
 const NoteRecord = Record({
@@ -65,13 +68,14 @@ export class Note extends NoteRecord implements INote {
       super(properties);
   }
 
-  addAccess(gid: string, permissions: TNoteAccessPermissions): this {
+  addAccess(gid: string, permissions: TNoteAccessPermissions, user: TNoteAccessUser): this {
+    const access: TNoteAccess = merge(permissions, user);
     const currentAccess: object = this.get('access');
 
     if(Object.keys(currentAccess).length === 0) {
-      return this.set('created_by', gid).setIn(['access', gid], permissions)
+      return this.set('created_by', gid).setIn(['access', gid], access)
     }
 
-    return this.setIn(['access', gid], permissions);
+    return this.setIn(['access', gid], access);
   }
 }
