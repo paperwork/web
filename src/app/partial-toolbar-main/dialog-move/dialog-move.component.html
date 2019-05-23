@@ -7,14 +7,16 @@
       <br>
       In order to move a note out of any folder, simply leave the <i>Folder</i> textfield empty.
     </p>
-  <mat-form-field class="full-width">
-    <input matInput type="text" placeholder="Folder" aria-label="Number" [matAutocomplete]="auto" [(ngModel)]="data.path">
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let folder of data.folders" [value]="folder">
-        {{ folder }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <input matInput type="text" placeholder="Folder" aria-label="Folder" [matAutocomplete]="auto" [(ngModel)]="data.path">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let folder of data.folders" [value]="folder">
+          {{ folder }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onCancel()" i18n>Cancel</button>
