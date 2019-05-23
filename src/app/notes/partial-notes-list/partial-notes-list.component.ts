@@ -67,7 +67,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
         case 'share':     return this.toolbarActionShare(toolbarAction.payload);
         case 'delete':    return this.toolbarActionDelete(toolbarAction.payload);
         case '0x90':      return true;
-        default: return console.log('Unhandled action: %s', toolbarAction.action); return false;
+        default: console.log('Unhandled action: %s', toolbarAction.action); return false;
       }
     });
 
@@ -112,6 +112,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
       this.dataSource.data.forEach(row => this.selection.select(row));
     }
 
+    this.setTargetNotes();
     this.toolbarState = state;
   }
 
@@ -133,8 +134,13 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
     }
   }
 
+  setTargetNotes() {
+    this.toolbarService.targetNotes = this.selection.selected;
+  }
+
   toggleRow(row) {
     this.selection.toggle(row);
+    this.setTargetNotes();
     this.setState()
   }
 
