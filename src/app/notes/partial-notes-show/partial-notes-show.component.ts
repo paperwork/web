@@ -9,7 +9,7 @@ import { MatChipInputEvent } from '@angular/material';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Note } from '../note';
 import { get } from 'lodash';
-import { Record } from 'immutable';
+import { Record, List } from 'immutable';
 import { AlertService } from '../../partial-alert/alert.service';
 
 @Component({
@@ -65,6 +65,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
         }
 
         this.editor.patchValue(noteObject);
+        this.toolbarService.targetNotes = List([note]);
       })
     );
 
@@ -81,7 +82,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
         case 'share':     return this.toolbarActionShare(toolbarAction.payload);
         case 'delete':    return this.toolbarActionDelete(toolbarAction.payload);
         case '0x90':      return true;
-        default: return console.log('Unhandled action: %s', toolbarAction.action); return false;
+        default: console.log('Unhandled action: %s', toolbarAction.action); return false;
       }
     });
 
