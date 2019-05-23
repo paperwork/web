@@ -19,5 +19,4 @@ do
     [[ -n "$new_dotenv" ]] && echo "$new_dotenv" > $1
 done
 
-envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf
 nginx -g "daemon off;"
