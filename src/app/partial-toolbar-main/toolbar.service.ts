@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { List } from 'immutable';
+import { Note, TNoteAccess } from '../notes/note';
+import { merge, forEach } from 'lodash';
 
 export type ToolbarActionPayload = {
   [key: string]: any;
@@ -37,6 +40,53 @@ export class ToolbarService {
 
   public set state(val: number) {
     this._state.next(val);
+  }
+
+
+
+  private readonly _targetNotes = new BehaviorSubject<List<Note>>(List());
+
+  public readonly targetNotes$ = this._targetNotes.asObservable();
+
+  public set targetNotes(notes: List<Note>) {
+    this._targetNotes.next(notes);
+  }
+
+  public get targetNotes() {
+    return this._targetNotes.getValue();
+  }
+
+  public getTargetNotesSingleAccess(actingAsGid?: string): [boolean, Array<string>, TNoteAccess] {
+    let differencesAppeared: boolean = false;
+    let noteIdsSkippedDueToPermissions: Array<string> = [];
+    const singleAccess: TNoteAccess = this.targetNotes.reduce((accessMap: TNoteAccess, note: Note) => {
+      forEach(Object.keys(accessMap), (accessMapKey: string): boolean => {
+        if(note.access.hasOwnProperty(accessMapKey) === true) {
+          if(typeof actingAsGid === 'string'
+          && accessMapKey === actingAsGid) {
+            if(note.access[accessMapKey].can_share === false) {
+              noteIdsSkippedDueToPermissions.push(note.id);
+              return !differencesAppeared;
+            }
+          }
+
+          forEach(Object.keys(accessMap[accessMapKey]), (permissionKey: string): boolean => {
+            if(note.access[accessMapKey].hasOwnProperty(permissionKey)
+            && note.access[accessMapKey][permissionKey] !== accessMap[accessMapKey][permissionKey]) {
+              differencesAppeared = true;
+            }
+
+            return !differencesAppeared;
+          });
+        }
+
+        return !differencesAppeared;
+      });
+
+      return merge(accessMap, note.access);
+    }, {});
+
+    return [ differencesAppeared, noteIdsSkippedDueToPermissions, singleAccess ];
   }
 
 

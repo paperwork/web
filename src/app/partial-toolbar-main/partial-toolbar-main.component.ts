@@ -3,6 +3,7 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ToolbarService, ToolbarAction } from './toolbar.service';
 import { NotesService } from '../notes/notes.service';
+import { UsersService } from '../users/users.service';
 import { AlertService } from '../partial-alert/alert.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,8 +12,10 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogDuplicateComponent } from './dialog-duplicate/dialog-duplicate.component';
 import { DialogMoveComponent } from './dialog-move/dialog-move.component';
 import { DialogExportComponent } from './dialog-export/dialog-export.component';
-// import { DialogShareComponent } from './dialog-share/dialog-share.component';
+import { DialogShareComponent } from './dialog-share/dialog-share.component';
 import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
+import { tokenGetDecoded } from '../../lib/token.helper';
+import { get } from 'lodash';
 
 @Component({
   selector: 'partial-toolbar-main',
@@ -25,6 +28,8 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   private toolbarServiceSearchSubscription: Subscription;
   private searchInputValueSubscription: Subscription;
   private routeQueryParamsSubscription: Subscription;
+
+  private myGid: string|null = null;
 
   state: number = 0;
   previousState: number = 0;
@@ -43,6 +48,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     private location: Location,
     private toolbarService: ToolbarService,
     private notesService: NotesService,
+    private usersService: UsersService,
     private alertService: AlertService,
     private dialog: MatDialog
   ) {
@@ -52,6 +58,8 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.myGid = get(tokenGetDecoded(), 'userGid', null);
+
     this.toolbarServiceStateSubscription = this.toolbarService.state$.subscribe((state: number) => {
       if(this.state !== state) {
         console.log("current state: %s, previousState: %s, received state: %s", this.state, this.previousState, state);
@@ -126,6 +134,24 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
     this.search.get(['searchInput']).setValue(value);
   }
 
+  displayDialog(component, action: string, validator: Function, data: Object = {}) {
+    const dialogRef = this.dialog.open(component, {
+      'width': '350px',
+      'data': data
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if(validator(data) === false) {
+        return false;
+      }
+
+      console.log('The dialog was closed with data:');
+      console.log(data);
+
+      this.toolbarService.trigger = new ToolbarAction(action, data);
+    });
+  }
+
   async buttonNewNote(): Promise<boolean> {
     const id: string|null = this.notesService.newNote();
 
@@ -138,46 +164,25 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   buttonDuplicate() {
-    const dialogRef = this.dialog.open(DialogDuplicateComponent, {
-      width: '350px',
-      data: {
+    this.displayDialog(DialogDuplicateComponent,
+      'duplicate',
+      (data) => typeof data === 'object',
+      {
         title: true,
         access: false,
         tags: true,
         body: true,
         attachments: true
       }
-    });
-
-    dialogRef.afterClosed().subscribe(data => {
-      if(typeof data !== 'object') {
-        return;
-      }
-
-      console.log('The dialog was closed with data:');
-      console.log(data);
-
-      this.toolbarService.trigger = new ToolbarAction('duplicate', data);
-    });
+    );
   }
 
   buttonMove() {
-    const dialogRef = this.dialog.open(DialogMoveComponent, {
-      width: '350px',
-      data: {}
-    });
-
-    dialogRef.afterClosed().subscribe(data => {
-      if(typeof data === 'undefined'
-      || typeof data.path !== 'string') {
-        return;
-      }
-
-      console.log('The dialog was closed with path:');
-      console.log(data);
-
-      this.toolbarService.trigger = new ToolbarAction('move', data);
-    });
+    this.displayDialog(DialogMoveComponent,
+      'move',
+      (data) => typeof data === 'object' && typeof data.path === 'string',
+      {}
+    );
   }
 
   buttonPrint() {
@@ -185,61 +190,37 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
   }
 
   buttonExport() {
-    const dialogRef = this.dialog.open(DialogExportComponent, {
-      width: '350px',
-      data: {}
-    });
-
-    dialogRef.afterClosed().subscribe(data => {
-      if(typeof data === 'undefined'
-      || typeof data.type !== 'string') {
-        return;
-      }
-
-      console.log('The dialog was closed with path:');
-      console.log(data);
-
-      this.toolbarService.trigger = new ToolbarAction('export', data);
-    });
+    this.displayDialog(DialogExportComponent,
+      'export',
+      (data) => typeof data === 'object' && typeof data.type === 'string',
+      {}
+    );
   }
 
   buttonShare() {
-    // const dialogRef = this.dialog.open(DialogShareComponent, {
-    //   width: '350px',
-    //   data: {}
-    // });
+    const [differencesAppeared, noteIdsSkippedDueToPermissions, singleAccess] = this.toolbarService.getTargetNotesSingleAccess(this.myGid);
 
-    // dialogRef.afterClosed().subscribe(data => {
-    //   if(typeof data.access !== 'object') {
-    //     return;
-    //   }
-
-    //   console.log('The dialog was closed with path:');
-    //   console.log(data);
-
-    //   this.toolbarService.trigger = new ToolbarAction('share', { 'access': data.access });
-    // });
+    this.displayDialog(DialogShareComponent,
+      'share',
+      (data) => typeof data === 'object' && typeof data.access === 'object',
+      {
+        myGid: this.myGid,
+        access: singleAccess,
+        differences: differencesAppeared,
+        skippedDueToPermissions: noteIdsSkippedDueToPermissions,
+        users: [] // TODO: Users here
+      }
+    );
   }
 
   buttonDelete() {
-    const dialogRef = this.dialog.open(DialogDeleteComponent, {
-      width: '350px',
-      data: {
+    this.displayDialog(DialogDeleteComponent,
+      'delete',
+      (data) => typeof data === 'object' && data.sure === true,
+      {
         sure: false
       }
-    });
-
-    dialogRef.afterClosed().subscribe(data => {
-      if(typeof data === 'undefined'
-      || data.sure !== true) {
-        return;
-      }
-
-      console.log('The dialog was closed with path:');
-      console.log(data);
-
-      this.toolbarService.trigger = new ToolbarAction('delete', data);
-    });
+    );
   }
 
 }
