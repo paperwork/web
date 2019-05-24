@@ -33,17 +33,18 @@ In order to start development, you need to have the following tools installed:
 
 - Node.js ([Mac](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-and-create-a-local-development-environment-on-macos) | [Ubuntu Linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04) | [Windows](https://www.wikihow.com/Install-Node.Js-on-Windows))
 - make (Mac: `xcode-select --install` | Ubuntu Linux: `apt-get install make` | [Windows](http://gnuwin32.sourceforge.net/install.html))
+- yarn ([Mac](https://yarnpkg.com/en/docs/install#mac-stable) | [Ubuntu Linux](https://yarnpkg.com/en/docs/install#debian-stable) | [Windows](https://yarnpkg.com/en/docs/install#windows-stable))
 
 ### Development server
 
 - Open a terminal/command line and `cd` into this directory.
-- Run `npm install` if you haven't done it at all or haven't done it in a while, in order to install all required dependencies.
+- Run `yarn install` if you haven't done it at all or haven't done it in a while, in order to install all required dependencies.
 - Run `make local-run-develop` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
 
 ### Code scaffolding
 
 - Open a terminal/command line and `cd` into this directory. 
-- Run `npm install` if you haven't done it at all or haven't done it in a while, in order to install all required dependencies.
+- Run `yarn install` if you haven't done it at all or haven't done it in a while, in order to install all required dependencies.
 - Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ### Building
