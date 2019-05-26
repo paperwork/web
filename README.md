@@ -34,6 +34,13 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 ![Current state](docs/current-state-10.png)
 
+### GIFs (~8MB per file)
+
+- [Creating a new note](docs/current-state-01.gif)
+- [Sharing a note](docs/current-state-02.gif)
+- [Moving a note into a folder](docs/current-state-03.gif)
+- [Filtering notes by tags](docs/current-state-04.gif)
+
 ## Docker
 
 ### Environment Options
