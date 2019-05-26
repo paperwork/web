@@ -44,7 +44,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
         (typeof note.deleted_at === 'undefined' || note.deleted_at === null || note.deleted_at > new Date())
       ).toArray();
       this.selection = new SelectionModel<Note>(true, []);
-    })
+    });
 
     this.toolbarServiceStateSubscription = this.toolbarService.state$.subscribe((state: number) => {
       this.setAll(state);

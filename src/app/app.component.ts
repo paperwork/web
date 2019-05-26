@@ -1,8 +1,10 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { environment } from '../environments/environment';
 import { EnvService } from './env/env.service';
 import { ITCollectionService, ICollectionService } from '../lib/collection.service';
-import { get } from 'lodash';
+import { Subscription } from 'rxjs';
+import { List } from 'immutable';
+import { get, forEach } from 'lodash';
 import Dexie from 'dexie';
 import 'dexie-observable';
 
@@ -15,7 +17,7 @@ export class DexieStores {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Paperwork';
   collectionChangeTypes = [
     'null',
@@ -23,15 +25,20 @@ export class AppComponent implements OnInit {
     'updated',
     'deleted'
   ];
+  collectionSubscriptions: Array<Subscription> = [];
 
   constructor(
     private injector: Injector,
     public envService: EnvService
   ) {
-    this.initializeDatabase();
   }
 
   ngOnInit() {
+    this.initializeDatabase();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeCollectionSubscriptions();
   }
 
   private async initializeDatabase(): Promise<boolean> {
@@ -45,6 +52,34 @@ export class AppComponent implements OnInit {
     }
 
     return this.initializeCollectionServices(collectionServices, db);
+  }
+
+  private async openDatabase(version: number, stores: DexieStores): Promise<Dexie|null> {
+    let db: Dexie = new Dexie(environment.database.name, { autoOpen: false });
+
+    console.debug(`Trying to open local database "${environment.database.name}" with version ${version} and the following stores:`);
+    console.debug(stores);
+    db.version(version).stores(stores);
+
+    try {
+      console.debug('Opening local database ...');
+      await db.open();
+
+      console.debug('Adding observer to local database ...');
+      db = await this.observeDatabase(db);
+
+      return db;
+    } catch(err) {
+      console.error('Could not open local database:');
+      console.error(err);
+
+      console.debug('Will delete the local database now.');
+      Dexie.delete(environment.database.name);
+
+      return null;
+    }
+
+    return db;
   }
 
   private async observeDatabase(db: Dexie): Promise<Dexie> {
@@ -69,22 +104,6 @@ export class AppComponent implements OnInit {
     return db;
   }
 
-  private async openDatabase(version: number, stores: DexieStores): Promise<Dexie|null> {
-    let db = new Dexie(environment.database.name);
-    db.version(version).stores(stores);
-    db = await this.observeDatabase(db);
-
-    try {
-      await db.open();
-
-      return db;
-    } catch(err) {
-      console.error(err);
-
-      return null;
-    }
-  }
-
   private async initializeCollectionServices(collectionServices: Array<ICollectionService>, db: Dexie): Promise<boolean> {
     let successful: boolean = true;
 
@@ -107,6 +126,35 @@ export class AppComponent implements OnInit {
     });
 
     return successful;
+  }
+
+  private subscribeToCollectionService(collectionService: ICollectionService): boolean {
+    const collectionSubscription: Subscription = collectionService.entries.subscribe(async (entries: List<any>): Promise<boolean> => {
+      const collectionName: string = collectionService.collectionName;
+      const db: Dexie = collectionService.db;
+
+      try {
+        console.debug('Persisting changes to local database ...');
+        db[collectionName].bulkPut(entries);
+      } catch(err) {
+        console.error('Could not persist changes to local database:');
+        console.error(err);
+      }
+
+      return true;
+    });
+
+    this.collectionSubscriptions.push(collectionSubscription);
+    return true;
+  }
+
+  private unsubscribeCollectionSubscriptions(): boolean {
+    forEach(this.collectionSubscriptions, (subscription: Subscription): boolean => {
+      subscription.unsubscribe();
+      return true;
+    });
+
+    return true;
   }
 
   private getStores(collectionServices: Array<ICollectionService>): DexieStores {
