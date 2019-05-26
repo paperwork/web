@@ -27,27 +27,30 @@
 
         <mat-list>
           <mat-list-item>
-            <mat-checkbox [(ngModel)]="access.value.can_write" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can edit this note</mat-checkbox>
+            <mat-checkbox [(ngModel)]="access.value.can_write" [disabled]="data.myAccess.can_change_permissions !== true">Can edit this note</mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox [(ngModel)]="access.value.can_share" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can add others to this note</mat-checkbox>
+            <mat-checkbox [(ngModel)]="access.value.can_share" [disabled]="data.myAccess.can_change_permissions !== true">Can add others to this note</mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox [(ngModel)]="access.value.can_leave" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can leave this note</mat-checkbox>
+            <mat-checkbox [(ngModel)]="access.value.can_leave" [disabled]="data.myAccess.can_change_permissions !== true">Can leave this note</mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox [(ngModel)]="access.value.can_change_permissions" [disabled]="data.access[data.myGid].can_change_permissions !== true">Can change permissions</mat-checkbox>
+            <mat-checkbox [(ngModel)]="access.value.can_change_permissions" [disabled]="isCanChangePermissionsAvailable(access.key, access.value) === false">Can change permissions</mat-checkbox>
+          </mat-list-item>
+          <mat-list-item>
+            <button mat-flat-button color="warn" (click)="removeUser(access.key)" [disabled]="isRemoveAvailable(access.key, access.value) === false">Remove this person</button>
           </mat-list-item>
         </mat-list>
 
       </mat-expansion-panel>
     </mat-accordion>
 
-    <mat-form-field class="full-width">
-      <input matInput type="text" placeholder="Share with person" aria-label="Share with person" [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let user of data.users" [value]="user.gid">
-          {{ user.name.first_name }}&nbsp;{{ user.name.last_name }}
+    <mat-form-field class="share-to full-width">
+      <input matInput type="text" placeholder="Share with person" aria-label="Share with person" [matAutocomplete]="auto" [formControl]="userAutocomplete">
+      <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)='addUser($event.option.value)'>
+        <mat-option *ngFor="let user of filteredUsers | async" [value]="user.gid">
+          <span class="user-name">{{ user.name.first_name }}&nbsp;{{ user.name.last_name }}</span>&nbsp;<span class="user-email color-light">{{ user.email }}</span>
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
