@@ -205,10 +205,11 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       (data) => typeof data === 'object' && typeof data.access === 'object',
       {
         myGid: this.myGid,
+        myAccess: singleAccess[this.myGid],
         access: singleAccess,
         differences: differencesAppeared,
         skippedDueToPermissions: noteIdsSkippedDueToPermissions,
-        users: [] // TODO: Users here
+        users: this.usersService.listSnapshot()
       }
     );
   }
