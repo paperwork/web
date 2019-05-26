@@ -7,7 +7,7 @@ import { NotesService } from '../notes.service';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Note } from '../note';
+import { Note, TNoteAccess } from '../note';
 import { get } from 'lodash';
 import { Record, List } from 'immutable';
 import { AlertService } from '../../partial-alert/alert.service';
@@ -26,6 +26,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
   toolbarState: number;
   modeEdit: boolean;
   editor: FormGroup;
+  noteAccessUpdate: TNoteAccess | null = null;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
@@ -65,6 +66,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
         }
 
         this.editor.patchValue(noteObject);
+        this.noteAccessUpdate = null;
         this.toolbarService.targetNotes = List([note]);
       })
     );
@@ -122,6 +124,10 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       'body': this.editor.get(['body']).value,
       'path': this.editor.get(['path']).value
     };
+
+    if(this.noteAccessUpdate !== null) {
+      allFields['access'] = this.noteAccessUpdate;
+    }
 
     let toBeSavedFields: Object = allFields;
 
@@ -212,7 +218,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
   }
 
   private toolbarActionShare(payload: ToolbarActionPayload) {
-    // TODO: Adjust `access`.
+    this.noteAccessUpdate = payload.access;
     this.saveNote();
     this.alertService.success(`Shared note!`);
   }
