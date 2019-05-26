@@ -18,6 +18,22 @@ This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) an
 
 ![Current state](docs/current-state-02.png)
 
+![Current state](docs/current-state-03.png)
+
+![Current state](docs/current-state-04.png)
+
+![Current state](docs/current-state-05.png)
+
+![Current state](docs/current-state-06.png)
+
+![Current state](docs/current-state-07.png)
+
+![Current state](docs/current-state-08.png)
+
+![Current state](docs/current-state-09.png)
+
+![Current state](docs/current-state-10.png)
+
 ## Docker
 
 ### Environment Options
