@@ -139,6 +139,22 @@ a[color=white] {
   font-style: italic;
 }
 
+.color-regular {
+  color: $default-font-color-regular;
+}
+
+.color-grey {
+  color: $default-font-color-grey;
+}
+
+.color-light {
+  color: $default-font-color-light;
+}
+
+.color-ultra-light {
+  color: $default-font-color-ultra-light;
+}
+
 .full-width {
   width: 100%;
 }
