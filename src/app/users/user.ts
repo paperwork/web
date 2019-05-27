@@ -13,6 +13,7 @@ export interface IUser {
   role: string;
   created_at?: Date;
   deleted_at?: Date;
+  _rev?: string;
 }
 
 const UserRecord = Record({
@@ -26,7 +27,8 @@ const UserRecord = Record({
   profile_photo: '',
   role: '',
   created_at: new Date(),
-  deleted_at: null
+  deleted_at: null,
+  _rev: undefined
 });
 
 export class User extends UserRecord implements IUser {
