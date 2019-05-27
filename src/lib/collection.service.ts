@@ -1,47 +1,87 @@
 import { Injectable, InjectionToken } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { List, Record } from 'immutable';
-
-import Dexie from 'dexie';
+import { map, omit } from 'lodash';
+import PouchDB from 'pouchdb-browser';
 
 export interface ICollectionService {
-  db: Dexie;
+  db: any;
   collection: Function;
 
   collectionName: string;
   index: string;
 
   readonly entries: Observable<List<any>>;
+  readonly entriesPersisted: Observable<List<any>>;
+
+  bulkChange?(bulk: List<any>);
 
   onCollectionInit?(): Promise<boolean>;
   onCollectionChange?(changeset: Object): Promise<boolean>;
 }
 
-export const ITCollectionService = new InjectionToken<ICollectionService[]>('collectionService');
+export type TPouchResponseRow = {
+  doc: {
+    _id: string;
+    _rev: string;
+    _attachments: Object;
+    [key: string]: any;
+  };
+}
+
+export type TPouchResponse = {
+  offset: number;
+  total_rows: number;
+  rows: Array<TPouchResponseRow>;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class CollectionService implements ICollectionService {
-  private _db: Dexie|null = null;
+  private _db: any|null = null;
   public collectionName: string = '';
   public index: string = '';
 
   public readonly entries: Observable<List<any>>;
 
+  private _entriesPersisted: BehaviorSubject<List<any>> = new BehaviorSubject(List([]));
+  public readonly entriesPersisted: Observable<List<any>> = this._entriesPersisted.asObservable();
+
   constructor() {
   }
 
-  get db() {
+  init() {
+    console.debug(`Initializing local database with collection ${this.collectionName} ...`)
+    this.db = new PouchDB(this.collectionName);
+  }
+
+  get db(): any {
     return this._db;
   }
 
-  set db(db: Dexie) {
+  set db(db: any) {
     this._db = db;
   }
 
   get collection() {
-    return this._db[this.collectionName];
+    return this.db;
+  }
+
+  async all(): Promise<Array<Object>> {
+    const allDocs: TPouchResponse = await this.collection.allDocs({include_docs: true});
+
+    console.debug(allDocs);
+
+    const entries: Array<Object> = map(allDocs.rows, (row: TPouchResponseRow) => {
+      const entry = omit(row.doc, ['_id']);
+      entry.id = row.doc._id;
+      console.debug('Loading the following row:');
+      console.debug(entry);
+      return entry;
+    });
+
+    return entries;
   }
 
   getEntryIndexById<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, entryId: string): number {
@@ -67,7 +107,7 @@ export class CollectionService implements ICollectionService {
     return this.getEntryByIndex(entriesSubject, entryIndex);
   }
 
-  changeEntry<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, action: string, entryId: string|null, newValue?: T): boolean {
+  changeEntry<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, action: string, entryId: string|null, newValue?: T, persist: boolean = true): boolean {
     const entries: List<T> = entriesSubject.getValue();
     let entryIndex: number = -1;
 
@@ -92,7 +132,14 @@ export class CollectionService implements ICollectionService {
       return false;
     }
 
+    console.debug('Propagating new entries ...');
     entriesSubject.next(newEntries);
+
+    console.debug('Propagating new entries to be persisted ...');
+    if(persist === true) {
+      this._entriesPersisted.next(newEntries);
+    }
+
     return true;
   }
 
