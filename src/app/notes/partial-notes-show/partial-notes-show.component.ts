@@ -42,7 +42,8 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       title: ['', Validators.required],
       tags: formBuilder.array([]),
       body: ['', Validators.required],
-      path: ['']
+      path: [''],
+      _rev: ['']
     });
   }
 
@@ -122,7 +123,8 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       'title': this.editor.get(['title']).value,
       'tags': this.tags.controls.map((tagControl) => tagControl.value),
       'body': this.editor.get(['body']).value,
-      'path': this.editor.get(['path']).value
+      'path': this.editor.get(['path']).value,
+      '_rev': this.editor.get(['_rev']).value
     };
 
     if(this.noteAccessUpdate !== null) {
