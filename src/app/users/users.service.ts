@@ -26,10 +26,13 @@ export class UsersService extends CollectionService implements ICollectionServic
     private envService: EnvService
   ) {
     super();
+    this.init();
+    this.onCollectionInit();
   }
 
   async onCollectionInit(): Promise<boolean> {
-    const rows = await this.collection.toArray();
+    console.debug('Initializing users.service ...');
+    const rows = await this.all();
     let entries = (<Object[]>rows).map((user: any) => new User(user));
     this._entries.next(List(entries));
 
@@ -47,11 +50,15 @@ export class UsersService extends CollectionService implements ICollectionServic
     }
 
     if(changeType === 'deleted') {
-      this.changeEntry(this._entries, changeType, changedEntryId);
+      this.changeEntry(this._entries, changeType, changedEntryId, undefined, false);
     } else {
-      this.changeEntry(this._entries, changeType, changedEntryId, new User(changedEntry));
+      this.changeEntry(this._entries, changeType, changedEntryId, new User(changedEntry), false);
     }
     return true;
+  }
+
+  public bulkChange(bulk: List<User>) {
+    this._entries.next(bulk);
   }
 
   public listSnapshot(): List<User> {
