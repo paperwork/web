@@ -78,7 +78,6 @@ import { PartialSidebarNotificationsComponent } from './partial-sidebar-notifica
 import { GroupByPipe } from './group-by.pipe';
 import { PartialUsersSettingsShowComponent } from './users/partial-users-settings-show/partial-users-settings-show.component';
 
-import { ITCollectionService } from '../lib/collection.service';
 import { DialogMoveComponent } from './partial-toolbar-main/dialog-move/dialog-move.component';
 import { DialogDuplicateComponent } from './partial-toolbar-main/dialog-duplicate/dialog-duplicate.component';
 import { DialogExportComponent } from './partial-toolbar-main/dialog-export/dialog-export.component';
@@ -86,6 +85,8 @@ import { DialogShareComponent } from './partial-toolbar-main/dialog-share/dialog
 import { DialogDeleteComponent } from './partial-toolbar-main/dialog-delete/dialog-delete.component';
 
 import { ViewPrintComponent } from './view-print/view-print.component';
+
+import { SyncService } from './api/sync.service';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -190,8 +191,9 @@ export function init_env(envService: EnvService) {
   ],
   providers: [
     EnvService,
-    {provide: ITCollectionService, useClass: UsersService, multi: true},
-    {provide: ITCollectionService, useClass: NotesService, multi: true},
+    UsersService,
+    NotesService,
+    SyncService
   ],
   entryComponents: [
     DialogMoveComponent,
