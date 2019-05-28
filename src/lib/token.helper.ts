@@ -69,3 +69,11 @@ export const tokenGetDecoded = (access_token?: string|null): Token|null => {
   const jwtPayload: JsonWebTokenPayload = JSON.parse(decodeURIComponent(escape(window.atob(payload64))));
   return new Token(jwtPayload);
 };
+
+export const accessToken = (): string => {
+  return localStorage.getItem('access_token');
+};
+
+export const isLoggedIn = (): boolean => {
+  return localStorage.getItem('access_token') !==  null;
+};
