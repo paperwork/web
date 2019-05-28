@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { forEach, omit } from 'lodash';
-import { List } from 'immutable';
+import { List, Record } from 'immutable';
+import { first } from 'rxjs/operators';
 
 import { ICollectionService } from '../../lib/collection.service';
+import { EnvService, TEnvStatus } from '../env/env.service';
 import { UsersService } from '../users/users.service';
 import { NotesService } from '../notes/notes.service';
 
@@ -16,12 +18,21 @@ type TEntry = {
   providedIn: 'root'
 })
 export class SyncService {
+  envStatus: Subscription = null;
   collectionSubscriptions: Array<Subscription> = [];
 
   constructor(
+    private envService: EnvService,
     private usersService: UsersService,
     private notesService: NotesService
   ) {
+    this.envStatus = envService.status.subscribe((status: TEnvStatus) => {
+      if(typeof status === 'object' && status.initialized === true) {
+        this.apiLoad(usersService);
+        this.apiLoad(notesService);
+      }
+    });
+
     this.subscribeToCollectionService(usersService);
     this.subscribeToCollectionService(notesService);
   }
@@ -75,6 +86,8 @@ export class SyncService {
       return true;
     });
 
+    this.envStatus.unsubscribe();
+
     return true;
   }
 
@@ -89,6 +102,17 @@ export class SyncService {
     return entries.map((entry: TEntry) => {
       return this.rowFromEntry(entry);
     });
+  }
+
+  private async apiLoad(collectionService: ICollectionService) {
+    await collectionService.apiList()
+      .pipe(first())
+      .subscribe((entries: List<Record<TEntry>>) => {
+        console.log(entries);
+        collectionService.bulkChange(entries);
+      }, error => {
+        // this.alertService.error(error.error.content.error);
+      });
   }
 
 }
