@@ -100,10 +100,6 @@ export function jwtOptionsFactory(envService) {
   }
 }
 
-export function init_env(envService: EnvService) {
-  return () => envService.init();
-}
-
 @NgModule({
   declarations: [
     AppComponent,
