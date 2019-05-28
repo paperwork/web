@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
 import { ObjectId } from '../../lib/objectid.helper';
-import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+import { EnvService } from '../env/env.service';
+import { accessToken, isLoggedIn } from '../../lib/token.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { User } from './user';
-import { EnvService } from '../env/env.service';
 
 @Injectable({
   providedIn: 'root'
@@ -92,7 +92,25 @@ export class UsersService extends CollectionService implements ICollectionServic
   }
 
   public get isLoggedIn(): boolean {
-    return localStorage.getItem('access_token') !==  null;
+    return isLoggedIn();
+  }
+
+  apiList() {
+    console.log('apiList');
+
+    return this.httpClient
+      .get<{content: Array<User> }>(
+        `${this.envService.gatewayUrl()}/users`,
+        {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken()
+          })
+        }
+      )
+      .pipe(map(res => {
+        return List(res.content);
+      }));
   }
 
 }
