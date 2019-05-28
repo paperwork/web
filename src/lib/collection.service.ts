@@ -18,6 +18,8 @@ export interface ICollectionService {
 
   onCollectionInit?(): Promise<boolean>;
   onCollectionChange?(changeset: Object): Promise<boolean>;
+
+  apiList?();
 }
 
 export type TPouchResponseRow = {
