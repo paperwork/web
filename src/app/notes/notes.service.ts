@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
 import { ObjectId } from '../../lib/objectid.helper';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { tokenGetDecoded } from '../../lib/token.helper';
+import { EnvService } from '../env/env.service';
+import { accessToken, tokenGetDecoded } from '../../lib/token.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
@@ -19,7 +21,10 @@ export class NotesService extends CollectionService implements ICollectionServic
   private _entries: BehaviorSubject<List<Note>> = new BehaviorSubject(List([]));
   public readonly entries: Observable<List<Note>> = this._entries.asObservable();
 
-  constructor() {
+  constructor(
+    private httpClient: HttpClient,
+    private envService: EnvService
+  ) {
     super();
     this.init();
     this.onCollectionInit();
@@ -107,4 +112,23 @@ export class NotesService extends CollectionService implements ICollectionServic
   public updateFields(id: string, fieldsValuesMap: object): boolean {
     return this.updateEntryFields(this._entries, id, fieldsValuesMap);
   }
+
+  apiList() {
+    console.log('apiList');
+
+    return this.httpClient
+      .get<{content: Array<Note> }>(
+        `${this.envService.gatewayUrl()}/notes`,
+        {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken()
+          })
+        }
+      )
+      .pipe(map(res => {
+        return List(res.content);
+      }));
+  }
+
 }
