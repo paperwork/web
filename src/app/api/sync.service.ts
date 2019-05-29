@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 
 import { ICollectionService } from '../../lib/collection.service';
 import { EnvService, TEnvStatus } from '../env/env.service';
+import { AlertService } from '../partial-alert/alert.service';
 import { UsersService } from '../users/users.service';
 import { NotesService } from '../notes/notes.service';
 
@@ -23,6 +24,7 @@ export class SyncService {
 
   constructor(
     private envService: EnvService,
+    private alertService: AlertService,
     private usersService: UsersService,
     private notesService: NotesService
   ) {
@@ -111,7 +113,7 @@ export class SyncService {
         console.log(entries);
         collectionService.bulkChange(entries);
       }, error => {
-        // this.alertService.error(error.error.content.error);
+        this.alertService.error(error.error.content.error);
       });
   }
 
