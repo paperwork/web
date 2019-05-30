@@ -57,12 +57,13 @@ In order to start development, you need to have the following tools installed:
 - Node.js ([Mac](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-and-create-a-local-development-environment-on-macos) | [Ubuntu Linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04) | [Windows](https://www.wikihow.com/Install-Node.Js-on-Windows))
 - make (Mac: `xcode-select --install` | Ubuntu Linux: `apt-get install make` | [Windows](http://gnuwin32.sourceforge.net/install.html))
 - yarn ([Mac](https://yarnpkg.com/en/docs/install#mac-stable) | [Ubuntu Linux](https://yarnpkg.com/en/docs/install#debian-stable) | [Windows](https://yarnpkg.com/en/docs/install#windows-stable))
+- [Paperwork Local Dev Env](https://github.com/paperwork/paperwork#local-development-environment)
 
 ### Development server
 
 - Open a terminal/command line and `cd` into this directory.
 - Run `yarn install` if you haven't done it at all or haven't done it in a while, in order to install all required dependencies.
-- Run `make local-run-develop` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
+- Run `make local-run-develop` for a dev server. Even though the Angular development server runs on [http://localhost:4200/](http://localhost:4200/), this setup uses Paperwork's [local dev env](https://github.com/paperwork/paperwork#local-development-environment), hence you should navigate to [http://dev.www.paperwork.local:8000/](http://dev.www.paperwork.local:8000/) to access your local development instance. The app will automatically reload if you change any of the source files. Use `make local-run` for a production build.
 
 ### Code scaffolding
 
