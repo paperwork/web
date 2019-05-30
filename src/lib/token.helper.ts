@@ -70,10 +70,11 @@ export const tokenGetDecoded = (access_token?: string|null): Token|null => {
   return new Token(jwtPayload);
 };
 
-export const accessToken = (): string => {
+export const accessToken = (): string | null => {
   return localStorage.getItem('access_token');
 };
 
 export const isLoggedIn = (): boolean => {
-  return localStorage.getItem('access_token') !==  null;
+  const aT: string | null = accessToken();
+  return aT !==  null && aT.length > 0;
 };
