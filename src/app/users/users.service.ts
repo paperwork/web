@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, of, empty, BehaviorSubject } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
 import { ObjectId } from '../../lib/objectid.helper';
@@ -95,8 +95,15 @@ export class UsersService extends CollectionService implements ICollectionServic
     return isLoggedIn();
   }
 
+  public get accessToken(): string | null {
+    return accessToken();
+  }
+
   apiList() {
-    console.log('apiList');
+    if(isLoggedIn() === false) {
+      console.debug('Not performing apiList since user is not logged in');
+      return of(List());
+    }
 
     return this.httpClient
       .get<{content: Array<User> }>(
