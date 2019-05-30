@@ -3,6 +3,7 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { get } from 'lodash';
 
 import { UsersService } from '../users/users.service';
 import { AlertService } from '../partial-alert/alert.service';
@@ -102,7 +103,8 @@ export class ViewLoginComponent implements OnInit, OnDestroy {
       .subscribe(data => {
         this.router.navigate([this.returnUrl]);
       }, error => {
-        this.alertService.error(error.error.content.error);
+        console.error(error);
+        this.alertService.error(get(error, 'error.content.error', error));
         this.loading = false;
       });
     }
