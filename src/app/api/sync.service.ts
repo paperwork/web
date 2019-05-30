@@ -29,8 +29,12 @@ export class SyncService {
     private notesService: NotesService
   ) {
     this.envStatus = envService.status.subscribe((status: TEnvStatus) => {
-      if(typeof status === 'object' && status.initialized === true) {
+      console.debug('Retrieved EnvService status:', status);
+      if(typeof status === 'object' && status.initialized === true && status.loggedIn === true) {
+        console.debug('apiLoad(usersService)');
         this.apiLoad(usersService);
+
+        console.debug('apiLoad(notesService)');
         this.apiLoad(notesService);
       }
     });
