@@ -22,7 +22,13 @@ export class PartialSidebarTagsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.notesServiceSubscription = this.notesService.entries.subscribe((notes: List<Note>) => {
       this.tags = notes.map((note: Note) => {
-        return note.get('tags');
+        if(typeof note !== 'undefined'
+        && note !== null
+        && typeof note.get === 'function') {
+          return note.get('tags');
+        }
+
+        return [];
       }).reduce((res: Array<string>, tags: Array<string>) => {
         return union(res, tags);
       }, []);
