@@ -1,7 +1,8 @@
 import { EnvService } from './env/env.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ApiAuthInterceptor, ApiJwtInterceptor } from '../lib/api.interceptor';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -186,6 +187,8 @@ export function jwtOptionsFactory(envService) {
     MarkdownModule.forRoot(),
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ApiJwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiAuthInterceptor, multi: true },
     EnvService,
     UsersService,
     NotesService,
