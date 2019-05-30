@@ -44,7 +44,7 @@ local-build: ##@Local Build service (target: prod) locally
 	./node_modules/@angular/cli/bin/ng build --prod
 
 local-run-develop: ##@Local Run service (target: dev) locally
-	./node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --disable-host-check --open
+	./node_modules/@angular/cli/bin/ng serve --disable-host-check
 
 local-run: ##@Local Run service (target: prod) locally
-	./node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --disable-host-check --prod --open
+	./node_modules/@angular/cli/bin/ng serve --disable-host-check --prod
