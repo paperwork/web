@@ -7,6 +7,7 @@ import {
   Router
 } from '@angular/router';
 import { Observable } from 'rxjs';
+import { EnvService } from '../env/env.service';
 import { UsersService } from '../users/users.service';
 
 @Injectable({
@@ -14,6 +15,7 @@ import { UsersService } from '../users/users.service';
 })
 export class AuthGuard implements CanActivate {
   constructor(
+    private envService: EnvService,
     private usersService: UsersService,
     private router: Router
   ) {}
@@ -22,11 +24,13 @@ export class AuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    if (!this.usersService.isLoggedIn) {
+    if(this.usersService.isLoggedIn === false) {
+      this.envService.setStatusOf('loggedIn', false);
       this.router.navigate(['/login']);
       return false;
     }
 
+    this.envService.setStatusOf('loggedIn', true);
     return true;
   }
 }
