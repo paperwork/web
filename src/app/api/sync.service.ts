@@ -113,7 +113,8 @@ export class SyncService {
         console.log(entries);
         collectionService.bulkChange(entries);
       }, error => {
-        this.alertService.error(error.error.content.error);
+        console.error(error);
+        this.alertService.error(error.message);
       });
   }
 
