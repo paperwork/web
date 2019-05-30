@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, of, empty, throwError, BehaviorSubject } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
 import { ObjectId } from '../../lib/objectid.helper';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
 import { EnvService } from '../env/env.service';
-import { accessToken, tokenGetDecoded } from '../../lib/token.helper';
+import { accessToken, tokenGetDecoded, isLoggedIn } from '../../lib/token.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
@@ -114,7 +114,10 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   apiList() {
-    console.log('apiList');
+    if(isLoggedIn() === false) {
+      console.debug('Not performing apiList since user is not logged in');
+      return of(List());
+    }
 
     return this.httpClient
       .get<{content: Array<Note> }>(
@@ -126,9 +129,19 @@ export class NotesService extends CollectionService implements ICollectionServic
           })
         }
       )
-      .pipe(map(res => {
-        return List(res.content);
-      }));
+      .pipe(
+        map(res => {
+          return List(res.content);
+        }),
+        catchError(err => {
+          // We get 404 when no notes were found (e.g. because the user hasn't created any yet)
+          if(err.status === 404) {
+            return empty()
+          }
+
+          return throwError(err);
+        })
+      );
   }
 
 }
