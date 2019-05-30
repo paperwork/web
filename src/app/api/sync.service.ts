@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { first, tap } from 'rxjs/operators';
 import { forEach, omit } from 'lodash';
 import { List, Record } from 'immutable';
-import { first } from 'rxjs/operators';
 
 import { ICollectionService } from '../../lib/collection.service';
 import { EnvService, TEnvStatus } from '../env/env.service';
@@ -112,14 +112,16 @@ export class SyncService {
 
   private async apiLoad(collectionService: ICollectionService) {
     await collectionService.apiList()
-      .pipe(first())
-      .subscribe((entries: List<Record<TEntry>>) => {
-        console.log(entries);
-        collectionService.bulkChange(entries);
-      }, error => {
-        console.error(error);
-        this.alertService.error(error.message);
-      });
+      .subscribe(
+        (entries: List<Record<TEntry>>) => {
+          if(entries.size > 0) {
+            collectionService.bulkChange(entries);
+          }
+        },
+        (error) => {
+          this.alertService.error(error.message);
+        }
+      );
   }
 
 }
