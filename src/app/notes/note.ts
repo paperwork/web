@@ -23,6 +23,7 @@ export type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
 
 export interface INote {
   id: string;
+  version?: string;
   title?: string;
   body?: string;
   attachments?: Array<string>;
@@ -50,6 +51,7 @@ export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {
 
 const NoteRecord = Record({
   id: '',
+  version: undefined,
   title: '',
   body: '',
   attachments: [],
