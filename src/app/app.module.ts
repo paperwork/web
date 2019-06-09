@@ -87,6 +87,8 @@ import { DialogDeleteComponent } from './partial-toolbar-main/dialog-delete/dial
 
 import { ViewPrintComponent } from './view-print/view-print.component';
 
+import { UsersJournalsService } from './users/journals/journals.service';
+
 import { SyncService } from './api/sync.service';
 
 export function jwtOptionsFactory(envService) {
@@ -191,6 +193,7 @@ export function jwtOptionsFactory(envService) {
     { provide: HTTP_INTERCEPTORS, useClass: ApiAuthInterceptor, multi: true },
     EnvService,
     UsersService,
+    UsersJournalsService,
     NotesService,
     SyncService
   ],
