@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Observable, of, empty, throwError, BehaviorSubject } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
@@ -11,10 +11,14 @@ import { accessToken, tokenGetDecoded, isLoggedIn } from '../../lib/token.helper
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
+export type TNoteRequestParams = {
+  id?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class NotesService extends CollectionService implements ICollectionService {
+export class NotesService extends CollectionService implements ICollectionService, OnInit {
   collectionName: string = 'notes';
   index: string = 'id,created_at';
 
@@ -26,16 +30,16 @@ export class NotesService extends CollectionService implements ICollectionServic
     private envService: EnvService
   ) {
     super();
+    this.ngOnInit();
+  }
+
+  ngOnInit() {
     this.init();
     this.onCollectionInit();
   }
 
   async onCollectionInit(): Promise<boolean> {
     console.debug('Initializing notes.service ...');
-    const rows = await this.all();
-    let entries = (<Object[]>rows).map((note: any) => new Note(note));
-    this._entries.next(List(entries));
-
     return true;
   }
 
@@ -58,6 +62,7 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   public bulkChange(bulk: List<Note>) {
+    console.log('BULK CHANGE NOTES', bulk);
     this._entries.next(bulk);
   }
 
@@ -92,7 +97,7 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   public create(note: Note): boolean {
-    return this.changeEntry(this._entries, 'created', null, note);
+    return this.changeEntry(this._entries, 'created', null, note, false);
   }
 
   public update(id: string, note: Note): boolean {
@@ -113,7 +118,7 @@ export class NotesService extends CollectionService implements ICollectionServic
     return this.updateEntryFields(this._entries, id, fieldsValuesMap);
   }
 
-  apiList() {
+  apiList(params: TNoteRequestParams = {}) {
     if(isLoggedIn() === false) {
       console.debug('Not performing apiList since user is not logged in');
       return of(List());
@@ -121,7 +126,7 @@ export class NotesService extends CollectionService implements ICollectionServic
 
     return this.httpClient
       .get<{content: Array<Note> }>(
-        `${this.envService.gatewayUrl()}/notes`,
+        `${this.envService.gatewayUrl()}/notes${typeof params.id === 'string' ? '/' + params.id : ''}`,
         {
           headers: new HttpHeaders({
             'Content-Type': 'application/json',
@@ -131,7 +136,16 @@ export class NotesService extends CollectionService implements ICollectionServic
       )
       .pipe(
         map(res => {
-          return List(res.content);
+          let itemsArray: Array<Note> = [];
+
+          if(Array.isArray(res.content) === true) {
+            itemsArray = res.content.map((item: Object): Note => {
+              return new Note(item);
+            });
+          } else {
+            itemsArray.push(new Note(res.content));
+          }
+          return List(itemsArray);
         }),
         catchError(err => {
           // We get 404 when no notes were found (e.g. because the user hasn't created any yet)
