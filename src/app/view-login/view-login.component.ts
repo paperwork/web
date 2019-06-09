@@ -7,6 +7,7 @@ import { get } from 'lodash';
 
 import { UsersService } from '../users/users.service';
 import { AlertService } from '../partial-alert/alert.service';
+import { resetSyncId } from '../../lib/sync.helper';
 
 @Component({
   selector: 'view-login',
@@ -45,6 +46,8 @@ export class ViewLoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    resetSyncId();
+
     let commonUsername = ['', [Validators.required, Validators.email]];
     let commonPassword = ['', [Validators.required, Validators.minLength(8)]];
     let commonName = ['', [Validators.required]];
