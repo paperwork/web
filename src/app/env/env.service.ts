@@ -29,8 +29,13 @@ export class EnvService {
 
   public setStatusOf(property: string, value: any) {
     if(this.statusMap.hasOwnProperty(property) === true) {
-      this.statusMap[property] = value;
-      this._status.next(this.statusMap);
+      if(this.statusMap[property] !== value) {
+        console.debug('Setting new env status for %s to %s ...', property, value);
+        this.statusMap[property] = value;
+        this._status.next(this.statusMap);
+      } else {
+        console.debug('Not setting env status for %s to %s, as it is already set that way.', property, value);
+      }
     }
   }
 
