@@ -39,6 +39,10 @@ export class EnvService {
     }
   }
 
+  public getStatus(): TEnvStatus {
+    return this._status.getValue();
+  }
+
   public async init() {
     await from(fetch('/.env.json')
       .then(function(response) {
