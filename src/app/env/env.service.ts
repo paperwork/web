@@ -7,6 +7,7 @@ declare var window: any;
 export type TEnvStatus = {
   initialized?: boolean;
   loggedIn?: boolean;
+  domReady?: boolean;
 }
 
 @Injectable({
@@ -18,7 +19,8 @@ export class EnvService {
 
   private statusMap: TEnvStatus = {
     initialized: false,
-    loggedIn: false
+    loggedIn: false,
+    domReady: false,
   }
 
   constructor() {
