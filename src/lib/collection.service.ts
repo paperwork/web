@@ -6,7 +6,7 @@ import PouchDB from 'pouchdb-browser';
 
 export interface ICollectionService {
   db: any;
-  collection: Function;
+  collection: any;
 
   collectionName: string;
   index: string;
@@ -14,28 +14,14 @@ export interface ICollectionService {
   readonly entries: Observable<List<any>>;
   readonly entriesPersisted: Observable<List<any>>;
 
+
   bulkChange?(bulk: List<any>);
 
   onCollectionInit?(): Promise<boolean>;
   onCollectionChange?(changeset: Object): Promise<boolean>;
 
-  apiList?();
+  apiList?(params);
 }
-
-export type TPouchResponseRow = {
-  doc: {
-    _id: string;
-    _rev: string;
-    _attachments: Object;
-    [key: string]: any;
-  };
-}
-
-export type TPouchResponse = {
-  offset: number;
-  total_rows: number;
-  rows: Array<TPouchResponseRow>;
-};
 
 @Injectable({
   providedIn: 'root'
@@ -68,22 +54,6 @@ export class CollectionService implements ICollectionService {
 
   get collection() {
     return this.db;
-  }
-
-  async all(): Promise<Array<Object>> {
-    const allDocs: TPouchResponse = await this.collection.allDocs({include_docs: true});
-
-    console.debug(allDocs);
-
-    const entries: Array<Object> = map(allDocs.rows, (row: TPouchResponseRow) => {
-      const entry = omit(row.doc, ['_id']);
-      entry.id = row.doc._id;
-      console.debug('Loading the following row:');
-      console.debug(entry);
-      return entry;
-    });
-
-    return entries;
   }
 
   getEntryIndexById<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, entryId: string): number {
@@ -134,12 +104,12 @@ export class CollectionService implements ICollectionService {
       return false;
     }
 
-    console.debug('Propagating new entries ...');
-    entriesSubject.next(newEntries);
-
     console.debug('Propagating new entries to be persisted ...');
     if(persist === true) {
       this._entriesPersisted.next(newEntries);
+    } else {
+      console.debug('Propagating new entries ...');
+      entriesSubject.next(newEntries);
     }
 
     return true;
