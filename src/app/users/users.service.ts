@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Observable, of, empty, BehaviorSubject } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
@@ -14,7 +14,7 @@ import { User } from './user';
 @Injectable({
   providedIn: 'root'
 })
-export class UsersService extends CollectionService implements ICollectionService {
+export class UsersService extends CollectionService implements ICollectionService, OnInit {
   collectionName: string = 'users';
   index: string = 'id,created_at';
 
@@ -26,16 +26,16 @@ export class UsersService extends CollectionService implements ICollectionServic
     private envService: EnvService
   ) {
     super();
+    this.ngOnInit();
+  }
+
+  ngOnInit() {
     this.init();
     this.onCollectionInit();
   }
 
   async onCollectionInit(): Promise<boolean> {
     console.debug('Initializing users.service ...');
-    const rows = await this.all();
-    let entries = (<Object[]>rows).map((user: any) => new User(user));
-    this._entries.next(List(entries));
-
     return true;
   }
 
@@ -99,7 +99,7 @@ export class UsersService extends CollectionService implements ICollectionServic
     return accessToken();
   }
 
-  apiList() {
+  apiList(params = {}) {
     if(isLoggedIn() === false) {
       console.debug('Not performing apiList since user is not logged in');
       return of(List());
@@ -116,7 +116,17 @@ export class UsersService extends CollectionService implements ICollectionServic
         }
       )
       .pipe(map(res => {
-        return List(res.content);
+        let itemsArray: Array<User> = [];
+
+        if(Array.isArray(res.content) === true) {
+          itemsArray = res.content.map((item: Object): User => {
+            return new User(item);
+          });
+        } else {
+          itemsArray.push(new User(res.content));
+        }
+
+        return List(itemsArray);
       }));
   }
 
