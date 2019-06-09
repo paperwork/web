@@ -17,13 +17,14 @@ export class ApiAuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
-      if(err.status === 401) {
+      switch(err.status) {
+      case 401:
         this.usersService.logout();
         location.reload(true);
         return;
+      default:
+        return throwError(err);
       }
-
-      return throwError(err);
     }))
   }
 }
