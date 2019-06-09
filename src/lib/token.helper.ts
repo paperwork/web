@@ -18,7 +18,7 @@ class JsonWebTokenPayload implements IJsonWebTokenPayload {
   iss: string;
 }
 
-interface IToken {
+export interface IToken {
   id: string;
   type: string;
   userId: string;
@@ -29,7 +29,7 @@ interface IToken {
   issuer: string;
 }
 
-class Token implements IToken {
+export class Token implements IToken {
   id: string;
   type: string;
   userId: string;
