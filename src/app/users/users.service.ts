@@ -1,5 +1,5 @@
-import { Injectable, OnInit } from '@angular/core';
-import { Observable, of, empty, BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, of, empty, BehaviorSubject, throwError } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
@@ -8,35 +8,30 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EnvService } from '../env/env.service';
 import { accessToken, isLoggedIn } from '../../lib/token.helper';
+import { paramsToQuery, mapContent } from '../../lib/api.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { User } from './user';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UsersService extends CollectionService implements ICollectionService, OnInit {
-  collectionName: string = 'users';
-  index: string = 'id,created_at';
-
-  private _entries: BehaviorSubject<List<User>> = new BehaviorSubject(List([]));
-  public readonly entries: Observable<List<User>> = this._entries.asObservable();
-
+export class UsersService extends CollectionService<User> implements ICollectionService<User> {
   constructor(
-    private httpClient: HttpClient,
-    private envService: EnvService
+    protected httpClient: HttpClient,
+    protected envService: EnvService
   ) {
-    super();
-    this.ngOnInit();
-  }
-
-  ngOnInit() {
-    this.init();
-    this.onCollectionInit();
-  }
-
-  async onCollectionInit(): Promise<boolean> {
-    console.debug('Initializing users.service ...');
-    return true;
+    super(
+      httpClient,
+      envService,
+      () => {
+        this.init({
+          collectionName: 'users',
+          apiUrl: `${this.envService.gatewayUrl()}/users`,
+          entryInitializer: User
+        });
+        this.envService.pushToStatusOf('initializedCollections', 'users');
+      }
+    );
   }
 
   async onCollectionChange(change): Promise<boolean> {
@@ -50,25 +45,16 @@ export class UsersService extends CollectionService implements ICollectionServic
     }
 
     if(changeType === 'deleted') {
-      this.changeEntry(this._entries, changeType, changedEntryId, undefined, false);
+      this.memDbChangeEntry(changeType, changedEntryId, undefined);
     } else {
-      this.changeEntry(this._entries, changeType, changedEntryId, new User(changedEntry), false);
+      this.memDbChangeEntry(changeType, changedEntryId, new User(changedEntry));
     }
     return true;
   }
 
-  public bulkChange(bulk: List<User>) {
-    this._entries.next(bulk);
-  }
-
-  public listSnapshot(): List<User> {
-    return this._entries.getValue();
-  }
-
-  public show(id: string): Observable<User> {
-    return this.entries.pipe(
-      map((users: List<User>) => users.find(user => user.id === id))
-    );
+  public async mergeToLocalDb(notes: List<User>): Promise<List<User>> {
+    console.debug('mergeToLocalDb: NOT YET IMPLEMENTED');
+    return List();
   }
 
   register(email: string, password: string, name: object) {
@@ -97,37 +83,6 @@ export class UsersService extends CollectionService implements ICollectionServic
 
   public get accessToken(): string | null {
     return accessToken();
-  }
-
-  apiList(params = {}) {
-    if(isLoggedIn() === false) {
-      console.debug('Not performing apiList since user is not logged in');
-      return of(List());
-    }
-
-    return this.httpClient
-      .get<{content: Array<User> }>(
-        `${this.envService.gatewayUrl()}/users`,
-        {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken()
-          })
-        }
-      )
-      .pipe(map(res => {
-        let itemsArray: Array<User> = [];
-
-        if(Array.isArray(res.content) === true) {
-          itemsArray = res.content.map((item: Object): User => {
-            return new User(item);
-          });
-        } else {
-          itemsArray.push(new User(res.content));
-        }
-
-        return List(itemsArray);
-      }));
   }
 
 }
