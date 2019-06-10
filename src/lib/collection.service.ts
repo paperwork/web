@@ -1,45 +1,95 @@
 import { Injectable, InjectionToken } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, of, empty, throwError, BehaviorSubject, Subscription } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { List, Record } from 'immutable';
-import { map, omit } from 'lodash';
+import { omit, get } from 'lodash';
 import PouchDB from 'pouchdb-browser';
+import { accessToken, tokenGetDecoded, isLoggedIn } from './token.helper';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { paramsToQuery, mapContent } from './api.helper';
+import { EnvService, TEnvStatus } from '../app/env/env.service';
 
-export interface ICollectionService {
+import { Note } from '../app/notes/note';
+
+export type TLocalDbResponseRow = {
+  doc: {
+    _id: string;
+    _rev: string;
+    _attachments: Object;
+    [key: string]: any;
+  };
+}
+
+export type TLocalDbResponse = {
+  offset: number;
+  total_rows: number;
+  rows: Array<TLocalDbResponseRow>;
+};
+
+export interface ICollectionService<T> {
   db: any;
   collection: any;
-
   collectionName: string;
-  index: string;
 
-  readonly entries: Observable<List<any>>;
-  readonly entriesPersisted: Observable<List<any>>;
+  readonly entries: Observable<List<T>>;
+  readonly entriesPersisted: Observable<List<T>>;
 
+  mergeToLocalDb(notes: List<T>): Promise<List<T>>;
 
-  bulkChange?(bulk: List<any>);
-
-  onCollectionInit?(): Promise<boolean>;
-  onCollectionChange?(changeset: Object): Promise<boolean>;
-
-  apiList?(params);
+  memDbPersist(bulk: List<T>);
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class CollectionService implements ICollectionService {
+export class CollectionService<T extends { id: string, merge: Function, toJS: Function }> {
   private _db: any|null = null;
-  public collectionName: string = '';
-  public index: string = '';
+  public collectionName: string;
+  public apiUrl: string;
+  private entryInitializer;
 
-  public readonly entries: Observable<List<any>>;
+  protected envStatus: Subscription = null;
+  protected hasBeenInitialzed: boolean = false;
+
+  protected _entries: BehaviorSubject<List<T>> = new BehaviorSubject(List([]));
+  public readonly entries: Observable<List<T>> = this._entries.asObservable();
 
   private _entriesPersisted: BehaviorSubject<List<any>> = new BehaviorSubject(List([]));
   public readonly entriesPersisted: Observable<List<any>> = this._entriesPersisted.asObservable();
 
-  constructor() {
+  constructor(
+    protected httpClient: HttpClient,
+    protected envService: EnvService,
+    private initializer: Function
+  )
+  {
+    this.envStatus = this.envService.status.subscribe((status: TEnvStatus) => {
+      if(this.canInit(status) === true) {
+        console.debug('CollectionService.constructor: Initializer was called, canInit returned true, initializing ...');
+        this.hasBeenInitialzed = true;
+        initializer();
+      } else {
+        console.debug('CollectionService.constructor: Initializer was called, but canInit returned false.');
+      }
+    });
   }
 
-  init() {
+  protected canInit(status: TEnvStatus): boolean {
+    if(typeof status === 'object'
+    && status.initialized === true
+    && status.loggedIn === true
+    && this.hasBeenInitialzed === false) {
+      return true;
+    }
+
+    return false;
+  }
+
+  protected init(opts) {
+    this.collectionName = get(opts, 'collectionName', 'forgotToNameACollection');
+    this.apiUrl = get(opts, 'apiUrl', 'http://127.0.0.1/forgotToNameApiUrl');
+    this.entryInitializer = get(opts, 'entryInitializer', Object);
+
     console.debug(`Initializing local database with collection ${this.collectionName} ...`)
     this.db = new PouchDB(this.collectionName);
   }
@@ -56,36 +106,60 @@ export class CollectionService implements ICollectionService {
     return this.db;
   }
 
-  getEntryIndexById<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, entryId: string): number {
-    const entries: List<T> = entriesSubject.getValue();
+
+  // ================================================= memDb ======================================================== //
+
+  public async memDbToLocalDb() {
+    console.log('memDbToLocalDb');
+    const entries: List<T> = this.memDbList();
+    return this.localDbPersist(entries);
+  }
+
+  public memDbPersist(bulk: List<T>) {
+    console.log('memDbPersist', bulk);
+    this._entries.next(bulk);
+  }
+
+  public memDbList(): List<T> {
+    return this._entries.getValue();
+  }
+
+  public memDbShowObservable(id: string): Observable<T> {
+    return this.entries.pipe(
+      map((entries: List<T>) => entries.find(entry => entry.id === id))
+    );
+  }
+
+  public memDbGetEntryIndexById(entryId: string): number {
+    const entries: List<T> = this._entries.getValue();
     let entryIndex: number = 0;
 
     return entries.findIndex((entry: T) => entry.id === entryId);
   }
 
-  getEntryByIndex<T>(entriesSubject: BehaviorSubject<List<T>>, entryIndex: number): T|null {
+  public memDbGetEntryByIndex(entryIndex: number): T|null {
     let entry: T|null = null;
 
     if(entryIndex < 0) {
       return null;
     }
 
-    const entries: List<T> = entriesSubject.getValue();
+    const entries: List<T> = this._entries.getValue();
     return entries.get(entryIndex, null);
   }
 
-  getEntryById<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, entryId: string): T|null {
-    const entryIndex: number = this.getEntryIndexById(entriesSubject, entryId);
-    return this.getEntryByIndex(entriesSubject, entryIndex);
+  public memDbGetEntryById(entryId: string): T|null {
+    const entryIndex: number = this.memDbGetEntryIndexById(entryId);
+    return this.memDbGetEntryByIndex(entryIndex);
   }
 
-  changeEntry<T extends { id: string; }>(entriesSubject: BehaviorSubject<List<T>>, action: string, entryId: string|null, newValue?: T, persist: boolean = true): boolean {
-    const entries: List<T> = entriesSubject.getValue();
+  public memDbChangeEntry(action: string, entryId: string|null, newValue?: T): boolean {
+    const entries: List<T> = this._entries.getValue();
     let entryIndex: number = -1;
 
     if((action === 'updated' || action === 'deleted')
     && typeof entryId === 'string') {
-      entryIndex = this.getEntryIndexById(entriesSubject, entryId);
+      entryIndex = this.memDbGetEntryIndexById(entryId);
 
       if(entryIndex === -1) {
         console.log('Could not find entry in entries!');
@@ -104,19 +178,14 @@ export class CollectionService implements ICollectionService {
       return false;
     }
 
-    console.debug('Propagating new entries to be persisted ...');
-    if(persist === true) {
-      this._entriesPersisted.next(newEntries);
-    } else {
-      console.debug('Propagating new entries ...');
-      entriesSubject.next(newEntries);
-    }
+    console.debug('Propagating new entries ...');
+    this._entries.next(newEntries);
 
     return true;
   }
 
-  public updateEntryFields<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, fieldsValuesMap: object): boolean {
-    const entry: T|null = this.getEntryById(entriesSubject, id);
+  public memDbUpdateEntryFields(id: string, fieldsValuesMap: object): boolean {
+    const entry: T|null = this.memDbGetEntryById(id);
 
     if(entry === null) {
       console.log('Entry with ID %s not found!', id);
@@ -125,11 +194,11 @@ export class CollectionService implements ICollectionService {
 
     const updatedEntry: T = entry.merge(fieldsValuesMap);
 
-    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+    return this.memDbChangeEntry('updated', id, updatedEntry);
   }
 
-  public updateEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: any): boolean {
-    const entry: T|null = this.getEntryById(entriesSubject, id);
+  public memDbUpdateEntryField(id: string, field: string, value: any): boolean {
+    const entry: T|null = this.memDbGetEntryById(id);
 
     if(entry === null) {
       console.log('Entry with ID %s not found!', id);
@@ -140,11 +209,11 @@ export class CollectionService implements ICollectionService {
       [field]: value
     });
 
-    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+    return this.memDbChangeEntry('updated', id, updatedEntry);
   }
 
-  public pushToEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: T) {
-    const entry: T|null = this.getEntryById(entriesSubject, id);
+  public memDbPushToEntryField(id: string, field: string, value: T) {
+    const entry: T|null = this.memDbGetEntryById(id);
 
     if(entry === null) {
       console.log('Entry with ID %s not found!', id);
@@ -162,11 +231,11 @@ export class CollectionService implements ICollectionService {
       [field]: fieldList.push(value).toArray()
     });
 
-    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+    return this.memDbChangeEntry('updated', id, updatedEntry);
   }
 
-  public popFromEntryField<T extends { id: string, merge: Function }>(entriesSubject: BehaviorSubject<List<T>>, id: string, field: string, value: T) {
-    const entry: T|null = this.getEntryById(entriesSubject, id);
+  public memDbPopFromEntryField(id: string, field: string, value: T) {
+    const entry: T|null = this.memDbGetEntryById(id);
 
     if(entry === null) {
       console.log('Entry with ID %s not found!', id);
@@ -188,7 +257,98 @@ export class CollectionService implements ICollectionService {
       [field]: currentValues.delete(idx).toArray()
     });
 
-    return this.changeEntry(entriesSubject, 'updated', id, updatedEntry);
+    return this.memDbChangeEntry('updated', id, updatedEntry);
+  }
+
+
+  // ================================================= localDb ====================================================== //
+
+  public async localDbToMemDb() {
+    console.log('localDbToMemDb');
+    const entries: List<T> = await this.localDbList();
+    return this.memDbPersist(entries);
+  }
+
+  public localDbPersist(bulk: List<T>) {
+    console.log('localDbPersist', bulk);
+    this._entriesPersisted.next(bulk);
+  }
+
+  public async localDbList(): Promise<List<T>> {
+    console.debug('localDbList called ...');
+    const allDocs: TLocalDbResponse = await this.collection.allDocs({include_docs: true});
+
+    console.debug('localDbList: All existing documents:', allDocs);
+
+    const rows: Array<TLocalDbResponseRow> = get(allDocs, 'rows', []);
+    console.debug('localDbList: rows', rows);
+    const entries: Array<T> = rows.map((row: TLocalDbResponseRow) => {
+      console.debug('localDbList: Checking row ...');
+      const entry = omit(row.doc, ['_id']);
+      entry.id = row.doc._id;
+      console.debug('localDbList: Loading the following row:');
+      console.debug(entry);
+      return new this.entryInitializer(entry);
+    });
+
+    console.debug('localDbList: Converted existing documents:', entries);
+
+    return List(entries);
+  }
+
+  public async localDbUpsert(entries: List<T>): Promise<any> {
+    console.debug('localDbUpsert called ...');
+    const localDbRows: Array<Object> = entries.reduce((arr: Array<Object>, entry: T) => {
+      const row = omit(entry.toJS(), ['id']);
+      row._id = entry.id;
+      arr.push(row);
+      return arr;
+    }, []);
+
+    console.debug('localDbUpsert: Transformed to localDb rows', localDbRows);
+    const dbret = await this.collection.bulkDocs(localDbRows);
+    console.debug('localDbUpsert: bulkDocs return', dbret);
+
+    return dbret;
+  }
+
+
+  // ================================================= api ========================================================== //
+
+  public apiList(params = {}, opts = {}) {
+    const optAuthenticatedOnly: boolean = get(opts, 'authenticatedOnly', false);
+    let reqHeaders: HttpHeaders = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    if(optAuthenticatedOnly === true) {
+      if(isLoggedIn() === false) {
+        console.debug('Not performing apiList since user is not logged in');
+        return of(List());
+      }
+
+      reqHeaders = reqHeaders.append('Authorization', `Bearer ${accessToken()}`);
+    }
+
+    return this.httpClient
+      .get<{content: Array<T> }>(
+        `${this.apiUrl}?${paramsToQuery(params)}`,
+        {
+          headers: reqHeaders
+        }
+      )
+      .pipe(
+        map(res => mapContent(res, this.entryInitializer)),
+        catchError(err => {
+          switch(err.status) {
+          case 404:
+            console.debug('apiList: Retrieved 404, apparently there is nothing new!');
+            return of(List());
+          default:
+            return throwError(err);
+          }
+        })
+      );
   }
 
 }
