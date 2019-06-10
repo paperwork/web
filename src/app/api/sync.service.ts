@@ -1,5 +1,5 @@
-import { Injectable, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, BehaviorSubject,ReplaySubject, Subscription, of } from 'rxjs';
 import { first, tap } from 'rxjs/operators';
 import { forEach, omit, get, map } from 'lodash';
 import { List, Record } from 'immutable';
@@ -21,27 +21,19 @@ export type TEntry = {
   [key: string]: any;
 }
 
-export type TPouchResponseRow = {
-  doc: {
-    _id: string;
-    _rev: string;
-    _attachments: Object;
-    [key: string]: any;
-  };
-}
-
-export type TPouchResponse = {
-  offset: number;
-  total_rows: number;
-  rows: Array<TPouchResponseRow>;
-};
-
 @Injectable({
   providedIn: 'root'
 })
-export class SyncService implements OnInit, OnDestroy {
-  envStatus: Subscription = null;
-  collectionSubscriptions: Array<Subscription> = [];
+export class SyncService {
+  private envStatus: Subscription = null;
+  private collectionSubscriptions: Array<Subscription> = [];
+
+  private syncJournalsSubscription: Subscription;
+  private _syncJournals = new ReplaySubject<List<Journal>>(1);
+  public syncJournals: Observable<List<Journal>> = this._syncJournals.asObservable();
+
+  public syncTriggerInProgess: boolean = false;
+  public syncInProgess: boolean = false;
 
   constructor(
     private envService: EnvService,
@@ -51,170 +43,56 @@ export class SyncService implements OnInit, OnDestroy {
     private notesService: NotesService
   ) {
     console.debug('Constructing SyncService ...');
-    this.ngOnInit();
+    this.init();
   }
 
-  ngOnInit() {
+  init() {
     console.debug('Initializing SyncService ...');
     this.envStatus = this.envService.status.subscribe((status: TEnvStatus) => {
       console.debug('Retrieved EnvService status:', status);
       if(this.canSync(status) === true) {
-        // console.debug('apiLoad(usersService)');
-        // this.apiLoad(this.usersService, User);
+        this.triggerSync('note');
+      }
+    });
 
-        // console.debug('apiLoad(usersJournalsService)');
-        // this.apiLoad(this.usersJournalsService, Journal);
+    this.syncJournalsSubscription = this.syncJournals.subscribe(async (newJournalEntries: List<Journal>): Promise<boolean> => {
+      if(newJournalEntries.size > 0) {
+        const checkEntry: Journal = newJournalEntries.get(0);
 
-        // console.debug('apiLoad(notesService)');
-        // this.apiLoad(this.notesService, Note);
-
-        this.sync();
+        return this.sync(checkEntry.resource, newJournalEntries);
       }
     });
 
     this.subscribeToCollectionService(this.usersService, User);
     this.subscribeToCollectionService(this.usersJournalsService, Journal);
     this.subscribeToCollectionService(this.notesService, Note);
+
+    // setInterval(() => {
+    //   this.notesService.memDbToLocalDb();
+    // }, 30000);
   }
 
-  ngOnDestroy() {
-    this.unsubscribeCollectionSubscriptions();
-  }
-
-  canSync(status: TEnvStatus): boolean {
-    if(typeof status === 'object'
-    && status.initialized === true
-    && status.loggedIn === true
-    && status.domReady === true) {
-      return true;
-    }
-
-    return false;
-  }
-
-  public async sync(): Promise<boolean> {
-    const status: TEnvStatus = this.envService.getStatus();
-    if(this.canSync(status) === false) {
-      return false;
-    }
-
-    console.debug('Syncing UsersJournalsService ...');
-    await this.apiLoad(this.usersJournalsService, Journal, {}, null, null, async (collectionService: ICollectionService, newJournalEntries: List<Journal>) => {
-      return this.syncJournalReflector(collectionService, newJournalEntries);
-    });
-
-    return true;
-  }
-
-  private async syncJournalReflector(collectionService: ICollectionService, newJournalEntries: List<Journal>) {
-      console.debug('Checking currently available journal entries:', newJournalEntries);
-
-      if(newJournalEntries.size > 0) {
-        console.debug('Got new journal entries! Checking ...');
-
-        const newJournalNoteEntries: List<Journal> = newJournalEntries.filter((journalEntry: Journal) => journalEntry.resource === 'note');
-        if(newJournalNoteEntries.size > 0) {
-          console.debug('Got new journal entries for notes! Checking ...');
-
-          const promises: List<Promise<any>> = newJournalNoteEntries.map(async (newJournalNoteEntry: Journal) => {
-            console.debug('Requesting note', newJournalNoteEntry.resource_id);
-
-            await this.apiLoad(this.notesService, Note, { id: newJournalNoteEntry.resource_id }, null, async (collectionService: ICollectionService, existingEntries: List<Note>, newEntries: List<Note>) => {
-              return this.syncNoteMerger(collectionService, existingEntries, newEntries);
-            }, null);
-
-            setSyncId(newJournalNoteEntry.id);
-          });
-
-          await Promise.all(promises);
-          console.debug('Updated all notes!');
-        }
+  private subscribeToCollectionService<T>(collectionService: ICollectionService<T>, entryType): boolean {
+    console.debug('subscribeToCollectionService: Subscribing to collection', collectionService.collectionName, '...');
+    const collectionSubscription: Subscription = collectionService.entriesPersisted.subscribe(async (entries: List<T>): Promise<boolean> => {
+      if(this.canSync(this.envService.getStatus()) === true) {
+        const mergedNotes: List<T> = await collectionService.mergeToLocalDb(entries);
+        console.debug('subscribeToCollectionService: Retrieved merged notes', mergedNotes);
+        collectionService.memDbPersist(mergedNotes);
+        return true;
       }
-  }
 
-  private async syncNoteMerger(collectionService: ICollectionService, existingEntries: List<Note>, newEntries: List<Note>) {
-
-  }
-
-  private subscribeToCollectionService(collectionService: ICollectionService, entryType, perEntryCallback: Function|null = null, reflectCallback: Function|null = null): boolean {
-    console.debug('Subscribing to collection', collectionService.collectionName, '...');
-    const collectionSubscription: Subscription = collectionService.entriesPersisted.subscribe(async (entries: List<any>): Promise<boolean> => {
-      return this.collectionServiceProcessEntries(collectionService, entryType, entries, perEntryCallback, reflectCallback);
+      return false;
     });
 
     this.collectionSubscriptions.push(collectionSubscription);
     return true;
   }
 
-  private async collectionServiceProcessEntries(collectionService: ICollectionService, entryType, entries: List<any>, entriesMerger: Function|null = null, perEntryCallback: Function|null = null, reflectCallback: Function|null = null): Promise<boolean> {
-    const collectionName: string = collectionService.collectionName;
-    const db: any = collectionService.db;
-
-    if(entries.size === 0) {
-      console.debug('Nothing to persist to local database.');
-      return true;
-    }
-
-    const existingEntries: List<any> = await this.collectionServiceLoadExistingEntries(collectionService, entryType);
-    let mergedEntries: List<any> = List();
-
-    console.debug('Merging new values:', entries);
-    console.debug('Merging with existing values:', existingEntries);
-    if(entriesMerger === null) {
-      console.debug('Using regular merger ...');
-      mergedEntries = existingEntries.concat(entries);
-    } else {
-      console.debug('Using custom merger ...');
-      mergedEntries = await entriesMerger(collectionService, existingEntries, entries);
-    }
-
-    try {
-      console.debug('Persisting changes to local database ...', mergedEntries);
-      const mergedEntriesJs: Array<TEntry> = mergedEntries.toJS();
-      console.debug('Got original data:');
-      console.debug(mergedEntriesJs);
-      const mergedEntriesRows: Array<Object> = this.rowsFromEntries(mergedEntriesJs);
-      console.debug('Transformed original data:');
-      console.debug(mergedEntriesRows);
-      // const dbret = await db.bulkDocs(mergedEntriesRows);
-      // console.debug(dbret);
-
-      const newEntriesPromises: List<Promise<any>> = mergedEntries.map(async (entry: any) => {
-        const entryId = entry.id;
-        // const dbretEntry = dbret.find((retEntry) => (retEntry.ok === true && retEntry.id === entryId));
-        let dbretEntry;
-        const newEntry: any = entry.set('_rev', get(dbretEntry, 'rev', undefined));
-
-        if(perEntryCallback !== null) {
-          console.debug('Calling per entry callback ...');
-          return perEntryCallback(collectionService, newEntry);
-        }
-
-        return newEntry;
-      });
-
-      const newEntriesArray: Array<any> = await Promise.all(newEntriesPromises.values());
-      const newEntries: List<any> = List(newEntriesArray);
-
-      if(reflectCallback === null) {
-        console.debug('Using regular reflect callback ...');
-        await this.collectionServiceReflectChanges(collectionService, newEntries);
-      } else {
-        console.debug('Using custom reflect callback ...');
-        await reflectCallback(collectionService, newEntries);
-      }
-    } catch(err) {
-      console.error('Could not persist changes to local database:');
-      console.error(err);
-    }
-
-    return true;
-  }
-
-  private async collectionServiceReflectChanges(collectionService: ICollectionService, entries: List<any>): Promise<boolean> {
-    console.debug('Propagating:', entries);
-    await collectionService.bulkChange(entries);
-    return true;
+  ngOnDestroy() {
+    this.unsubscribeCollectionSubscriptions();
+    this.syncJournalsSubscription.unsubscribe();
+    this.envStatus.unsubscribe();
   }
 
   private unsubscribeCollectionSubscriptions(): boolean {
@@ -224,55 +102,143 @@ export class SyncService implements OnInit, OnDestroy {
       return true;
     });
 
-    this.envStatus.unsubscribe();
-
     return true;
   }
 
-  async collectionServiceLoadExistingEntries(collectionService: ICollectionService, entryType): Promise<List<TEntry>> {
-    console.debug('collectionServiceLoadExistingEntries ...');
-    const allDocs: TPouchResponse = await collectionService.collection.allDocs({include_docs: true});
+  public canSync(status: TEnvStatus): boolean {
+    if(typeof status === 'object'
+    && status.initialized === true
+    && status.loggedIn === true
+    && status.domReady === true
+    && status.initializedCollections.includes('users') === true
+    && status.initializedCollections.includes('notes') === true
+    && status.initializedCollections.includes('users_journals') === true
+    && this.syncTriggerInProgess === false
+    && this.syncInProgess === false) {
+      console.debug('canSync: Everything good to go, can begin syncing!');
+      return true;
+    }
 
-    console.debug('All existing documents:', allDocs);
-
-    const entries: Array<TEntry> = map(allDocs.rows, (row: TPouchResponseRow) => {
-      const entry = omit(row.doc, ['_id']);
-      entry.id = row.doc._id;
-      console.debug('Loading the following row:');
-      console.debug(entry);
-      return new entryType(entry);
-    });
-
-    console.debug('Converted existing documents:', entries);
-
-    return List(entries);
+    console.debug('canSync: Not ready for sync yet, waiting ...');
+    return false;
   }
 
-  private rowFromEntry(entry: TEntry): Object {
-    const row = omit(entry, ['id']);
-    row._id = entry.id;
-
-    return row;
+  public async triggerSync(resource: string): Promise<boolean> {
+    await this.triggerSyncJournals(resource);
+    return true;
   }
 
-  private rowsFromEntries(entries: Array<TEntry>): Array<Object> {
-    return entries.map((entry: TEntry) => {
-      return this.rowFromEntry(entry);
-    });
-  }
+  public async triggerSyncJournals(resource: string): Promise<boolean> {
+    return new Promise((fulfill, reject) => {
+      const status: TEnvStatus = this.envService.getStatus();
+      if(this.canSync(status) === false) {
+        return false;
+      }
 
-  private async apiLoad(collectionService: ICollectionService, entryType, params = {}, entriesMerger: Function|null = null, perEntryCallback: Function|null = null, reflectCallback: Function|null = null) {
-    return collectionService.apiList(params)
-      .subscribe(
-        (entries: List<Record<TEntry>>) => {
-          if(entries.size > 0) {
-            this.collectionServiceProcessEntries(collectionService, entryType, entries, entriesMerger, perEntryCallback, reflectCallback);
+      this.syncInProgess = true;
+
+      const syncId: string = getSyncId(resource);
+      console.debug('triggerSyncJournals: Syncing UsersJournalsService with syncId %s for %s ...', syncId, resource);
+
+      this.usersJournalsService.apiList({
+        resource: resource,
+        newer_than_id: syncId
+      }, {
+        authenticatedOnly: true
+      }).subscribe(
+        (newJournalEntries: List<Journal>) => {
+          this.syncInProgess = false;
+
+          if(newJournalEntries.size > 0) {
+            console.debug('triggerSyncJournals: Found new journal entries, publishing ...');
+            this._syncJournals.next(newJournalEntries);
+          } else {
+            console.debug('triggerSyncJournals: No new journal entries found, finishing sync.');
           }
+          return fulfill(true);
         },
         (error) => {
           this.alertService.error(error.message);
+
+          this.syncInProgess = false;
+          return reject(false);
         }
       );
+    });
   }
+
+  private async sync(resource: string, newJournalEntries: List<Journal>): Promise<boolean> {
+    console.debug('sync ...', newJournalEntries);
+
+    if(this.canSync(this.envService.getStatus()) === false) {
+      console.debug('sync: Aborting sync');
+      return false;
+    }
+
+    this.syncInProgess = true;
+
+    const allJournalEntryIds: List<string> = newJournalEntries.map((newJournalEntry: Journal): string => newJournalEntry.id);
+    console.debug('sync: allJournalEntryIds', allJournalEntryIds);
+    let syncedJournalEntryIds: List<string> = List();
+    console.debug('sync: syncedJournalEntryIds', syncedJournalEntryIds);
+
+    if(newJournalEntries.size > 0) {
+      console.debug('sync: Got new journal entries! Checking ...');
+
+      const noteIds: List<string> = newJournalEntries.map((newNoteJournalEntry: Journal): string => {
+        console.debug('sync: Adding note ID %s to request ...', newNoteJournalEntry.resource_id);
+        console.debug('sync:', newNoteJournalEntry);
+        return newNoteJournalEntry.resource_id;
+      });
+      console.debug('sync: noteIds', noteIds);
+
+      try {
+        console.debug('sync: Triggering syncNotes ...');
+        await this.syncNotes(noteIds);
+        console.debug('sync: syncNotes finished successfully!');
+      } catch(error) {
+        console.error(error);
+      }
+    }
+
+    // TODO: Intersect allJournalEntryIds with syncedJournalEntryIds and see which IDs did not sync
+    const newestJournalEntry: Journal|null = newJournalEntries.get(-1);
+    if(newestJournalEntry !== null) {
+      console.debug('sync: Setting syncId:', newestJournalEntry.id);
+      // setSyncId(resource, newestJournalEntry.id);
+    }
+
+    this.syncInProgess = false;
+    return true;
+  }
+
+  private async syncNotes(noteIds: List<string>) {
+    return new Promise((fulfill, reject) => {
+      console.debug('syncNotes ...', noteIds.toJS());
+      this.notesService.apiList({
+          ids: noteIds.toJS()
+        }, {
+          authenticatedOnly: true
+        }).subscribe(async (newNotes: List<Note>) => {
+          console.debug('syncNotes: newNotes', newNotes);
+
+          if(newNotes.size > 0) {
+            console.debug('syncNotes: Retrieved notes from API, syncing to LocalDb ...');
+            const mergedNotes: List<Note> = await this.notesService.mergeToLocalDb(newNotes);
+            console.debug('syncNotes: Retrieved merged notes', mergedNotes);
+            this.notesService.memDbPersist(mergedNotes);
+            return fulfill(mergedNotes);
+          }
+
+          console.debug('No new journal entries found, finishing sync.');
+          return fulfill(List());
+        },
+        (error) => {
+          return reject(error);
+        }
+      );
+    });
+  }
+
 
 }
