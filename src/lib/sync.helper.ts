@@ -24,3 +24,20 @@ export const resetSyncId = (resource: string = ''): string => {
   localStorage.removeItem(`sync_id_${resource}`);
   return syncId;
 };
+
+export const getRevisionNumber = (rev: string): number => {
+  if(typeof rev !== 'string') {
+    return -1;
+  }
+
+  const rMatchRevisionNumber = /^([0-9]{1,})-.*$/;
+  const match: Array<string> | null = rev.match(rMatchRevisionNumber);
+
+  if(match !== null
+  && match.length === 2) {
+    const revisionNumberStr: string = match[1];
+    return parseInt(revisionNumberStr, 10);
+  }
+
+  return -1;
+};
