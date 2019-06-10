@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, of, empty, throwError, BehaviorSubject } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
@@ -8,39 +8,30 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 
 import { EnvService } from '../env/env.service';
 import { accessToken, tokenGetDecoded, isLoggedIn } from '../../lib/token.helper';
+import { paramsToQuery, mapContent } from '../../lib/api.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
-
-export type TNoteRequestParams = {
-  id?: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotesService extends CollectionService implements ICollectionService, OnInit {
-  collectionName: string = 'notes';
-  index: string = 'id,created_at';
-
-  private _entries: BehaviorSubject<List<Note>> = new BehaviorSubject(List([]));
-  public readonly entries: Observable<List<Note>> = this._entries.asObservable();
-
+export class NotesService extends CollectionService<Note> implements ICollectionService<Note> {
   constructor(
-    private httpClient: HttpClient,
-    private envService: EnvService
+    protected httpClient: HttpClient,
+    protected envService: EnvService
   ) {
-    super();
-    this.ngOnInit();
-  }
-
-  ngOnInit() {
-    this.init();
-    this.onCollectionInit();
-  }
-
-  async onCollectionInit(): Promise<boolean> {
-    console.debug('Initializing notes.service ...');
-    return true;
+    super(
+      httpClient,
+      envService,
+      () => {
+        this.init({
+          collectionName: 'notes',
+          apiUrl: `${this.envService.gatewayUrl()}/notes`,
+          entryInitializer: Note
+        });
+        this.envService.pushToStatusOf('initializedCollections', 'notes');
+      }
+    );
   }
 
   async onCollectionChange(change): Promise<boolean> {
@@ -54,26 +45,44 @@ export class NotesService extends CollectionService implements ICollectionServic
     }
 
     if(changeType === 'deleted') {
-      this.changeEntry(this._entries, changeType, changedEntryId, undefined, false);
+      this.memDbChangeEntry(changeType, changedEntryId, undefined);
     } else {
-      this.changeEntry(this._entries, changeType, changedEntryId, new Note(changedEntry), false);
+      this.memDbChangeEntry(changeType, changedEntryId, new Note(changedEntry));
     }
     return true;
   }
 
-  public bulkChange(bulk: List<Note>) {
-    console.log('BULK CHANGE NOTES', bulk);
-    this._entries.next(bulk);
+  public async mergeToLocalDb(notes: List<Note>): Promise<List<Note>> {
+    const localDbNotes: List<Note> = await this.localDbList();
+
+    const mergedNotes: List<Note> = notes.map((note: Note) => {
+      console.debug('mergeToLocalDb: notes.map');
+      const foundNote: Note|undefined = localDbNotes.find((localDbNote: Note) => localDbNote.id === note.id);
+      if(typeof foundNote === 'undefined') { // Note ID not found in local db -> it's a new note we can simply add
+        console.debug('mergeToLocalDb: Note not found in database, adding as new note ...');
+        return note;
+      }
+
+      console.debug('mergeToLocalDb: Note found in database, merging ...');
+      return this.mergeNotes(foundNote, note);
+    });
+
+    console.debug('mergeToLocalDb: Upserting merged notes', mergedNotes);
+    const localDbReturn: Array<any> = await this.localDbUpsert(mergedNotes);
+
+    console.debug('mergeToLocalDb: Retrieved upserting return', localDbReturn);
+    const updatedNotes: List<Note> = mergedNotes.map((note: Note) => {
+      const localDbReturnedEntry = localDbReturn.find((retEntry) => (retEntry.ok === true && retEntry.id === note.id));
+      console.debug('mergeToLocalDb: Setting _rev of note %s ...', note.id);
+      return note.set('_rev', get(localDbReturnedEntry, 'rev', undefined));
+    });
+
+    console.debug('mergeToLocalDb: Updated notes', updatedNotes);
+    return updatedNotes;
   }
 
-  public listSnapshot(): List<Note> {
-    return this._entries.getValue();
-  }
-
-  public show(id: string): Observable<Note> {
-    return this.entries.pipe(
-      map((notes: List<Note>) => notes.find(note => note.id === id))
-    );
+  public mergeNotes(leftNote: Note, rightNote: Note): Note {
+    return leftNote;
   }
 
   public newNote(fields?: INote): string|null {
@@ -97,11 +106,11 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   public create(note: Note): boolean {
-    return this.changeEntry(this._entries, 'created', null, note, false);
+    return this.memDbChangeEntry('created', null, note);
   }
 
   public update(id: string, note: Note): boolean {
-    return this.changeEntry(this._entries, 'updated', id, note);
+    return this.memDbChangeEntry('updated', id, note);
   }
 
   public delete(id: string): boolean {
@@ -111,51 +120,11 @@ export class NotesService extends CollectionService implements ICollectionServic
   }
 
   public updateField(id: string, field: string, value: any): boolean {
-    return this.updateEntryField(this._entries, id, field, value);
+    return this.memDbUpdateEntryField(id, field, value);
   }
 
   public updateFields(id: string, fieldsValuesMap: object): boolean {
-    return this.updateEntryFields(this._entries, id, fieldsValuesMap);
-  }
-
-  apiList(params: TNoteRequestParams = {}) {
-    if(isLoggedIn() === false) {
-      console.debug('Not performing apiList since user is not logged in');
-      return of(List());
-    }
-
-    return this.httpClient
-      .get<{content: Array<Note> }>(
-        `${this.envService.gatewayUrl()}/notes${typeof params.id === 'string' ? '/' + params.id : ''}`,
-        {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken()
-          })
-        }
-      )
-      .pipe(
-        map(res => {
-          let itemsArray: Array<Note> = [];
-
-          if(Array.isArray(res.content) === true) {
-            itemsArray = res.content.map((item: Object): Note => {
-              return new Note(item);
-            });
-          } else {
-            itemsArray.push(new Note(res.content));
-          }
-          return List(itemsArray);
-        }),
-        catchError(err => {
-          // We get 404 when no notes were found (e.g. because the user hasn't created any yet)
-          if(err.status === 404) {
-            return empty()
-          }
-
-          return throwError(err);
-        })
-      );
+    return this.memDbUpdateEntryFields(id, fieldsValuesMap);
   }
 
 }
