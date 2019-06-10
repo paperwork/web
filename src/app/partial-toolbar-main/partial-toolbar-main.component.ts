@@ -209,7 +209,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
         access: singleAccess,
         differences: differencesAppeared,
         skippedDueToPermissions: noteIdsSkippedDueToPermissions,
-        users: this.usersService.listSnapshot()
+        users: this.usersService.memDbList()
       }
     );
   }

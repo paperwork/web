@@ -25,7 +25,7 @@ export class ViewPrintComponent implements OnInit {
 
     switch(this.resource) {
     case 'notes':
-      this.entities = this.notesService.listSnapshot().filter((note: Note) => {
+      this.entities = this.notesService.memDbList().filter((note: Note) => {
         return this.resourceIds.indexOf(note.id) > -1;
       });
       break;
