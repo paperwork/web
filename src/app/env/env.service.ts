@@ -6,6 +6,7 @@ declare var window: any;
 
 export type TEnvStatus = {
   initialized?: boolean;
+  initializedCollections?: Array<string>;
   loggedIn?: boolean;
   domReady?: boolean;
 }
@@ -19,8 +20,9 @@ export class EnvService {
 
   private statusMap: TEnvStatus = {
     initialized: false,
+    initializedCollections: [],
     loggedIn: false,
-    domReady: false,
+    domReady: false
   }
 
   constructor() {
@@ -35,6 +37,18 @@ export class EnvService {
         this._status.next(this.statusMap);
       } else {
         console.debug('Not setting env status for %s to %s, as it is already set that way.', property, value);
+      }
+    }
+  }
+
+  public pushToStatusOf(property: string, value: any) {
+    if(this.statusMap.hasOwnProperty(property) === true) {
+      if(this.statusMap[property].includes(value) !== true) {
+        console.debug('Pushing new env status %s to %s ...', value, property);
+        this.statusMap[property].push(value);
+        this._status.next(this.statusMap);
+      } else {
+        console.debug('Not pushing env status %s to %s, as it is already available.', value, property);
       }
     }
   }
