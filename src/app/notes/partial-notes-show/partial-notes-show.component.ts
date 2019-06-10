@@ -51,7 +51,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     this.note$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.noteId = params.get('id');
-        return this.notesService.show(this.noteId);
+        return this.notesService.memDbShowObservable(this.noteId);
       }),
       tap((note?: Note) => {
         if(typeof note !== 'object'
