@@ -3,7 +3,6 @@ import { Observable, of, empty, throwError, BehaviorSubject } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
-import { ObjectId } from '../../lib/objectid.helper';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
 import { EnvService } from '../env/env.service';
@@ -12,6 +11,7 @@ import { paramsToQuery, mapContent } from '../../lib/api.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
+import ObjectID from 'bson-objectid';
 @Injectable({
   providedIn: 'root'
 })
@@ -86,7 +86,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
   }
 
   public newNote(fields?: INote): string|null {
-    const objectId: ObjectId = new ObjectId();
+    const objectId: ObjectID = new ObjectID();
     const id: string = objectId.toString();
     const userGid: string = (tokenGetDecoded()).userGid;
     if(typeof fields === 'object') {

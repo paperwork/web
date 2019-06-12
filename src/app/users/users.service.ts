@@ -3,7 +3,7 @@ import { Observable, of, empty, BehaviorSubject, throwError } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { List } from 'immutable';
 import { get } from 'lodash';
-import { ObjectId } from '../../lib/objectid.helper';
+import ObjectID from 'bson-objectid';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EnvService } from '../env/env.service';
