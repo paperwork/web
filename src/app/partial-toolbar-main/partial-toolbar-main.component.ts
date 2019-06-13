@@ -160,7 +160,7 @@ export class PartialToolbarMainComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    return this.router.navigate(['notes', id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT } });
+    return this.router.navigate(['notes', id], { state: { toolbarState: this.toolbarService.TOOLBAR_STATE_BACK_MODE_EDIT, noteState: { new: true } } });
   }
 
   buttonDuplicate() {
