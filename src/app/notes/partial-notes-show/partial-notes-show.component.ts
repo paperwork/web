@@ -21,6 +21,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
   private toolbarStateSubscription: Subscription;
   private toolbarServiceActionsSubscription: Subscription;
 
+  note: Note;
   noteId: string;
   note$: Observable<Note>;
   toolbarState: number;
@@ -43,7 +44,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       tags: formBuilder.array([]),
       body: ['', Validators.required],
       path: [''],
-      _rev: ['']
+      _rev: [''],
     });
   }
 
@@ -60,6 +61,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
           return this.router.navigate(['/notes']);
         }
 
+        this.note = note;
         const noteObject = note.toJS();
         const additionalTagControlsRequired: number = noteObject.tags.length - this.tags.length;
         for(let i = 0; i < additionalTagControlsRequired; i++) {
@@ -124,7 +126,8 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       'tags': this.tags.controls.map((tagControl) => tagControl.value),
       'body': this.editor.get(['body']).value,
       'path': this.editor.get(['path']).value,
-      '_rev': this.editor.get(['_rev']).value
+      '_rev': this.editor.get(['_rev']).value,
+      '$_original': this.note,
     };
 
     if(this.noteAccessUpdate !== null) {
