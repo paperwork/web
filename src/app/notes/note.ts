@@ -39,9 +39,9 @@ export interface INote {
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
-  _original?: Note;
   _rev?: string;
-  _api?: {
+  $_original?: Note;
+  $_api?: {
     must_create?: boolean;
     must_update?: boolean;
   };
@@ -71,9 +71,9 @@ const NoteRecord = Record({
   created_at: new Date(),
   updated_at: new Date(),
   deleted_at: null,
-  _original: undefined,
   _rev: undefined,
-  _api: undefined,
+  $_original: undefined,
+  $_api: undefined,
 });
 
 export class Note extends NoteRecord implements INote {
