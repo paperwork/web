@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { EnvService } from '../env/env.service';
 import { accessToken, tokenGetDecoded, isLoggedIn } from '../../lib/token.helper';
 import { paramsToQuery, mapContent } from '../../lib/api.helper';
-import { getRevisionNumber } from '../../lib/sync.helper';
+import { getRevisionNumber, setApiInformation } from '../../lib/sync.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
@@ -63,7 +63,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
       const foundNote: Note|undefined = localDbNotes.find((localDbNote: Note) => localDbNote.id === note.id);
       if(typeof foundNote === 'undefined') { // Note ID not found in local db -> it's a new note we can simply add
         console.debug('mergeToLocalDb: Note not found in database, adding as new note ...');
-        return note;
+        return setApiInformation(note, source, true);
       }
 
       console.debug('mergeToLocalDb: Note found in database, merging ...');
@@ -102,9 +102,9 @@ export class NotesService extends CollectionService<Note> implements ICollection
     && LN_rev !== '') {
       [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
       if(oldNote !== null && newNote !== null) {
-        return newNote;
+        return setApiInformation(newNote, source, false);
       } else {
-        return rightNote;
+        return setApiInformation(rightNote, source, false);
       }
     } else
     if(LN_rev === RN_rev
@@ -112,9 +112,9 @@ export class NotesService extends CollectionService<Note> implements ICollection
       if(LNVersion === RNVersion) {
         [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
         if(oldNote !== null && newNote !== null) {
-          return newNote;
+          return setApiInformation(newNote, source, false);
         } else {
-          return rightNote;
+          return setApiInformation(rightNote, source, false);
         }
       } else {
         /*
@@ -127,16 +127,20 @@ export class NotesService extends CollectionService<Note> implements ICollection
           In order to find out, which whether a version succeeds another, we can simply compare their timestamps with
           each other.
         */
+        if(source !== 'api') {
+          console.warn('mergeNotes: Weird. Expecting the source to be "api", instead it is "%s". Something seems wrong...', source);
+        }
+
         [oldNote, newNote] = this.mergeNotesGetOldAndNewByVersion(leftNote, rightNote);
         if(oldNote !== null && newNote !== null) {
-          return this.mergeNotesOldToNew(oldNote, newNote);
+          return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
         } else {
           [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
           if(oldNote !== null && newNote !== null) {
-            return this.mergeNotesOldToNew(oldNote, newNote);
+            return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
           } else {
             console.debug('mergeNotes: Man, what the... will simply return one of the notes now.');
-            return rightNote;
+            return setApiInformation(rightNote, source, false);
           }
         }
       }
@@ -156,35 +160,39 @@ export class NotesService extends CollectionService<Note> implements ICollection
       the current localDb version (2-e8a451cf9...).
     */
     } else if(LN_rev !== RN_rev) {
+      if(source !== 'memDb') {
+          console.warn('mergeNotes: Weird. Expecting the source to be "memDb", instead it is "%s". Something seems wrong...', source);
+      }
+
       [oldNote, newNote] = this.mergeNotesGetOldAndNewByRevision(leftNote, rightNote);
       if(oldNote !== null && newNote !== null) {
-        return this.mergeNotesOldToNew(oldNote, newNote);
+        return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
       } else {
         console.debug('mergeNotes: Could not determine old or new based on revision number, trying version ...');
         [oldNote, newNote] = this.mergeNotesGetOldAndNewByVersion(leftNote, rightNote);
         if(oldNote !== null && newNote !== null) {
-          return this.mergeNotesOldToNew(oldNote, newNote);
+          return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
         } else {
           console.debug('mergeNotes: Could not determine old or new based on version, tryingt updated_at ...');
           [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
           if(oldNote !== null && newNote !== null) {
-            return this.mergeNotesOldToNew(oldNote, newNote);
+            return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
           } else {
             console.debug('mergeNotes: Dude, what the... will simply return one of the notes now.');
-            return rightNote;
+            return setApiInformation(rightNote, source, false);
           }
         }
       }
     }
 
     console.warn('mergeNotes: This code shall never be reached.');
-    return rightNote;
+    return setApiInformation(rightNote, source, false);
   }
 
   private mergeNotesOldToNew(oldNote: Note, newNote: Note): Note {
     const dmp = new DiffMatchPatch();
 
-    const ON_original: Note|null = get(oldNote, '_original', null);
+    const ON_original: Note|null = get(oldNote, '$_original', null);
 
     let diffAgainstNote: Note;
 
