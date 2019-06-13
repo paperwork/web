@@ -55,7 +55,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
     return true;
   }
 
-  public async mergeToLocalDb(notes: List<Note>): Promise<List<Note>> {
+  public async mergeToLocalDb(notes: List<Note>, source: string): Promise<List<Note>> {
     const localDbNotes: List<Note> = await this.localDbList();
 
     const mergedNotes: List<Note> = notes.map((note: Note) => {
@@ -67,7 +67,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
       }
 
       console.debug('mergeToLocalDb: Note found in database, merging ...');
-      return this.mergeNotes(foundNote, note);
+      return this.mergeNotes(foundNote, note, source);
     });
 
     console.debug('mergeToLocalDb: Upserting merged notes', mergedNotes);
@@ -84,7 +84,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
     return updatedNotes;
   }
 
-  public mergeNotes(leftNote: Note, rightNote: Note): Note {
+  public mergeNotes(leftNote: Note, rightNote: Note, source: string): Note {
     const LN_rev: string = get(leftNote, '_rev', '');
     const RN_rev: string = get(rightNote, '_rev', '');
 

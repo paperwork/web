@@ -52,7 +52,7 @@ export class UsersService extends CollectionService<User> implements ICollection
     return true;
   }
 
-  public async mergeToLocalDb(notes: List<User>): Promise<List<User>> {
+  public async mergeToLocalDb(notes: List<User>, source: string): Promise<List<User>> {
     console.debug('mergeToLocalDb: NOT YET IMPLEMENTED');
     return List();
   }

@@ -34,7 +34,7 @@ export interface ICollectionService<T> {
   readonly entries: Observable<List<T>>;
   readonly entriesPersisted: Observable<List<T>>;
 
-  mergeToLocalDb(notes: List<T>): Promise<List<T>>;
+  mergeToLocalDb(notes: List<T>, source: string): Promise<List<T>>;
 
   memDbPersist(bulk: List<T>);
 }

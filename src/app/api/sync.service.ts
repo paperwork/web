@@ -76,7 +76,7 @@ export class SyncService {
     console.debug('subscribeToCollectionService: Subscribing to collection', collectionService.collectionName, '...');
     const collectionSubscription: Subscription = collectionService.entriesPersisted.subscribe(async (entries: List<T>): Promise<boolean> => {
       if(this.canSync(this.envService.getStatus()) === true) {
-        const mergedNotes: List<T> = await collectionService.mergeToLocalDb(entries);
+        const mergedNotes: List<T> = await collectionService.mergeToLocalDb(entries, 'memDb');
         console.debug('subscribeToCollectionService: Retrieved merged notes', mergedNotes);
         collectionService.memDbPersist(mergedNotes);
         return true;
@@ -224,7 +224,7 @@ export class SyncService {
 
           if(newNotes.size > 0) {
             console.debug('syncNotes: Retrieved notes from API, syncing to LocalDb ...');
-            const mergedNotes: List<Note> = await this.notesService.mergeToLocalDb(newNotes);
+            const mergedNotes: List<Note> = await this.notesService.mergeToLocalDb(newNotes, 'api');
             console.debug('syncNotes: Retrieved merged notes', mergedNotes);
             this.notesService.memDbPersist(mergedNotes);
             return fulfill(mergedNotes);

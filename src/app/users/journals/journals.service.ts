@@ -41,7 +41,7 @@ export class UsersJournalsService extends CollectionService<Journal> implements 
     return true;
   }
 
-  public async mergeToLocalDb(notes: List<Journal>): Promise<List<Journal>> {
+  public async mergeToLocalDb(notes: List<Journal>, source: string): Promise<List<Journal>> {
     console.debug('mergeToLocalDb: NOT YET IMPLEMENTED');
     return List();
   }
