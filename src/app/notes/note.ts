@@ -36,9 +36,9 @@ export interface INote {
   }
   path?: string;
   created_by?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
   _rev?: string;
   $_original?: Note;
   $_api?: {
@@ -68,9 +68,9 @@ const NoteRecord = Record({
   access: {},
   path: '',
   created_by: '',
-  created_at: new Date(),
-  updated_at: new Date(),
-  deleted_at: null,
+  created_at: (new Date()).toISOString(),
+  updated_at: (new Date()).toISOString(),
+  deleted_at: undefined,
   _rev: undefined,
   $_original: undefined,
   $_api: undefined,
