@@ -126,6 +126,8 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
       'tags': this.tags.controls.map((tagControl) => tagControl.value),
       'body': this.editor.get(['body']).value,
       'path': this.editor.get(['path']).value,
+      'updated_at': (new Date()).toISOString(),
+
       '_rev': this.editor.get(['_rev']).value,
       '$_original': this.note,
     };
