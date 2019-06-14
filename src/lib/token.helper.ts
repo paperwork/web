@@ -53,7 +53,7 @@ export class Token implements IToken {
 
 export const tokenGetDecoded = (access_token?: string|null): Token|null => {
   if(typeof access_token !== 'string') {
-    access_token = localStorage.getItem('access_token');
+    access_token = accessToken();
   }
 
   if(access_token === null) {
