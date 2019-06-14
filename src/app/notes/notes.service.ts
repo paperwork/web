@@ -8,11 +8,10 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { EnvService } from '../env/env.service';
 import { accessToken, tokenGetDecoded, isLoggedIn } from '../../lib/token.helper';
 import { paramsToQuery, mapContent } from '../../lib/api.helper';
-import { getRevisionNumber, setApiInformation } from '../../lib/sync.helper';
+import { getRevisionNumber } from '../../lib/sync.helper';
 import { CollectionService, ICollectionService } from '../../lib/collection.service';
 import { Note, INote, NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER } from './note';
 
-import DiffMatchPatch from 'diff-match-patch';
 import ObjectID from 'bson-objectid';
 
 @Injectable({
@@ -32,6 +31,7 @@ export class NotesService extends CollectionService<Note> implements ICollection
           apiUrl: `${this.envService.gatewayUrl()}/notes`,
           entryInitializer: Note
         });
+        this.localDbToMemDb();
         this.envService.pushToStatusOf('initializedCollections', 'notes');
       }
     );
@@ -57,34 +57,68 @@ export class NotesService extends CollectionService<Note> implements ICollection
 
   public async mergeToLocalDb(notes: List<Note>, source: string): Promise<List<Note>> {
     const localDbNotes: List<Note> = await this.localDbList();
+    let replaceNoteIds: Array<string> = [];
+    let appendNoteIds: Array<string> = [];
 
-    const mergedNotes: List<Note> = notes.map((note: Note) => {
+    const mergedNotes: List<Note|null> = notes.map((note: Note): Note|null => {
       console.debug('mergeToLocalDb: notes.map');
       const foundNote: Note|undefined = localDbNotes.find((localDbNote: Note) => localDbNote.id === note.id);
-      if(typeof foundNote === 'undefined') { // Note ID not found in local db -> it's a new note we can simply add
-        console.debug('mergeToLocalDb: Note not found in database, adding as new note ...');
-        return setApiInformation(note, source, true);
+
+      if(typeof foundNote === 'undefined'
+       || foundNote === null) {
+        appendNoteIds.push(note.id);
+      } else {
+        replaceNoteIds.push(note.id);
       }
 
-      console.debug('mergeToLocalDb: Note found in database, merging ...');
+      console.debug('mergeToLocalDb: Merging notes...');
       return this.mergeNotes(foundNote, note, source);
     });
 
-    console.debug('mergeToLocalDb: Upserting merged notes', mergedNotes);
+    console.debug('mergeToLocalDb: Upserting merged notes', mergedNotes.toJS());
     const localDbReturn: Array<any> = await this.localDbUpsert(mergedNotes);
 
     console.debug('mergeToLocalDb: Retrieved upserting return', localDbReturn);
+
     const updatedNotes: List<Note> = mergedNotes.map((note: Note) => {
-      const localDbReturnedEntry = localDbReturn.find((retEntry) => (retEntry.ok === true && retEntry.id === note.id));
+      const localDbReturnedEntry = localDbReturn.find((retEntry) => (retEntry.id === note.id));
+
+      if(typeof localDbReturnedEntry === 'undefined' || localDbReturnedEntry === null) {
+        console.error('mergeToLocalDb: Did not find return entry for note %s! That is bad.', note.id);
+        return note;
+      }
+
+      if(localDbReturnedEntry.hasOwnProperty('ok') === false || localDbReturnedEntry.ok === false) {
+        console.error('mergeToLocalDb: Return for note %s was not ok:', note.id, localDbReturnedEntry);
+        return note;
+      }
+
       console.debug('mergeToLocalDb: Setting _rev of note %s ...', note.id);
       return note.set('_rev', get(localDbReturnedEntry, 'rev', undefined));
     });
 
     console.debug('mergeToLocalDb: Updated notes', updatedNotes);
-    return updatedNotes;
+
+    const localDbNotesReplacedWithUpdated: List<Note> = localDbNotes.map((note: Note): Note => {
+      if(replaceNoteIds.indexOf(note.id) > -1) {
+        return updatedNotes.find((updatedNote: Note) => updatedNote.id === note.id);
+      }
+
+      return note;
+    });
+
+    const notesNotYetInLocalDb: List<Note> = updatedNotes.reduce((newList: List<Note>, note: Note) => {
+      if(appendNoteIds.indexOf(note.id) > -1) {
+        return newList.push(note);
+      }
+
+      return newList;
+    }, List());
+
+    return localDbNotesReplacedWithUpdated.concat(notesNotYetInLocalDb);
   }
 
-  public mergeNotes(leftNote: Note, rightNote: Note, source: string): Note {
+  public mergeNotes(leftNote: Note, rightNote: Note, source: string): Note|null {
     const LN_rev: string = get(leftNote, '_rev', '');
     const RN_rev: string = get(rightNote, '_rev', '');
 
@@ -94,156 +128,44 @@ export class NotesService extends CollectionService<Note> implements ICollection
     let oldNote: Note|null = null;
     let newNote: Note|null = null;
 
-    /*
-      Let's see if both notes still have the same version (relevant for api <-> localDb sync) and the same _rev
-      (relevant for localDb <-> memDb sync). If so, it means that we're simply dealing with an edited note.
-    */
-    if(LN_rev === RN_rev
-    && LN_rev !== '') {
-      [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
-      if(oldNote !== null && newNote !== null) {
-        return setApiInformation(newNote, source, false);
-      } else {
-        return setApiInformation(rightNote, source, false);
-      }
+    if(typeof leftNote === 'undefined' && typeof rightNote !== 'undefined') {
+      console.debug('mergeNotes: leftNote is undefined, adding as new note ...');
+      return rightNote.set$_api(source, true);
     } else
-    if(LN_rev === RN_rev
-    && LN_rev === '') {
-      if(LNVersion === RNVersion) {
+    if(typeof leftNote !== 'undefined' && typeof rightNote === 'undefined') {
+      console.debug('mergeNotes: rightNote is undefined, adding as new note ...');
+      return leftNote.set$_api(source, true);
+    } else
+    if(typeof leftNote === 'undefined' && typeof rightNote === 'undefined') {
+      console.error('mergeNotes: Whoops, something bad happened. Both sides (leftNote, rightNote) are undefined.');
+      return null;
+    }
+
+    console.debug('mergeNotes: leftNote', leftNote.toJS());
+    console.debug('mergeNotes: rightNote', rightNote.toJS());
+
+    [oldNote, newNote] = this.mergeNotesGetOldAndNewByRevision(leftNote, rightNote);
+    if(oldNote !== null && newNote !== null) {
+      return oldNote.mergeWithNote(newNote).set$_api(source, false);
+    } else {
+      console.debug('mergeNotes: Could not determine old or new based on revision number, trying version ...');
+      [oldNote, newNote] = this.mergeNotesGetOldAndNewByVersion(leftNote, rightNote);
+      if(oldNote !== null && newNote !== null) {
+        return oldNote.mergeWithNote(newNote).set$_api(source, false);
+      } else {
+        console.debug('mergeNotes: Could not determine old or new based on version, tryingt updated_at ...');
         [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
         if(oldNote !== null && newNote !== null) {
-          return setApiInformation(newNote, source, false);
+          return oldNote.mergeWithNote(newNote).set$_api(source, false);
         } else {
-          return setApiInformation(rightNote, source, false);
-        }
-      } else {
-        /*
-          Here, we have the case that a note has changed on the server side, is coming in through the api and shall now
-          be synced into the localDb, so it's api -> localDb. When we sync with the api, we don't have _rev, but we
-          do have the version available. It's pretty much the same thing, it's just a different format. While _rev is
-          a hash prefixed with an incrementing number that's used by PouchDB, version is a MongoDB ObjectID. The cool
-          thing about using an ObjectID as version is, that we have information like a timestamp encoded in the ID.
-
-          In order to find out, which whether a version succeeds another, we can simply compare their timestamps with
-          each other.
-        */
-        if(source !== 'api') {
-          console.warn('mergeNotes: Weird. Expecting the source to be "api", instead it is "%s". Something seems wrong...', source);
-        }
-
-        [oldNote, newNote] = this.mergeNotesGetOldAndNewByVersion(leftNote, rightNote);
-        if(oldNote !== null && newNote !== null) {
-          return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
-        } else {
-          [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
-          if(oldNote !== null && newNote !== null) {
-            return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
-          } else {
-            console.debug('mergeNotes: Man, what the... will simply return one of the notes now.');
-            return setApiInformation(rightNote, source, false);
-          }
-        }
-      }
-
-
-    /*
-      Next, let's see if _rev is different. If that's the case, it means that one note has been updated in the
-      background. The scenario could look like this:
-
-      The user opened a note from memDb that was previously synced from localDb and contained the same _rev,
-      e.g. 1-03a137fe0... . The kept it open for editing, meanwhile the sync between api <-> localDb updated this note,
-      resulting in its _rev to be increased to e.g. 2-e8a451cf9... . After that, the user finished editing his note and
-      saves it to memDb. This also triggers a memDb <-> localDb sync. In this case, leftNote would be the one from
-      localDb (2-e8a451cf9...) and rightNote would be the one that the user edited (still 1-03a137fe0...). This means
-      we now need to try to merge the changes, by taking a look at what changed from the initial
-      version (1-03a137fe0...) to the edited version (also 1-03a137fe0...) and see if we can apply those changes onto
-      the current localDb version (2-e8a451cf9...).
-    */
-    } else if(LN_rev !== RN_rev) {
-      if(source !== 'memDb') {
-          console.warn('mergeNotes: Weird. Expecting the source to be "memDb", instead it is "%s". Something seems wrong...', source);
-      }
-
-      [oldNote, newNote] = this.mergeNotesGetOldAndNewByRevision(leftNote, rightNote);
-      if(oldNote !== null && newNote !== null) {
-        return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
-      } else {
-        console.debug('mergeNotes: Could not determine old or new based on revision number, trying version ...');
-        [oldNote, newNote] = this.mergeNotesGetOldAndNewByVersion(leftNote, rightNote);
-        if(oldNote !== null && newNote !== null) {
-          return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
-        } else {
-          console.debug('mergeNotes: Could not determine old or new based on version, tryingt updated_at ...');
-          [oldNote, newNote] = this.mergeNotesGetOldAndNewByUpdatedAt(leftNote, rightNote);
-          if(oldNote !== null && newNote !== null) {
-            return setApiInformation(this.mergeNotesOldToNew(oldNote, newNote), source, false);
-          } else {
-            console.debug('mergeNotes: Dude, what the... will simply return one of the notes now.');
-            return setApiInformation(rightNote, source, false);
-          }
+          console.debug('mergeNotes: Looks like both notes are identical, returning the rightNote ...');
+          return rightNote.set$_api(source, false);
         }
       }
     }
 
     console.warn('mergeNotes: This code shall never be reached.');
-    return setApiInformation(rightNote, source, false);
-  }
-
-  private mergeNotesOldToNew(oldNote: Note, newNote: Note): Note {
-    const dmp = new DiffMatchPatch();
-
-    const ON_original: Note|null = get(oldNote, '$_original', null);
-
-    let diffAgainstNote: Note;
-
-    if(ON_original === null) {
-      console.warn('mergeNotesOldToNew: Old note has no _original included, will diff against new note.');
-      diffAgainstNote = newNote;
-    } else {
-       diffAgainstNote = ON_original;
-    }
-
-    const mergedNote: Note = List(['title', 'body', 'attachments', 'tags', 'path']).reduce((note: Note, prop: string): Note => {
-      let diffAgainstNotePropVal: string;
-      let oldNotePropVal: string;
-      let newNotePropVal: string;
-
-      if(typeof newNote[prop] === 'object'
-      && Array.isArray(newNote[prop]) === true) {
-        diffAgainstNotePropVal = diffAgainstNote[prop].join('≠');
-        oldNotePropVal = oldNote[prop].join('≠');
-        newNotePropVal = newNote[prop].join('≠');
-      } else if(typeof newNote[prop] === 'string') {
-        diffAgainstNotePropVal = diffAgainstNote[prop];
-        oldNotePropVal = oldNote[prop];
-        newNotePropVal = newNote[prop];
-      } else {
-        console.warn('mergeNotesOldToNew: Dealing with an unknown property type, will not do anything and simply return the (new) note for this property ...');
-        return note;
-      }
-
-      console.debug('mergeNotesOldToNew: diffAgainstNotePropVal', diffAgainstNotePropVal);
-      console.debug('mergeNotesOldToNew: oldNotePropVal', oldNotePropVal);
-      console.debug('mergeNotesOldToNew: newNotePropVal', newNotePropVal);
-
-      let diff = dmp.diff_main(diffAgainstNotePropVal, oldNotePropVal, true);
-      dmp.diff_cleanupSemantic(diff);
-      let patch_list = dmp.patch_make(diffAgainstNotePropVal, oldNotePropVal, diff);
-      let [newPropValue, lineByLineStatus] = dmp.patch_apply(patch_list, newNotePropVal);
-
-      if(typeof newNote[prop] === 'object'
-      && Array.isArray(newNote[prop]) === true) {
-        return note.merge({
-          [prop]: newPropValue.split('≠')
-        });
-      } else if(typeof newNote[prop] === 'string') {
-        return note.merge({
-          [prop]: newPropValue
-        });
-      }
-    }, newNote);
-
-    return mergedNote;
+    return rightNote.set$_api(source, false);
   }
 
   private mergeNotesGetOldAndNewByRevision(leftNote: Note, rightNote: Note): [Note, Note] {
@@ -256,12 +178,15 @@ export class NotesService extends CollectionService<Note> implements ICollection
     let oldNote: Note|null = null;
     let newNote: Note|null = null;
 
-    if(LNRevision < RNRevision) { // Left is the older one
-      console.debug('mergeNotesGetOldAndNewByRevision: Left is old, right is new, based on revision number ...');
+    if(LNRevision < RNRevision
+    && LN_rev !== '' && RN_rev !== '') { // Left is the older one
+      console.debug('mergeNotesGetOldAndNewByRevision: Left is old, right is new, based on revision number (%s < %s)...', LNRevision, RNRevision);
       oldNote = leftNote;
       newNote = rightNote;
-    } else if(LNRevision > RNRevision) {
-      console.debug('mergeNotesGetOldAndNewByRevision: Right is old, left is new, based on revision number ...');
+    } else
+    if(LNRevision > RNRevision
+    && LN_rev !== '' && RN_rev !== '') {
+      console.debug('mergeNotesGetOldAndNewByRevision: Right is old, left is new, based on revision number (%s > %s)...', LNRevision, RNRevision);
       oldNote = rightNote;
       newNote = leftNote;
     } else {
@@ -281,11 +206,14 @@ export class NotesService extends CollectionService<Note> implements ICollection
     let oldNote: Note|null = null;
     let newNote: Note|null = null;
 
-    if(LNVersionOID.getTimestamp() < RNVersionOID.getTimestamp()) {
+    if(LNVersionOID !== null && RNVersionOID !== null
+    && LNVersionOID.getTimestamp() < RNVersionOID.getTimestamp()) {
       console.debug('mergeNotesGetOldAndNewByVersion: Left is old, right is new, based on version ...');
       oldNote = leftNote;
       newNote = rightNote;
-    } else if(RNVersionOID.getTimestamp() < LNVersionOID.getTimestamp()) {
+    } else
+    if(LNVersionOID !== null && RNVersionOID !== null
+    && RNVersionOID.getTimestamp() < LNVersionOID.getTimestamp()) {
       console.debug('mergeNotesGetOldAndNewByVersion: Right is old, left is new, based on version ...');
       oldNote = rightNote;
       newNote = leftNote;
@@ -297,8 +225,8 @@ export class NotesService extends CollectionService<Note> implements ICollection
   }
 
   private mergeNotesGetOldAndNewByUpdatedAt(leftNote: Note, rightNote: Note): [Note, Note] {
-    const LNUpdatedAt: Date = get(leftNote, 'updated_at', new Date());
-    const RNUpdatedAt: Date = get(rightNote, 'updated_at', new Date());
+    const LNUpdatedAt: Date = new Date(get(leftNote, 'updated_at', (new Date()).toISOString()));
+    const RNUpdatedAt: Date = new Date(get(rightNote, 'updated_at', (new Date()).toISOString()));
 
     let oldNote: Note|null = null;
     let newNote: Note|null = null;
