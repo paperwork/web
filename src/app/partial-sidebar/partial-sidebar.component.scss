@@ -12,8 +12,10 @@
       width: 100px;
       height: 100px;
       margin: 48px 74px 0px 74px;
-      background: url('/assets/images/avatar-default.png');
+      background-image: url('/assets/images/avatar-default.png');
       background-size: 100px 100px;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .blurred {

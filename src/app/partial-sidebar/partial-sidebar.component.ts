@@ -1,8 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { EnvService } from '../env/env.service';
 import { SidebarService } from './sidebar.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { User } from '../users/user';
+import { UsersService } from '../users/users.service';
+import { Token, accessToken, tokenGetDecoded } from '../../lib/token.helper';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,11 +16,15 @@ import { Subscription } from 'rxjs';
 export class PartialSidebarComponent implements OnInit, OnDestroy {
   private sidebarServiceSelectedSubscription: Subscription;
   selected: number;
+  public myAccessToken: string;
+  public me$: Observable<User>;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    public sidebarService: SidebarService
+    private envService: EnvService,
+    public sidebarService: SidebarService,
+    private usersService: UsersService
   ) {
   }
 
@@ -24,6 +32,11 @@ export class PartialSidebarComponent implements OnInit, OnDestroy {
     this.sidebarServiceSelectedSubscription = this.sidebarService.selected$.subscribe(num =>
       this.selected = num
     );
+
+    this.myAccessToken = accessToken();
+    const myToken: Token = tokenGetDecoded(this.myAccessToken);
+
+    this.me$ = this.usersService.memDbShowObservable(myToken.userId);
   }
 
   ngOnDestroy() {
