@@ -29,6 +29,7 @@ export class UsersService extends CollectionService<User> implements ICollection
           apiUrl: `${this.envService.gatewayUrl()}/users`,
           entryInitializer: User
         });
+        this.localDbToMemDb();
         this.envService.pushToStatusOf('initializedCollections', 'users');
       }
     );
@@ -52,9 +53,29 @@ export class UsersService extends CollectionService<User> implements ICollection
     return true;
   }
 
-  public async mergeToLocalDb(notes: List<User>, source: string): Promise<List<User>> {
-    console.debug('mergeToLocalDb: NOT YET IMPLEMENTED');
-    return List();
+  public async mergeToLocalDb(users: List<User>, source: string): Promise<List<User>> {
+    const localDbUsers: List<User> = await this.localDbList();
+
+    const mergedUsers: List<User|null> = users.map((user: User): User|null => {
+      console.debug('mergeToLocalDb: users.map');
+      const foundUser: User|undefined = localDbUsers.find((localDbUser: User) => localDbUser.id === user.id);
+
+      console.debug('mergeToLocalDb: Merging users...');
+      return this.mergeUsers(foundUser, user, source);
+    });
+
+    console.debug('mergeToLocalDb: Upserting merged users', mergedUsers.toJS());
+    const localDbReturn: Array<any> = await this.localDbUpsert(mergedUsers);
+
+    return mergedUsers;
+  }
+
+  public mergeUsers(leftUser: User, rightUser: User, source: string): User|null {
+    if(typeof leftUser === 'undefined') {
+      return rightUser;
+    }
+
+    return rightUser.set('_rev', leftUser.get('_rev'));
   }
 
   register(email: string, password: string, name: object) {
