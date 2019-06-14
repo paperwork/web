@@ -1,5 +1,6 @@
 import { List, Record } from 'immutable';
 import { merge, get } from 'lodash';
+import DiffMatchPatch from 'diff-match-patch';
 
 export type TNoteAccessUser = {
   user?: {
@@ -114,6 +115,69 @@ export class Note extends NoteRecord implements INote {
     }
 
     return this;
+  }
+
+  public mergeWithNote(withNote: Note): Note {
+    const dmp = new DiffMatchPatch();
+
+    console.debug('mergeWithNote: Merging this', this.toJS());
+    console.debug('mergeWithNote: with Note', withNote.toJS());
+
+    const originalNote: Note|null = get(this, '$_original', get(withNote, '$_original', null));
+
+    let diffAgainstNote: Note;
+
+    if(originalNote === null) {
+      console.warn('mergeWithNote: No _original included, will diff against new note.');
+      diffAgainstNote = withNote;
+    } else {
+       diffAgainstNote = originalNote;
+    }
+
+    const mergedNote: Note = List(['title', 'body', 'attachments', 'tags', 'path']).reduce((note: Note, prop: string): Note => {
+      let diffAgainstNotePropVal: string;
+      let thisPropVal: string;
+      let withNotePropVal: string;
+
+      if(typeof withNote[prop] === 'object'
+      && Array.isArray(withNote[prop]) === true) {
+        diffAgainstNotePropVal = diffAgainstNote[prop].join('≠');
+        thisPropVal = this[prop].join('≠');
+        withNotePropVal = withNote[prop].join('≠');
+      } else if(typeof withNote[prop] === 'string') {
+        diffAgainstNotePropVal = diffAgainstNote[prop];
+        thisPropVal = this[prop];
+        withNotePropVal = withNote[prop];
+      } else {
+        console.warn('mergeWithNote: Dealing with an unknown property type, will not do anything and simply return the (new) note for this property ...');
+        return note;
+      }
+
+      console.debug('mergeWithNote: diffAgainstNotePropVal', diffAgainstNotePropVal);
+      console.debug('mergeWithNote: thisPropVal', thisPropVal);
+      console.debug('mergeWithNote: withNotePropVal', withNotePropVal);
+
+      let diff = dmp.diff_main(diffAgainstNotePropVal, thisPropVal, true);
+      dmp.diff_cleanupSemantic(diff);
+      let patch_list = dmp.patch_make(diffAgainstNotePropVal, thisPropVal, diff);
+
+      console.debug('mergeWithNote: patch', patch_list);
+
+      let [newPropValue, lineByLineStatus] = dmp.patch_apply(patch_list, withNotePropVal);
+
+      if(typeof withNote[prop] === 'object'
+      && Array.isArray(withNote[prop]) === true) {
+        return note.merge({
+          [prop]: newPropValue.split('≠')
+        });
+      } else if(typeof withNote[prop] === 'string') {
+        return note.merge({
+          [prop]: newPropValue
+        });
+      }
+    }, withNote);
+
+    return mergedNote;
   }
 
 }
