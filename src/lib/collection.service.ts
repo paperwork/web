@@ -116,7 +116,7 @@ export class CollectionService<T extends { id: string, merge: Function, toJS: Fu
   }
 
   public memDbPersist(bulk: List<T>) {
-    console.log('memDbPersist', bulk);
+    console.log('memDbPersist', bulk.toJS());
     this._entries.next(bulk);
   }
 
