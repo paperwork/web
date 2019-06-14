@@ -151,6 +151,7 @@ export class PartialNotesShowComponent implements OnInit, OnDestroy {
     console.log(toBeSavedFields);
 
     this.notesService.updateFields(id, toBeSavedFields);
+    this.notesService.memDbToLocalDb();
   }
 
   deleteNote(id?: string) {
