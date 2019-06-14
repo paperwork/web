@@ -41,29 +41,3 @@ export const getRevisionNumber = (rev: string): number => {
 
   return -1;
 };
-
-export const setApiInformation = <T extends { merge: Function }>(entry: T, source: string, was_created: boolean): T => {
-  let updatedEntry: T = entry;
-
-  switch(source) {
-  case 'memDb':
-    updatedEntry = entry.merge({
-      '$_api': {
-        'must_create': was_created,
-        'must_update': !was_created
-      }
-    });
-  case 'api':
-    updatedEntry = entry.merge({
-      '$_api': {
-        'must_create': false,
-        'must_update': false
-      }
-    });
-  default:
-    updatedEntry = entry;
-  break;
-  }
-
-  return updatedEntry;
-}

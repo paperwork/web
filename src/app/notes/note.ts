@@ -1,5 +1,5 @@
 import { List, Record } from 'immutable';
-import { merge } from 'lodash';
+import { merge, get } from 'lodash';
 
 export type TNoteAccessUser = {
   user?: {
@@ -91,4 +91,29 @@ export class Note extends NoteRecord implements INote {
 
     return this.setIn(['access', gid], access);
   }
+
+  public set$_api(source: string, was_created: boolean): this {
+    switch(source) {
+    case 'memDb':
+      return this.merge({
+        '$_api': {
+          'must_create': was_created,
+          'must_update': !was_created
+        }
+      });
+    case 'api':
+      return this.merge({
+        '$_api': {
+          'must_create': false,
+          'must_update': false
+        }
+      });
+    default:
+      return this;
+    break;
+    }
+
+    return this;
+  }
+
 }
