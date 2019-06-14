@@ -32,8 +32,11 @@ export class SyncService {
   private _syncJournals = new ReplaySubject<List<Journal>>(1);
   public syncJournals: Observable<List<Journal>> = this._syncJournals.asObservable();
 
-  public syncTriggerInProgess: boolean = false;
-  public syncInProgess: boolean = false;
+  public syncInProgess: Object = {
+    'user': false,
+    'note': false,
+    'journal': false
+  };
 
   constructor(
     private envService: EnvService,
@@ -50,7 +53,8 @@ export class SyncService {
     console.debug('Initializing SyncService ...');
     this.envStatus = this.envService.status.subscribe((status: TEnvStatus) => {
       console.debug('Retrieved EnvService status:', status);
-      if(this.canSync(status) === true) {
+      if(this.canSync(status, '') === true) {
+        this.syncMandatory();
         this.triggerSync('note');
       }
     });
@@ -58,24 +62,23 @@ export class SyncService {
     this.syncJournalsSubscription = this.syncJournals.subscribe(async (newJournalEntries: List<Journal>): Promise<boolean> => {
       if(newJournalEntries.size > 0) {
         const checkEntry: Journal = newJournalEntries.get(0);
-
-        return this.sync(checkEntry.resource, newJournalEntries);
+        return this.syncNewJournalEntries(checkEntry.resource, newJournalEntries);
       }
     });
 
-    this.subscribeToCollectionService(this.usersService, User);
-    this.subscribeToCollectionService(this.usersJournalsService, Journal);
-    this.subscribeToCollectionService(this.notesService, Note);
+    this.subscribeToCollectionService(this.usersService, User, 'user');
+    this.subscribeToCollectionService(this.usersJournalsService, Journal, 'journal');
+    this.subscribeToCollectionService(this.notesService, Note, 'note');
 
     // setInterval(() => {
     //   this.notesService.memDbToLocalDb();
     // }, 30000);
   }
 
-  private subscribeToCollectionService<T>(collectionService: ICollectionService<T>, entryType): boolean {
+  private subscribeToCollectionService<T>(collectionService: ICollectionService<T>, entryType, resource: string): boolean {
     console.debug('subscribeToCollectionService: Subscribing to collection', collectionService.collectionName, '...');
     const collectionSubscription: Subscription = collectionService.entriesPersisted.subscribe(async (entries: List<T>): Promise<boolean> => {
-      if(this.canSync(this.envService.getStatus()) === true) {
+      if(this.canSync(this.envService.getStatus(), resource) === true) {
         const mergedNotes: List<T> = await collectionService.mergeToLocalDb(entries, 'memDb');
         console.debug('subscribeToCollectionService: Retrieved merged notes', mergedNotes);
         collectionService.memDbPersist(mergedNotes);
@@ -105,18 +108,19 @@ export class SyncService {
     return true;
   }
 
-  public canSync(status: TEnvStatus): boolean {
+  public canSync(status: TEnvStatus, resource: string): boolean {
     if(typeof status === 'object'
     && status.initialized === true
     && status.loggedIn === true
     && status.domReady === true
     && status.initializedCollections.includes('users') === true
     && status.initializedCollections.includes('notes') === true
-    && status.initializedCollections.includes('users_journals') === true
-    && this.syncTriggerInProgess === false
-    && this.syncInProgess === false) {
-      console.debug('canSync: Everything good to go, can begin syncing!');
-      return true;
+    && status.initializedCollections.includes('users_journals') === true) {
+      if(resource === ''
+      || (resource !== '' && this.syncInProgess[resource] !== true)) {
+        console.debug('canSync: Everything good to go, can begin syncing!');
+        return true;
+      }
     }
 
     console.debug('canSync: Not ready for sync yet, waiting ...');
@@ -124,18 +128,20 @@ export class SyncService {
   }
 
   public async triggerSync(resource: string): Promise<boolean> {
+    console.debug('triggerSync: %s', resource);
     await this.triggerSyncJournals(resource);
     return true;
   }
 
   public async triggerSyncJournals(resource: string): Promise<boolean> {
+    console.debug('triggerSyncJournals: %s', resource);
     return new Promise((fulfill, reject) => {
       const status: TEnvStatus = this.envService.getStatus();
-      if(this.canSync(status) === false) {
+      if(this.canSync(status, resource) === false) {
         return false;
       }
 
-      this.syncInProgess = true;
+      this.syncInProgess[resource] = true;
 
       const syncId: string = getSyncId(resource);
       console.debug('triggerSyncJournals: Syncing UsersJournalsService with syncId %s for %s ...', syncId, resource);
@@ -147,7 +153,7 @@ export class SyncService {
         authenticatedOnly: true
       }).subscribe(
         (newJournalEntries: List<Journal>) => {
-          this.syncInProgess = false;
+          this.syncInProgess[resource] = false;
 
           if(newJournalEntries.size > 0) {
             console.debug('triggerSyncJournals: Found new journal entries, publishing ...');
@@ -160,42 +166,59 @@ export class SyncService {
         (error) => {
           this.alertService.error(error.message);
 
-          this.syncInProgess = false;
+          this.syncInProgess[resource] = false;
           return reject(false);
         }
       );
     });
   }
 
-  private async sync(resource: string, newJournalEntries: List<Journal>): Promise<boolean> {
-    console.debug('sync ...', newJournalEntries);
+  private async syncMandatory(): Promise<boolean> {
+    // ------------------------------------------------ Users ----------------------------------------------------------
+    this.syncInProgess['user'] = true;
+    try {
+      console.debug('syncMandatory: Triggering syncUsers ...');
+      await this.syncUsers();
+      console.debug('syncMandatory: syncUsers finished successfully!');
+    } catch(error) {
+      console.error(error);
+    }
+    this.syncInProgess['user'] = false;
 
-    if(this.canSync(this.envService.getStatus()) === false) {
-      console.debug('sync: Aborting sync');
+    return true;
+  }
+
+  private async syncNewJournalEntries(resource: string, newJournalEntries: List<Journal>): Promise<boolean> {
+    console.debug('syncNewJournalEntries ...', newJournalEntries);
+
+    if(this.canSync(this.envService.getStatus(), resource) === false) {
+      console.debug('syncNewJournalEntries: Aborting sync');
       return false;
     }
 
-    this.syncInProgess = true;
+    this.syncInProgess[resource] = true;
+
+    // ----------------------------------------- Notes from Journal entries --------------------------------------------
 
     const allJournalEntryIds: List<string> = newJournalEntries.map((newJournalEntry: Journal): string => newJournalEntry.id);
-    console.debug('sync: allJournalEntryIds', allJournalEntryIds);
+    console.debug('syncNewJournalEntries: allJournalEntryIds', allJournalEntryIds);
     let syncedJournalEntryIds: List<string> = List();
-    console.debug('sync: syncedJournalEntryIds', syncedJournalEntryIds);
+    console.debug('syncNewJournalEntries: syncedJournalEntryIds', syncedJournalEntryIds);
 
     if(newJournalEntries.size > 0) {
-      console.debug('sync: Got new journal entries! Checking ...');
+      console.debug('syncNewJournalEntries: Got new journal entries! Checking ...');
 
       const noteIds: List<string> = newJournalEntries.map((newNoteJournalEntry: Journal): string => {
-        console.debug('sync: Adding note ID %s to request ...', newNoteJournalEntry.resource_id);
-        console.debug('sync:', newNoteJournalEntry);
+        console.debug('syncNewJournalEntries: Adding note ID %s to request ...', newNoteJournalEntry.resource_id);
+        console.debug('syncNewJournalEntries:', newNoteJournalEntry);
         return newNoteJournalEntry.resource_id;
       });
-      console.debug('sync: noteIds', noteIds);
+      console.debug('syncNewJournalEntries: noteIds', noteIds);
 
       try {
-        console.debug('sync: Triggering syncNotes ...');
+        console.debug('syncNewJournalEntries: Triggering syncNotes ...');
         await this.syncNotes(noteIds);
-        console.debug('sync: syncNotes finished successfully!');
+        console.debug('syncNewJournalEntries: syncNotes finished successfully!');
       } catch(error) {
         console.error(error);
       }
@@ -204,12 +227,39 @@ export class SyncService {
     // TODO: Intersect allJournalEntryIds with syncedJournalEntryIds and see which IDs did not sync
     const newestJournalEntry: Journal|null = newJournalEntries.get(-1);
     if(newestJournalEntry !== null) {
-      console.debug('sync: Setting syncId:', newestJournalEntry.id);
+      console.debug('syncNewJournalEntries: Setting syncId:', newestJournalEntry.id);
       // setSyncId(resource, newestJournalEntry.id);
     }
 
-    this.syncInProgess = false;
+    this.syncInProgess[resource] = false;
     return true;
+  }
+
+  private async syncUsers() {
+    return new Promise((fulfill, reject) => {
+      console.debug('syncUsers ...');
+      this.usersService.apiList({
+        }, {
+          authenticatedOnly: true
+        }).subscribe(async (users: List<User>) => {
+          console.debug('syncUsers: users', users);
+
+          if(users.size > 0) {
+            console.debug('syncUsers: Retrieved users from API, syncing to LocalDb ...');
+            const mergedUsers: List<User> = await this.usersService.mergeToLocalDb(users, 'api');
+            console.debug('syncUsers: Retrieved merged notes', mergedUsers);
+            this.usersService.memDbPersist(mergedUsers);
+            return fulfill(mergedUsers);
+          }
+
+          console.debug('No new journal entries found, finishing sync.');
+          return fulfill(List());
+        },
+        (error) => {
+          return reject(error);
+        }
+      );
+    });
   }
 
   private async syncNotes(noteIds: List<string>) {
