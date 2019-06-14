@@ -21,6 +21,14 @@ export type TNoteAccessPermissions = {
 
 export type TNoteAccess = TNoteAccessUser & TNoteAccessPermissions
 
+export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {
+  can_leave: false,
+  can_read: true,
+  can_share: true,
+  can_write: true,
+  can_change_permissions: true,
+};
+
 export interface INote {
   id: string;
   version?: string;
@@ -46,14 +54,6 @@ export interface INote {
     must_update?: boolean;
   };
 }
-
-export const NOTE_ACCESS_PERMISSIONS_DEFAULT_OWNER: TNoteAccessPermissions = {
-  can_leave: false,
-  can_read: true,
-  can_share: true,
-  can_write: true,
-  can_change_permissions: true,
-};
 
 const NoteRecord = Record({
   id: '',
