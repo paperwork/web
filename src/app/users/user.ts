@@ -35,4 +35,13 @@ export class User extends UserRecord implements IUser {
   constructor(properties) {
       super(properties);
   }
+
+  getProfilePhotoPath(gatewayUrl: string): string {
+    if(this.profile_photo !== null
+    && this.profile_photo !== '') {
+      return `${gatewayUrl}/profile_photos/${this.profile_photo}`;
+    }
+
+    return '/assets/images/avatar-default.png';
+  }
 }
