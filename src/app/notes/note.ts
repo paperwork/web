@@ -81,7 +81,7 @@ export class Note extends NoteRecord implements INote {
       super(properties);
   }
 
-  addAccess(gid: string, permissions: TNoteAccessPermissions, user: TNoteAccessUser): this {
+  public addAccess(gid: string, permissions: TNoteAccessPermissions, user: TNoteAccessUser): this {
     const access: TNoteAccess = merge(permissions, user);
     const currentAccess: object = this.get('access');
 
