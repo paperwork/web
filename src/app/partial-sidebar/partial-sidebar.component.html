@@ -1,5 +1,5 @@
-<mat-card class="mat-elevation-z profile" *ngIf="me$ | async as me">
-  <mat-card-header>
+<mat-card class="mat-elevation-z profile">
+  <mat-card-header *ngIf="me$ | async as me">
 
     <div mat-card-avatar class="avatar" [class.blurred]="selected !== sidebarService.SIDEBAR_SELECTED_DEFAULT" [style.backgroundImage]="'url('+ me.getProfilePhotoPath(envService.gatewayUrl()) +'?_accessToken=' + myAccessToken + ')'"></div>
     <div class="back-button" [class.back-button-on]="selected !== sidebarService.SIDEBAR_SELECTED_DEFAULT">
