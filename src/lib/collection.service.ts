@@ -39,9 +39,6 @@ export interface ICollectionService<T> {
   memDbPersist(bulk: List<T>);
 }
 
-@Injectable({
-  providedIn: 'root'
-})
 export class CollectionService<T extends { id: string, merge: Function, toJS: Function }> {
   private _db: any|null = null;
   public collectionName: string;
