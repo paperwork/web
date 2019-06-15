@@ -80,7 +80,7 @@ export class UsersService extends CollectionService<User> implements ICollection
 
   register(email: string, password: string, name: object) {
     return this.httpClient
-      .post<{content: { token:  string } }>(`${this.envService.gatewayUrl()}/login`, {email, password, name})
+      .post<{content: { token:  string } }>(`${this.envService.gatewayUrl()}/registration`, {'email': email, 'password': password, 'name': name})
       .pipe(tap(res => {
         localStorage.setItem('access_token', res.content.token);
       }));

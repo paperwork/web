@@ -96,12 +96,19 @@ export class ViewLoginComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.submitted = true;
 
-    if (this.loginForm.invalid) {
+    switch(this.currentRoute) {
+      case 'login': return this.onSubmitLogin();
+      case 'register': return this.onSubmitRegister();
+    }
+  }
+
+  onSubmitLogin() {
+    if(this.loginForm.invalid) {
         return;
     }
 
     this.loading = true;
-    this.usersService.login(this.f.username.value, this.f.password.value)
+    return this.usersService.login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe(data => {
         this.router.navigate([this.returnUrl]);
@@ -110,7 +117,24 @@ export class ViewLoginComponent implements OnInit, OnDestroy {
         this.alertService.error(get(error, 'error.content.error', error));
         this.loading = false;
       });
+  }
+
+  onSubmitRegister() {
+    if(this.registerForm.invalid) {
+        return;
     }
+
+    this.loading = true;
+    return this.usersService.register(this.f.username.value, this.f.password.value, { first_name: this.registerForm.get('name.first_name').value, last_name: this.registerForm.get('name.last_name').value })
+      .pipe(first())
+      .subscribe(data => {
+        this.router.navigate([this.returnUrl]);
+      }, error => {
+        console.error(error);
+        this.alertService.error(get(error, 'error.content.error', error));
+        this.loading = false;
+      });
+  }
 
   MustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {
