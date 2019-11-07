@@ -10,7 +10,7 @@ import { AlertService } from './alert.service';
   styleUrls: ['./partial-alert.component.scss']
 })
 export class PartialAlertComponent implements OnInit, OnDestroy {
-  @ViewChild('template') template: TemplateRef<any>;
+  @ViewChild('template', { static: false }) template: TemplateRef<any>;
   private subscription: Subscription;
   durationInSeconds: number = 10;
   message: string = '';

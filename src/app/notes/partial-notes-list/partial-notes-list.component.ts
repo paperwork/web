@@ -23,7 +23,7 @@ export class PartialNotesListComponent implements OnInit, OnDestroy {
 
   searchEngine: SearchEngine = new SearchEngine();
   dataSource = new MatTableDataSource();
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   selection = null;
   toolbarState: number;
 
