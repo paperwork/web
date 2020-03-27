@@ -6,7 +6,7 @@ Paperwork Web UI
 
 ## General
 
-This is a first try to build a web UI for Paperwork 2, based on Angular (7.x) and Material components.
+This is a first try to build a web UI for Paperwork 2, based on Angular 9 and Material components.
 
 ## Getting involved
 
