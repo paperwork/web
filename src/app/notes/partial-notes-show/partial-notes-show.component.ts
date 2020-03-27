@@ -5,7 +5,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { ToolbarService, ToolbarAction, ToolbarActionPayload } from '../../partial-toolbar-main/toolbar.service';
 import { NotesService } from '../notes.service';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Note, TNoteAccess } from '../note';
 import { get } from 'lodash';

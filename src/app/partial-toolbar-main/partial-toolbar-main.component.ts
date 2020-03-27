@@ -8,7 +8,7 @@ import { AlertService } from '../partial-alert/alert.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogDuplicateComponent } from './dialog-duplicate/dialog-duplicate.component';
 import { DialogMoveComponent } from './dialog-move/dialog-move.component';
 import { DialogExportComponent } from './dialog-export/dialog-export.component';

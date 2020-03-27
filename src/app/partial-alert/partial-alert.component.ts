@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 
 import { AlertService } from './alert.service';
