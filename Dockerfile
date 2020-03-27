@@ -12,7 +12,7 @@
 # We have to use Node 11 instead of the latest, because node-sass is only
 # compatible with Node 12 from v4.12.0 upwards but
 # @angular-devkit/build-angular hasn't updated to node-sass@4.12.0 or newer yet.
-FROM node:11-alpine AS builder
+FROM node:12-alpine AS builder
 
 ARG APP_NAME
 ARG APP_VSN
