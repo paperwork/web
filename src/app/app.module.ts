@@ -88,6 +88,7 @@ import { ViewPrintComponent } from './view-print/view-print.component';
 import { UsersJournalsService } from './users/journals/journals.service';
 
 import { SyncService } from './api/sync.service';
+import { SafePipe } from './safe.pipe';
 
 export function jwtOptionsFactory(envService) {
   return {
@@ -124,6 +125,7 @@ export function jwtOptionsFactory(envService) {
     DialogShareComponent,
     DialogDeleteComponent,
     ViewPrintComponent,
+    SafePipe,
   ],
   imports: [
     BrowserModule,
