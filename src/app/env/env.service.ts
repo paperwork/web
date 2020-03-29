@@ -75,6 +75,7 @@ export class EnvService {
     if(window.hasOwnProperty('dotenv') && window.dotenv.hasOwnProperty(key) === true) {
       return window.dotenv[key];
     } else {
+      console.debug("Cannot get %s from .env.json because it is not yet available!", key);
       return "";
     }
   }
