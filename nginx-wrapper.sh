@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ARGDIR=$(dirname "$1")
+
 env | grep -i '^PAPERWORK_' | while read envvar
 do
     envvar_key=`echo $envvar | sed 's/PAPERWORK_\([A-Z_]*\)=\(.*\)/\1/'`
@@ -18,5 +20,7 @@ do
 
     [[ -n "$new_dotenv" ]] && echo "$new_dotenv" > $1
 done
+
+echo $INDEX_INJECT >> "$ARGDIR/index.html"
 
 nginx -g "daemon off;"
