@@ -86,4 +86,8 @@ export class EnvService {
   public gatewayHostPort() {
     return this.get('apiGatewayProtocol');
   }
+
+  public uiInjectCode() {
+    return this.get('uiInjectCode');
+  }
 }
