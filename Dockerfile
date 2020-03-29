@@ -39,6 +39,9 @@ RUN apk update \
 
 COPY --from=builder /app/dist/* /usr/share/nginx/html/
 COPY --from=builder /app/nginx-wrapper.sh /usr/bin/nginx-wrapper.sh
+COPY --from=builder /app/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/nginx.default.conf /etc/nginx/conf.d/default.conf
+
 RUN echo "{\"name\":\"$APP_NAME\", \"version\":\"$APP_VSN\", \"build\":\"$BUILD\"}" > /usr/share/nginx/html/.env.json
 
 CMD ["/usr/bin/nginx-wrapper.sh", "/usr/share/nginx/html/.env.json"]
