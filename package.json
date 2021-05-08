@@ -57,7 +57,7 @@
     "hammerjs": "^2.0.8",
     "immutable": "^4.0.0-rc.12",
     "indexeddbshim": "^6.1.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "ngx-markdown": "^9.0.0",
     "pouchdb-browser": "^7.0.0",
     "rxjs": "~6.5.1",
